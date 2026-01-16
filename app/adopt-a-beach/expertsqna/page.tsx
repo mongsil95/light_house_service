@@ -269,7 +269,7 @@ export default function AdoptABeachCommunityPage() {
                       <h3 className="text-lg font-bold text-gray-900 mb-2">검색 결과가 없습니다</h3>
                       <p className="text-gray-600 mb-6">다른 검색어나 카테고리를 시도해보세요</p>
                       <Link href="/adopt-a-beach/expertsqna/ask">
-                        <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        <button className="px-6 py-3 bg-blue-300 text-white rounded-lg hover:bg-blue-400 transition-colors font-semibold">
                           새 질문하기
                         </button>
                       </Link>

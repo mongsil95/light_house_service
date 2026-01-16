@@ -373,7 +373,7 @@ export default function EditGuidePage() {
               <Button
                 onClick={() => handleSave("published")}
                 disabled={saving}
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-300 hover:bg-blue-400"
               >
                 <Eye className="w-4 h-4 mr-2" />
                 수정 완료

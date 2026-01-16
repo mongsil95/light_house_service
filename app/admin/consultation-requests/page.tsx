@@ -311,7 +311,7 @@ export default function ConsultationRequests() {
                       <Button
                         onClick={() => updateStatus(request.id, "확인됨")}
                         disabled={request.status !== "대기중"}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700 font-[Cafe24_Ssurround] disabled:bg-gray-300"
+                        className="flex-1 bg-blue-300 hover:bg-blue-400 font-[Cafe24_Ssurround] disabled:bg-gray-300"
                       >
                         확인됨으로 변경
                       </Button>

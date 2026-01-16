@@ -138,7 +138,7 @@ export default function AskQuestionPage() {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="카테고리를 선택하세요" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white">
                       {categories.map((cat) => (
                         <SelectItem key={cat.value} value={cat.value}>
                           {cat.label}
@@ -286,10 +286,17 @@ export default function AskQuestionPage() {
                       취소
                     </Button>
                   </Link>
-                  <Button type="submit" className="flex-1 bg-blue-600 hover:bg-blue-700" size="lg">
+                  <Button type="submit" className="flex-1 bg-blue-300 hover:bg-blue-400" size="lg">
                     <Send className="w-4 h-4 mr-2" />
                     질문 등록
                   </Button>
+                </div>
+                
+                {/* Response Time Notice */}
+                <div className="mt-4 text-center">
+                  <p className="text-sm text-gray-500">
+                    💡 질문에 대한 답변은 영업일 기준 2~3일 소요될 수 있습니다
+                  </p>
                 </div>
               </form>
             </CardContent>

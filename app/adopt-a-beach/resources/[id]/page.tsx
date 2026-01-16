@@ -2,190 +2,290 @@
 
 import Navigation from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
-import { ChevronRight, Clock, FileText, Home, ThumbsUp, Video } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  ArrowLeft,
+  Calendar,
+  ChevronRight,
+  Eye,
+  Home,
+  MessageCircle,
+  Share2,
+  ThumbsUp,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
-// 가이드 데이터 (실제로는 API나 DB에서 가져와야 함)
-const guideData: Record<string, any> = {
+// TODO: DB팀 - 게시글 상세 조회 API 구현 필요
+// GET /api/resources/:id
+
+// 임시 게시글 데이터
+const resourceData: Record<string, any> = {
   "1": {
-    category: "반려해변 입양",
-    title: "반려해변 입양 신청서 작성",
-    description: "해변 정보와 입양 동기를 작성하세요",
-    readTime: "3분",
+    id: 1,
+    title: "반려해변 입양 가이드 - 해변을 책임지는 방법",
+    content: `안녕하세요, 반려해변 운영팀입니다.
+
+**반려해변 입양이란?**
+
+반려해변은 기업, 단체, 학교, 개인이 특정 해변을 '입양'하여 지속적으로 관리하고 보호하는 프로그램입니다. 마치 반려동물을 가족으로 맞이하듯, 우리의 소중한 해변을 책임지고 가꾸어 나가는 의미 있는 활동입니다.
+
+**입양 절차**
+
+1. **입양 신청**
+   - 홈페이지에서 입양 가능한 해변 확인
+   - 입양 신청서 작성 및 제출
+   - 기관 정보 및 활동 계획서 첨부
+
+2. **서류 심사**
+   - 제출된 서류 검토 (약 3-5일 소요)
+   - 필요시 추가 서류 요청
+   - 승인 결과 이메일 발송
+
+3. **기금 납부**
+   - 입양 기금 납부 (연간 30만원~)
+   - 납부 확인 후 입양증서 발급
+   - 정기 후원으로 전환 가능
+
+**입양 후 활동**
+
+- 월 1회 이상 정화 활동 필수
+- 활동 사진 및 보고서 제출
+- 분기별 정화 키트 지원
+- 우수 입양 기관 시상
+
+**문의사항**
+
+자세한 내용은 운영팀(070-8015-4120)으로 연락 주시기 바랍니다.
+
+감사합니다.`,
+    category: "가이드",
+    author: "운영팀",
+    date: "2025-01-10",
     views: 1234,
-    likes: 45,
-    lastUpdated: "2026.01.15",
-    videoUrl: "https://www.youtube.com/embed/example",
-    sections: [
+    likes: 42,
+    comments: [
       {
-        title: "영상 가이드",
-        type: "video",
-        content: "",
+        id: 1,
+        author: "환경지킴이",
+        content: "정말 유익한 정보 감사합니다! 학교에서 입양 신청 준비 중입니다.",
+        date: "2025-01-11",
+        likes: 5,
       },
       {
-        title: "반려해변 입양 신청서란?",
-        type: "text",
-        content:
-          "반려해변 입양 신청서는 여러분이 선택한 해변을 정기적으로 관리하고 보호하겠다는 약속의 시작입니다. 신청서를 통해 입양하고자 하는 해변의 정보와 관리 계획을 제출하게 됩니다.",
-      },
-      {
-        title: "화면 설명",
-        type: "image-explanation",
-        items: [
-          {
-            number: "①",
-            title: "입양 희망 해변 선택",
-            description:
-              "전국 해변 지도에서 입양을 희망하는 해변을 선택합니다. 이미 입양된 해변은 선택할 수 없습니다.",
-          },
-          {
-            number: "②",
-            title: "기관/단체 정보",
-            description:
-              "입양을 신청하는 기관이나 단체의 기본 정보를 입력합니다. 사업자등록증 또는 고유번호증이 필요합니다.",
-          },
-          {
-            number: "③",
-            title: "활동 계획",
-            description: "월 1회 이상의 정화 활동 계획과 해변 관리 방안을 구체적으로 작성합니다.",
-          },
-          {
-            number: "④",
-            title: "입양 동기",
-            description:
-              "왜 이 해변을 입양하고 싶은지, 어떤 활동을 하고 싶은지 자유롭게 작성해주세요.",
-          },
-        ],
-      },
-      {
-        title: "신청서 작성 항목",
-        type: "list",
-        subsections: [
-          {
-            subtitle: "필수 작성 항목",
-            items: [
-              "입양 희망 해변 선택",
-              "기관/단체명 및 대표자명",
-              "사업자등록번호 또는 고유번호",
-              "담당자 연락처 (휴대폰, 이메일)",
-              "월별 활동 계획",
-              "입양 신청 동기",
-              "해변 관리 방안",
-            ],
-          },
-          {
-            subtitle: "선택 작성 항목",
-            items: ["참여 예상 인원", "보유 장비 현황", "과거 환경 활동 이력", "협력 기관 정보"],
-          },
-        ],
-      },
-      {
-        title: "작성 팁",
-        type: "tips",
-        items: [
-          {
-            icon: "💡",
-            title: "구체적인 활동 계획 작성",
-            description:
-              "막연한 계획보다는 '매월 첫째 주 토요일 오전 10시, 20명이 참여하여 2시간 동안 정화 활동'처럼 구체적으로 작성하면 승인률이 높아집니다.",
-          },
-          {
-            icon: "📝",
-            title: "진정성 있는 입양 동기",
-            description:
-              "단순히 '환경 보호'보다는 '우리 지역 해변을 깨끗하게 만들어 주민들에게 쉼터를 제공하고 싶다'처럼 진정성 있게 작성해주세요.",
-          },
-          {
-            icon: "🎯",
-            title: "실현 가능한 계획 수립",
-            description:
-              "과도한 계획보다는 현실적으로 실천 가능한 계획을 세우는 것이 중요합니다. 작게 시작해서 점차 확대하는 것을 권장합니다.",
-          },
-        ],
+        id: 2,
+        author: "바다사랑",
+        content: "입양 기금이 어떻게 사용되는지 궁금합니다.",
+        date: "2025-01-11",
+        likes: 3,
       },
     ],
-    relatedGuides: [
-      {
-        id: "2",
-        title: "입양 가능한 해변 찾기",
-        category: "반려해변 입양",
-      },
-      {
-        id: "3",
-        title: "입양 신청 시 필요한 정보",
-        category: "반려해변 입양",
-      },
-      {
-        id: "5",
-        title: "입양 계약서 다운로드 및 작성",
-        category: "서류 제출",
-      },
-    ],
-    tags: ["입양신청", "신청서작성", "해변입양", "시작하기"],
   },
   "2": {
-    category: "반려해변 입양",
-    title: "입양 가능한 해변 찾기",
-    description: "전국 반려해변 지도에서 원하는 해변을 선택하세요",
-    readTime: "2분",
-    views: 987,
-    likes: 32,
-    lastUpdated: "2026.01.14",
-    sections: [
+    id: 2,
+    title: "2025년 반려해변 입양 기관 명단",
+    content: `2025년 반려해변 입양에 참여해 주신 모든 기관에 감사드립니다.
+
+**총 입양 현황**
+- 총 입양 기관: 127개
+- 영리기업: 45개
+- 비영리단체: 38개
+- 학교: 32개
+- 공공기관: 12개
+
+**주요 입양 기관**
+
+**영리기업**
+- ㈜바다사랑기업 - 해운대 해수욕장
+- 오션테크놀로지 - 광안리 해수욕장
+- 그린마린 - 송도 해수욕장
+
+**비영리단체**
+- 환경보호협회 - 낙산 해수욕장
+- 클린오션 - 망상 해수욕장
+- 푸른바다 - 대천 해수욕장
+
+**학교**
+- 해양대학교 - 송정 해수욕장
+- 서울환경고등학교 - 을왕리 해수욕장
+- 부산여자중학교 - 다대포 해수욕장
+
+**2026년 신규 입양 신청**
+
+2026년 신규 입양 신청은 2월 1일부터 시작됩니다.
+많은 관심과 참여 부탁드립니다.
+
+문의: itaseoul@naver.com`,
+    category: "공지",
+    author: "관리자",
+    date: "2025-01-08",
+    views: 2341,
+    likes: 89,
+    comments: [
       {
-        title: "전국 반려해변 지도",
-        type: "text",
-        content:
-          "전국의 입양 가능한 해변을 지도에서 한눈에 확인할 수 있습니다. 지역별, 규모별로 검색하여 우리 기관에 맞는 해변을 찾아보세요.",
-      },
-      {
-        title: "해변 선택 가이드",
-        type: "list",
-        subsections: [
-          {
-            subtitle: "고려사항",
-            items: [
-              "기관 위치에서의 접근성",
-              "해변 규모 (소형: 100m 이하, 중형: 100-300m, 대형: 300m 이상)",
-              "주변 편의시설 (주차장, 화장실 등)",
-              "쓰레기 수거 협조 체계",
-            ],
-          },
-        ],
+        id: 1,
+        author: "신규지원자",
+        content: "2026년 신청 일정이 궁금합니다!",
+        date: "2025-01-09",
+        likes: 7,
       },
     ],
-    relatedGuides: [
-      {
-        id: "1",
-        title: "반려해변 입양 신청서 작성",
-        category: "반려해변 입양",
-      },
-      {
-        id: "3",
-        title: "입양 신청 시 필요한 정보",
-        category: "반려해변 입양",
-      },
-    ],
-    tags: ["해변찾기", "지도", "검색", "위치"],
   },
-  // 더 많은 가이드 데이터...
+  "3": {
+    id: 3,
+    title: "2025년 반려해변 운영 계획 안내",
+    content: `2025년 반려해변 운영 계획을 안내드립니다.
+
+**운영 목표**
+- 입양 해변 150개 달성
+- 정화 활동 1,000회 이상 진행
+- 해양 쓰레기 100톤 수거
+
+**주요 프로그램**
+
+1. **정기 정화 활동**
+   - 매월 첫째/셋째 주 토요일
+   - 입양 기관별 자율 활동
+   - 분기별 우수 기관 시상
+
+2. **교육 프로그램**
+   - 해양 환경 교육 분기별 1회
+   - 온라인 웨비나 월 1회
+   - 전문가 특강 반기별 1회
+
+3. **캠페인**
+   - 여름 해변 정화 대축제 (7월)
+   - 가을 해양 보호 주간 (10월)
+   - 연말 우수 활동 사례 공모전 (12월)
+
+**지원 사항**
+- 정화 키트 정기 지원
+- 활동 보험 가입
+- 홍보물 제작 지원
+- 우수 기관 시상 및 인증서
+
+**일정**
+- 1분기: 신규 입양 기관 모집
+- 2분기: 해변 정화 활동 집중
+- 3분기: 교육 및 캠페인
+- 4분기: 활동 평가 및 시상
+
+많은 참여 부탁드립니다.`,
+    category: "공지",
+    author: "운영팀",
+    date: "2025-01-05",
+    views: 3452,
+    likes: 156,
+    comments: [],
+  },
+  "4": {
+    id: 4,
+    title: "반려동물 동반 시설 상세 안내",
+    content: `반려동물과 함께하는 해변 정화 활동 안내입니다.
+
+**반려동물 동반 가능 해변**
+- 송정 해수욕장
+- 을왕리 해수욕장
+- 망상 해수욕장
+
+**준수사항**
+1. 반려동물 배변 봉투 지참 필수
+2. 목줄 착용 의무
+3. 다른 이용객 배려
+4. 배설물 즉시 처리
+
+**시설 안내**
+- 반려동물 음수대
+- 배변 봉투 비치함
+- 반려동물 쉼터
+
+문의: 070-8015-4120`,
+    category: "시설",
+    author: "운영팀",
+    date: "2025-01-03",
+    views: 987,
+    likes: 34,
+    comments: [],
+  },
+  "5": {
+    id: 5,
+    title: "자주 묻는 질문 TOP 10",
+    content: `반려해변 입양 관련 자주 묻는 질문을 정리했습니다.
+
+**Q1. 개인도 입양 신청이 가능한가요?**
+A. 네, 가능합니다. 다만 개인의 경우 월 1회 이상 정화 활동을 지속할 수 있는지 확인이 필요합니다.
+
+**Q2. 입양 기금은 어디에 사용되나요?**
+A. 정화 키트 제작, 보험료, 교육 프로그램 운영 등에 사용됩니다.
+
+**Q3. 활동을 못하면 어떻게 되나요?**
+A. 3개월 연속 활동이 없을 경우 입양이 취소될 수 있습니다.
+
+**Q4. 여러 해변을 동시에 입양할 수 있나요?**
+A. 네, 가능합니다. 다만 각 해변별로 활동 계획이 필요합니다.
+
+**Q5. 입양증서는 언제 발급되나요?**
+A. 기금 납부 확인 후 7일 이내 등기우편으로 발송됩니다.
+
+**Q6. 외국인도 신청 가능한가요?**
+A. 국내 체류 중인 외국인은 신청 가능합니다.
+
+**Q7. 정화 키트는 무엇이 포함되나요?**
+A. 집게, 장갑, 쓰레기봉투, 안전조끼가 포함됩니다.
+
+**Q8. 활동 사진은 꼭 제출해야 하나요?**
+A. 네, 분기별 1회 이상 활동 인증이 필요합니다.
+
+**Q9. 기금 환불이 가능한가요?**
+A. 승인 전 취소 시 전액 환불, 승인 후에는 환불 불가입니다.
+
+**Q10. 단체 활동 시 몇 명이 필요한가요?**
+A. 최소 5명 이상 권장합니다.`,
+    category: "FAQ",
+    author: "고객지원팀",
+    date: "2025-01-02",
+    views: 5678,
+    likes: 234,
+    comments: [
+      {
+        id: 1,
+        author: "궁금이",
+        content: "Q11도 추가해주세요. 겨울에도 활동해야 하나요?",
+        date: "2025-01-03",
+        likes: 12,
+      },
+      {
+        id: 2,
+        author: "환경지킴이",
+        content: "정말 유용한 정보네요!",
+        date: "2025-01-03",
+        likes: 8,
+      },
+    ],
+  },
 };
 
-export default function GuideDetailPage() {
+export default function ResourceDetailPage() {
   const params = useParams();
   const id = params.id as string;
-  const guide = guideData[id];
+  const resource = resourceData[id];
 
-  if (!guide) {
+  const [liked, setLiked] = useState(false);
+  const [comment, setComment] = useState("");
+
+  if (!resource) {
     return (
       <div className="min-h-screen bg-white">
         <Navigation />
         <main className="pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6 text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">가이드를 찾을 수 없습니다</h1>
-            <Link href="/adopt-a-beach" className="text-blue-600 hover:underline">
-              목록으로 돌아가기
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">게시글을 찾을 수 없습니다</h1>
+            <Link href="/adopt-a-beach/resources">
+              <Button variant="outline">목록으로 돌아가기</Button>
             </Link>
           </div>
         </main>
@@ -205,229 +305,187 @@ export default function GuideDetailPage() {
               <Home className="w-4 h-4" />
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/adopt-a-beach" className="hover:text-blue-600">
-              반려해변 입양
+            <Link href="/adopt-a-beach/resources" className="hover:text-blue-600">
+              자료 게시판
             </Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-gray-900 font-medium">{guide.title}</span>
+            <span className="text-gray-900 font-medium">{resource.category}</span>
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              {/* Header */}
-              <div className="bg-white rounded-xl p-8 mb-6 shadow-sm border border-gray-200">
-                <Badge className="mb-4 bg-blue-50 text-blue-600 hover:bg-blue-100">
-                  {guide.category}
-                </Badge>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{guide.title}</h1>
-                <p className="text-lg text-gray-600 mb-6">{guide.description}</p>
+              {/* Back Button */}
+              <Link href="/adopt-a-beach/resources">
+                <Button variant="outline" className="mb-6">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  목록으로
+                </Button>
+              </Link>
 
-                {/* Meta Info */}
-                <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 pt-4 border-t border-gray-200">
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{guide.readTime} 소요</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <FileText className="w-4 h-4" />
-                    <span>조회 {guide.views.toLocaleString()}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <ThumbsUp className="w-4 h-4" />
-                    <span>좋아요 {guide.likes}</span>
-                  </div>
-                  <div className="ml-auto text-gray-400">최종 수정일: {guide.lastUpdated}</div>
-                </div>
-              </div>
-
-              {/* Content Sections */}
-              {guide.sections.map((section: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="bg-white rounded-xl p-8 mb-6 shadow-sm border border-gray-200"
-                >
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    {section.type === "video" && <Video className="w-6 h-6 text-red-500" />}
-                    {section.title}
-                  </h2>
-
-                  {section.type === "video" && guide.videoUrl && (
-                    <div className="aspect-video bg-gray-100 rounded-lg mb-6">
-                      <iframe
-                        className="w-full h-full rounded-lg"
-                        src={guide.videoUrl}
-                        title="가이드 영상"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  )}
-
-                  {section.type === "text" && (
-                    <p className="text-gray-700 leading-relaxed">{section.content}</p>
-                  )}
-
-                  {section.type === "image-explanation" && (
-                    <div className="space-y-6">
-                      {/* 이미지 자리 */}
-                      <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-8">
-                        <span className="text-gray-400">가이드 이미지 (예정)</span>
+              {/* Article Card */}
+              <Card className="mb-6 border border-gray-200">
+                <CardContent className="p-8">
+                  {/* Header */}
+                  <div className="mb-6 pb-6 border-b border-gray-200">
+                    <Badge className="bg-blue-50 text-blue-600 hover:bg-blue-100 mb-4">
+                      {resource.category}
+                    </Badge>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-4">{resource.title}</h1>
+                    <div className="flex items-center gap-6 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <User className="w-4 h-4" />
+                        <span>{resource.author}</span>
                       </div>
-
-                      {/* 설명 항목들 */}
-                      <div className="space-y-4">
-                        {section.items.map((item: any, itemIdx: number) => (
-                          <div key={itemIdx} className="flex gap-4 p-4 bg-gray-50 rounded-lg">
-                            <div className="flex-shrink-0 w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center font-bold">
-                              {item.number}
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-gray-900 mb-1">{item.title}</h4>
-                              <p className="text-sm text-gray-600">{item.description}</p>
-                            </div>
-                          </div>
-                        ))}
+                      <div className="flex items-center gap-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>{resource.date}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-4 h-4" />
+                        <span>{resource.views.toLocaleString()}</span>
                       </div>
                     </div>
-                  )}
+                  </div>
 
-                  {section.type === "list" && (
-                    <div className="space-y-6">
-                      {section.subsections?.map((subsection: any, subIdx: number) => (
-                        <div key={subIdx}>
-                          <h3 className="font-bold text-lg text-gray-900 mb-3">
-                            {subsection.subtitle}
-                          </h3>
-                          <ul className="space-y-2">
-                            {subsection.items.map((item: string, itemIdx: number) => (
-                              <li key={itemIdx} className="flex items-start gap-2 text-gray-700">
-                                <span className="text-blue-500 mt-1">•</span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      ))}
+                  {/* Content */}
+                  <div className="prose max-w-none mb-8">
+                    <div className="text-gray-700 leading-relaxed whitespace-pre-line">
+                      {resource.content}
                     </div>
-                  )}
+                  </div>
 
-                  {section.type === "tips" && (
-                    <div className="space-y-4">
-                      {section.items.map((tip: any, tipIdx: number) => (
-                        <div
-                          key={tipIdx}
-                          className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg p-5"
-                        >
-                          <div className="flex items-start gap-3">
-                            <span className="text-2xl">{tip.icon}</span>
-                            <div>
-                              <h4 className="font-bold text-gray-900 mb-2">{tip.title}</h4>
-                              <p className="text-sm text-gray-700">{tip.description}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-
-              {/* Tags */}
-              <div className="bg-white rounded-xl p-6 mb-6 shadow-sm border border-gray-200">
-                <div className="flex flex-wrap gap-2">
-                  {guide.tags.map((tag: string, idx: number) => (
-                    <Link
-                      key={idx}
-                      href={`/search?query=${tag}`}
-                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-full text-sm transition-colors"
+                  {/* Actions */}
+                  <div className="flex items-center gap-3 pt-6 border-t border-gray-200">
+                    <Button
+                      variant={liked ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setLiked(!liked)}
+                      className={liked ? "bg-blue-300" : ""}
                     >
-                      #{tag}
-                    </Link>
-                  ))}
-                </div>
-              </div>
+                      <ThumbsUp className="w-4 h-4 mr-2" />
+                      좋아요 {resource.likes + (liked ? 1 : 0)}
+                    </Button>
+                    <Button variant="outline" size="sm">
+                      <Share2 className="w-4 h-4 mr-2" />
+                      공유하기
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-              {/* Like Button */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 text-center">
-                <p className="text-gray-600 mb-4">이 가이드가 도움이 되셨나요?</p>
-                <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2 mx-auto">
-                  <ThumbsUp className="w-5 h-5" />
-                  도움이 됐어요
-                </button>
-              </div>
+              {/* Comments Section */}
+              <Card className="border border-gray-200">
+                <CardContent className="p-8">
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <MessageCircle className="w-5 h-5" />
+                    댓글 {resource.comments.length}
+                  </h3>
+
+                  {/* Comment Form */}
+                  <div className="mb-8">
+                    <Textarea
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                      placeholder="댓글을 입력하세요..."
+                      rows={4}
+                      className="mb-3"
+                    />
+                    <div className="flex justify-end">
+                      <Button
+                        className="bg-blue-300 hover:bg-blue-400"
+                        onClick={() => {
+                          if (comment.trim()) {
+                            alert("댓글이 등록되었습니다!");
+                            setComment("");
+                          }
+                        }}
+                      >
+                        댓글 작성
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Comments List */}
+                  <div className="space-y-6">
+                    {resource.comments.length > 0 ? (
+                      resource.comments.map((comment: any) => (
+                        <div key={comment.id} className="bg-gray-50 rounded-lg p-6">
+                          <div className="flex items-start justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                <User className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <div>
+                                <p className="font-bold text-gray-900">{comment.author}</p>
+                                <p className="text-xs text-gray-500">{comment.date}</p>
+                              </div>
+                            </div>
+                            <Button variant="ghost" size="sm">
+                              <ThumbsUp className="w-4 h-4 mr-1" />
+                              {comment.likes}
+                            </Button>
+                          </div>
+                          <p className="text-gray-700">{comment.content}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center text-gray-500 py-8">
+                        아직 댓글이 없습니다. 첫 댓글을 작성해보세요!
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Sidebar */}
-            <div className="lg:col-span-1">
-              {/* Table of Contents */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 mb-6 sticky top-24">
-                <h3 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <FileText className="w-5 h-5" />
-                  목차
-                </h3>
-                <nav className="space-y-2">
-                  {guide.sections.map((section: any, idx: number) => (
-                    <a
-                      key={idx}
-                      href={`#section-${idx}`}
-                      className="block text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 px-3 py-2 rounded-lg transition-colors"
-                    >
-                      {section.title}
-                    </a>
-                  ))}
-                </nav>
-              </div>
+            <div className="space-y-6">
+              {/* Author Info */}
+              <Card className="border border-gray-200 sticky top-24">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-gray-900 mb-4">작성자</h3>
+                  <div className="flex items-start gap-3 mb-4">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                      <User className="w-6 h-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-gray-900">{resource.author}</h4>
+                      <p className="text-xs text-gray-500">반려해변 관리자</p>
+                    </div>
+                  </div>
+                  <Link href="/adopt-a-beach/expertsqna/ask">
+                    <Button size="sm" className="bg-blue-300 hover:bg-blue-400 w-full">
+                      질문하기
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
 
-              {/* Related Guides */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                <h3 className="font-bold text-gray-900 mb-4">함께 보면 좋은 글</h3>
-                <div className="space-y-3">
-                  {guide.relatedGuides.map((related: any) => (
-                    <Link
-                      key={related.id}
-                      href={`/adopt-a-beach/resources/${related.id}`}
-                      className="block p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors group"
-                    >
-                      <div className="text-xs text-gray-500 mb-1">{related.category}</div>
-                      <div className="text-sm font-medium text-gray-900 group-hover:text-blue-600">
-                        {related.title}
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-
-                <Link
-                  href="/adopt-a-beach"
-                  className="block mt-4 text-center text-sm text-blue-600 hover:text-blue-700 font-medium"
-                >
-                  전체 가이드 보기 →
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom CTA */}
-        <div className="max-w-7xl mx-auto px-6 mt-12">
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 md:p-12 text-center">
-            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-              아직 궁금한 점이 있으신가요?
-            </h3>
-            <p className="text-gray-600 mb-8">
-              전문가에게 직접 문의하시거나 등대지기에게 연락해보세요
-            </p>
-            <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/adopt-a-beach/community">
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                  전문가 Q&A 보기
-                </button>
-              </Link>
-              <Link href="/contact">
-                <button className="px-8 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-colors font-semibold">
-                  등대지기에게 연락하기
-                </button>
-              </Link>
+              {/* Recent Posts */}
+              <Card className="border border-gray-200">
+                <CardContent className="p-6">
+                  <h3 className="font-bold text-gray-900 mb-4">최근 게시글</h3>
+                  <div className="space-y-3">
+                    {Object.values(resourceData)
+                      .filter((r: any) => r.id !== resource.id)
+                      .slice(0, 5)
+                      .map((r: any) => (
+                        <Link key={r.id} href={`/adopt-a-beach/resources/${r.id}`}>
+                          <div className="p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer group">
+                            <Badge variant="outline" className="text-xs mb-2 inline-block">
+                              {r.category}
+                            </Badge>
+                            <p className="text-sm text-gray-900 group-hover:text-blue-600 line-clamp-2">
+                              {r.title}
+                            </p>
+                            <p className="text-xs text-gray-500 mt-1">{r.date}</p>
+                          </div>
+                        </Link>
+                      ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

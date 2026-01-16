@@ -90,7 +90,7 @@ export default function HaebomCommunityPage() {
                   해봄 활동 후기와 정보를 나눠보세요
                 </p>
               </div>
-              <button className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors font-[Cafe24_Ssurround] flex items-center gap-2">
+              <button className="px-6 py-3 bg-blue-500 hover:bg-blue-300 text-white rounded-lg transition-colors font-[Cafe24_Ssurround] flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

@@ -128,7 +128,7 @@ export default function ResourcesManagement() {
                     onClick={() => setSelectedBoard(board as "전체" | "반려해변" | "해봄")}
                     className={`px-4 py-2 rounded-lg font-[Cafe24_Ssurround] transition-colors ${
                       selectedBoard === board
-                        ? "bg-blue-600 text-white"
+                        ? "bg-blue-300 text-white"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                   >
@@ -143,7 +143,7 @@ export default function ResourcesManagement() {
                   setEditingResource(null);
                   setShowAddModal(true);
                 }}
-                className="bg-blue-600 hover:bg-blue-700 font-[Cafe24_Ssurround]"
+                className="bg-blue-300 hover:bg-blue-400 font-[Cafe24_Ssurround]"
               >
                 <Plus className="w-4 h-4 mr-2" />새 글 추가
               </Button>
@@ -354,7 +354,7 @@ export default function ResourcesManagement() {
                     </Button>
                     <Button
                       type="submit"
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 font-[Cafe24_Ssurround]"
+                      className="flex-1 bg-blue-300 hover:bg-blue-400 font-[Cafe24_Ssurround]"
                       onClick={(e) => {
                         e.preventDefault();
                         alert("실제 구현 시 데이터베이스에 저장됩니다.\n현재는 데모 버전입니다.");

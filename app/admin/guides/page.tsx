@@ -71,7 +71,7 @@ export default function AdminGuidesPage() {
               <p className="text-gray-600">반려해변 입양 가이드를 작성하고 관리하세요</p>
             </div>
             <Link href="/admin/guides/create">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-blue-300 hover:bg-blue-400 text-white">
                 <Plus className="w-4 h-4 mr-2" />새 가이드 작성
               </Button>
             </Link>
@@ -85,7 +85,7 @@ export default function AdminGuidesPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-lg whitespace-nowrap transition-colors ${
                   selectedCategory === category
-                    ? "bg-blue-600 text-white"
+                    ? "bg-blue-300 text-white"
                     : "bg-white text-gray-700 hover:bg-gray-100"
                 }`}
               >
@@ -103,7 +103,7 @@ export default function AdminGuidesPage() {
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600">가이드가 없습니다.</p>
                 <Link href="/admin/guides/create">
-                  <Button className="mt-4 bg-blue-600 hover:bg-blue-700">첫 가이드 작성하기</Button>
+                  <Button className="mt-4 bg-blue-300 hover:bg-blue-400">첫 가이드 작성하기</Button>
                 </Link>
               </CardContent>
             </Card>

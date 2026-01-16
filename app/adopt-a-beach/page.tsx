@@ -328,7 +328,7 @@ export default function PetBeachPage() {
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
               <Link href="/inquiry">
-                <button className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                <button className="px-8 py-3 bg-blue-300 text-white rounded-lg hover:bg-blue-400 transition-colors font-semibold">
                   전문가에게 질문하기
                 </button>
               </Link>

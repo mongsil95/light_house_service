@@ -43,7 +43,7 @@ export default function HaebomPage() {
                 </p>
                 <a
                   href="/haebom/resources"
-                  className="inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-[Cafe24_Ssurround]"
+                  className="inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-300 transition-colors font-[Cafe24_Ssurround]"
                 >
                   바로가기
                 </a>
@@ -75,7 +75,7 @@ export default function HaebomPage() {
                 </p>
                 <a
                   href="/haebom/community"
-                  className="inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-[Cafe24_Ssurround]"
+                  className="inline-block px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-300 transition-colors font-[Cafe24_Ssurround]"
                 >
                   바로가기
                 </a>

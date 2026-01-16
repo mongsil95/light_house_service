@@ -1,12 +1,12 @@
-import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { MessageCircle, HelpCircle, AlertCircle } from 'lucide-react';
+import { motion } from "framer-motion";
+import { AlertCircle, HelpCircle, MessageCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Boat {
   id: number;
   x: number;
   y: number;
-  icon: 'message' | 'help' | 'alert';
+  icon: "message" | "help" | "alert";
 }
 
 export function LighthouseAnimation() {
@@ -14,11 +14,11 @@ export function LighthouseAnimation() {
   const [illuminatedBoats, setIlluminatedBoats] = useState<number[]>([]);
 
   const boats: Boat[] = [
-    { id: 1, x: 120, y: 180, icon: 'message' },
-    { id: 2, x: 280, y: 220, icon: 'help' },
-    { id: 3, x: 200, y: 280, icon: 'alert' },
-    { id: 4, x: 380, y: 260, icon: 'message' },
-    { id: 5, x: 320, y: 160, icon: 'help' },
+    { id: 1, x: 120, y: 180, icon: "message" },
+    { id: 2, x: 280, y: 220, icon: "help" },
+    { id: 3, x: 200, y: 280, icon: "alert" },
+    { id: 4, x: 380, y: 260, icon: "message" },
+    { id: 5, x: 320, y: 160, icon: "help" },
   ];
 
   useEffect(() => {
@@ -33,35 +33,37 @@ export function LighthouseAnimation() {
     // 불빛이 비추는 각도 범위 계산
     const lightAngle = rotation;
     const lightSpan = 45; // 불빛의 각도 범위
-    
-    const lit = boats.filter((boat) => {
-      const dx = boat.x - 250;
-      const dy = boat.y - 160;
-      const angle = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
-      
-      const normalizedLightAngle = (lightAngle + 90) % 360;
-      let angleDiff = Math.abs(angle - normalizedLightAngle);
-      if (angleDiff > 180) angleDiff = 360 - angleDiff;
-      
-      return angleDiff < lightSpan / 2;
-    }).map(boat => boat.id);
-    
+
+    const lit = boats
+      .filter((boat) => {
+        const dx = boat.x - 250;
+        const dy = boat.y - 160;
+        const angle = ((Math.atan2(dy, dx) * 180) / Math.PI + 360) % 360;
+
+        const normalizedLightAngle = (lightAngle + 90) % 360;
+        let angleDiff = Math.abs(angle - normalizedLightAngle);
+        if (angleDiff > 180) angleDiff = 360 - angleDiff;
+
+        return angleDiff < lightSpan / 2;
+      })
+      .map((boat) => boat.id);
+
     setIlluminatedBoats(lit);
   }, [rotation]);
 
   const getBoatIcon = (icon: string, isIlluminated: boolean) => {
     const iconProps = {
       className: `w-4 h-4 transition-colors duration-300 ${
-        isIlluminated ? 'text-yellow-400' : 'text-blue-300/50'
+        isIlluminated ? "text-yellow-400" : "text-blue-300/50"
       }`,
     };
 
     switch (icon) {
-      case 'message':
+      case "message":
         return <MessageCircle {...iconProps} />;
-      case 'help':
+      case "help":
         return <HelpCircle {...iconProps} />;
-      case 'alert':
+      case "alert":
         return <AlertCircle {...iconProps} />;
       default:
         return null;
@@ -73,7 +75,7 @@ export function LighthouseAnimation() {
       <svg
         viewBox="0 0 500 400"
         className="w-full h-full"
-        style={{ maxWidth: '600px', maxHeight: '500px' }}
+        style={{ maxWidth: "600px", maxHeight: "500px" }}
       >
         {/* 바다 배경 */}
         <defs>
@@ -81,7 +83,7 @@ export function LighthouseAnimation() {
             <stop offset="0%" stopColor="#0f172a" />
             <stop offset="100%" stopColor="#1e3a8a" />
           </linearGradient>
-          
+
           {/* 불빛 그라디언트 */}
           <radialGradient id="lightGradient">
             <stop offset="0%" stopColor="#fbbf24" stopOpacity="0.8" />
@@ -130,11 +132,7 @@ export function LighthouseAnimation() {
 
         {/* 등대가 서있는 작은 섬 */}
         <ellipse cx="250" cy="310" rx="60" ry="15" fill="#1e40af" opacity="0.8" />
-        <path
-          d="M210,310 Q250,280 290,310 Z"
-          fill="#1e3a8a"
-          opacity="0.9"
-        />
+        <path d="M210,310 Q250,280 290,310 Z" fill="#1e3a8a" opacity="0.9" />
 
         {/* 등대 구조물 */}
         <g transform="translate(250, 160)">
@@ -148,11 +146,11 @@ export function LighthouseAnimation() {
             stroke="#cbd5e1"
             strokeWidth="1"
           />
-          
+
           {/* 등대 중간 스트라이프 */}
           <rect x="-15" y="100" width="30" height="15" fill="#ef4444" />
           <rect x="-15" y="130" width="30" height="15" fill="#ef4444" />
-          
+
           {/* 등대 꼭대기 (램프 하우스) */}
           <rect
             x="-20"
@@ -164,19 +162,14 @@ export function LighthouseAnimation() {
             strokeWidth="2"
             rx="2"
           />
-          
+
           {/* 등대 지붕 */}
-          <path
-            d="M-25,60 L0,45 L25,60 Z"
-            fill="#ef4444"
-            stroke="#dc2626"
-            strokeWidth="1"
-          />
+          <path d="M-25,60 L0,45 L25,60 Z" fill="#ef4444" stroke="#dc2626" strokeWidth="1" />
 
           {/* 회전하는 불빛 콘 */}
           <motion.g
             style={{
-              transformOrigin: '0 72px',
+              transformOrigin: "0 72px",
               transform: `rotate(${rotation}deg)`,
             }}
           >
@@ -186,20 +179,10 @@ export function LighthouseAnimation() {
               fill="url(#lightGradient)"
               opacity="0.7"
             />
-            
+
             {/* 불빛 외곽선 */}
-            <motion.path
-              d="M0,72 L150,0"
-              stroke="#fbbf24"
-              strokeWidth="1"
-              opacity="0.5"
-            />
-            <motion.path
-              d="M0,72 L150,144"
-              stroke="#fbbf24"
-              strokeWidth="1"
-              opacity="0.5"
-            />
+            <motion.path d="M0,72 L150,0" stroke="#fbbf24" strokeWidth="1" opacity="0.5" />
+            <motion.path d="M0,72 L150,144" stroke="#fbbf24" strokeWidth="1" opacity="0.5" />
           </motion.g>
 
           {/* 중앙 불빛 글로우 */}
@@ -239,7 +222,7 @@ export function LighthouseAnimation() {
         {/* 배들 (참여기관) */}
         {boats.map((boat) => {
           const isIlluminated = illuminatedBoats.includes(boat.id);
-          
+
           return (
             <g key={boat.id}>
               {/* 배 본체 */}
@@ -265,15 +248,15 @@ export function LighthouseAnimation() {
                   fill={isIlluminated ? "#60a5fa" : "#1e40af"}
                   stroke={isIlluminated ? "#93c5fd" : "#2563eb"}
                   strokeWidth="1"
-                  style={{ transition: 'all 0.3s ease' }}
+                  style={{ transition: "all 0.3s ease" }}
                 />
-                
+
                 {/* 돛 */}
                 <path
                   d={`M${boat.x},${boat.y - 5} L${boat.x},${boat.y} L${boat.x + 8},${boat.y - 2} Z`}
                   fill={isIlluminated ? "#fbbf24" : "#3b82f6"}
                   opacity={isIlluminated ? 0.9 : 0.6}
-                  style={{ transition: 'all 0.3s ease' }}
+                  style={{ transition: "all 0.3s ease" }}
                 />
 
                 {/* 말풍선 배경 */}
@@ -293,22 +276,17 @@ export function LighthouseAnimation() {
                     ease: "easeInOut",
                   }}
                 />
-                
+
                 {/* 말풍선 꼬리 */}
                 <path
                   d={`M${boat.x - 2},${boat.y - 12} L${boat.x},${boat.y - 8} L${boat.x + 2},${boat.y - 12} Z`}
                   fill={isIlluminated ? "#fef3c7" : "#1e3a8a"}
                   opacity={isIlluminated ? 0.9 : 0.7}
-                  style={{ transition: 'all 0.3s ease' }}
+                  style={{ transition: "all 0.3s ease" }}
                 />
 
                 {/* 아이콘을 foreignObject로 렌더링 */}
-                <foreignObject
-                  x={boat.x - 8}
-                  y={boat.y - 28}
-                  width="16"
-                  height="16"
-                >
+                <foreignObject x={boat.x - 8} y={boat.y - 28} width="16" height="16">
                   {getBoatIcon(boat.icon, isIlluminated)}
                 </foreignObject>
               </motion.g>

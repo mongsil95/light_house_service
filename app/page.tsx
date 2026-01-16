@@ -359,7 +359,7 @@ export default function Home() {
                         마감 {quiz.daysLeft}일 남음
                       </span>
                     </div>
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                    <Button className="w-full bg-blue-300 hover:bg-blue-400 text-white">
                       퀴즈 참여하기
                     </Button>
                   </div>
@@ -558,7 +558,7 @@ export default function Home() {
             <h2 className="text-3xl font-bold text-gray-900 mb-4">궁금한 게 있으신가요?</h2>
             <p className="text-gray-600 mb-8">환경 전문가가 직접 답변해드립니다</p>
             <Link href="/inquiry">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8">
+              <Button size="lg" className="bg-blue-300 hover:bg-blue-400 text-white px-8">
                 질문하러 가기
               </Button>
             </Link>

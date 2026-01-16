@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, Filter, Eye, MessageCircle, ThumbsUp } from "lucide-react";
+import { Eye, Filter, MessageCircle, Search, ThumbsUp } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function AdoptABeachResourcesPage() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
@@ -136,43 +137,42 @@ export default function AdoptABeachResourcesPage() {
               {/* Posts Grid */}
               <div className="space-y-4">
                 {filteredResources.map((resource) => (
-                  <Card
-                    key={resource.id}
-                    className="hover:shadow-lg transition-all cursor-pointer border-0 shadow-sm"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-3">
-                            <span className="px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full font-[Cafe24_Ssurround]">
-                              {resource.category}
-                            </span>
-                            <span className="text-sm text-gray-500 font-[Cafe24_Ssurround]">
-                              {resource.author}
-                            </span>
-                          </div>
-                          <h3 className="text-lg text-gray-900 mb-2 font-[Cafe24_Ssurround] hover:text-blue-600 transition-colors">
-                            {resource.title}
-                          </h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <span className="font-[Cafe24_Ssurround]">{resource.date}</span>
-                            <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
-                              <Eye className="w-4 h-4" />
-                              {resource.views.toLocaleString()}
-                            </span>
-                            <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
-                              <MessageCircle className="w-4 h-4" />
-                              {resource.comments}
-                            </span>
-                            <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
-                              <ThumbsUp className="w-4 h-4" />
-                              {resource.likes}
-                            </span>
+                  <Link key={resource.id} href={`/adopt-a-beach/resources/${resource.id}`}>
+                    <Card className="hover:shadow-lg transition-all cursor-pointer border-0 shadow-sm">
+                      <CardContent className="p-6">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-3">
+                              <span className="px-3 py-1 bg-blue-50 text-blue-600 text-sm rounded-full font-[Cafe24_Ssurround]">
+                                {resource.category}
+                              </span>
+                              <span className="text-sm text-gray-500 font-[Cafe24_Ssurround]">
+                                {resource.author}
+                              </span>
+                            </div>
+                            <h3 className="text-lg text-gray-900 mb-2 font-[Cafe24_Ssurround] hover:text-blue-600 transition-colors">
+                              {resource.title}
+                            </h3>
+                            <div className="flex items-center gap-4 text-sm text-gray-500">
+                              <span className="font-[Cafe24_Ssurround]">{resource.date}</span>
+                              <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
+                                <Eye className="w-4 h-4" />
+                                {resource.views.toLocaleString()}
+                              </span>
+                              <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
+                                <MessageCircle className="w-4 h-4" />
+                                {resource.comments}
+                              </span>
+                              <span className="flex items-center gap-1 font-[Cafe24_Ssurround]">
+                                <ThumbsUp className="w-4 h-4" />
+                                {resource.likes}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
 

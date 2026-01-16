@@ -243,7 +243,7 @@ export default function QuestionDetailPage() {
                         variant={liked ? "default" : "outline"}
                         size="sm"
                         onClick={() => setLiked(!liked)}
-                        className={liked ? "bg-blue-600" : ""}
+                        className={liked ? "bg-blue-300" : ""}
                       >
                         <ThumbsUp className="w-4 h-4 mr-2" />
                         도움이 됐어요 {question.likes + (liked ? 1 : 0)}
@@ -274,7 +274,7 @@ export default function QuestionDetailPage() {
                       className="mb-3"
                     />
                     <div className="flex justify-end">
-                      <Button className="bg-blue-600 hover:bg-blue-700">댓글 작성</Button>
+                      <Button className="bg-blue-300 hover:bg-blue-400">댓글 작성</Button>
                     </div>
                   </div>
 
@@ -299,7 +299,7 @@ export default function QuestionDetailPage() {
                       <h4 className="font-bold text-gray-900">{question.expert.name}</h4>
                       <p className="text-xs text-gray-500 mb-2">{question.expert.organization}</p>
                       <Link href="/adopt-a-beach/expertsqna/ask">
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700 w-full">
+                        <Button size="sm" className="bg-blue-300 hover:bg-blue-400 w-full">
                           질문하기
                         </Button>
                       </Link>

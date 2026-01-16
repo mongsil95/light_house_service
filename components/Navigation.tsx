@@ -39,9 +39,9 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center">
-            <ImageWithFallback
-              src="https://framerusercontent.com/images/ahixzKgecbCImRNI9gYoTYANY0U.svg?scale-down-to=512"
-              alt="반려해변 로고"
+            <img
+              src="/images/logo.png"
+              alt="등대지기의 랜턴"
               className="h-10 md:h-12 w-auto"
             />
           </Link>

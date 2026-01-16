@@ -248,7 +248,7 @@ export default function ContactPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg text-lg transition-all font-[Cafe24_Ssurround] flex items-center justify-center gap-2"
+                  className="w-full bg-blue-500 hover:bg-blue-300 text-white py-4 rounded-lg text-lg transition-all font-[Cafe24_Ssurround] flex items-center justify-center gap-2"
                 >
                   <Calendar className="w-5 h-5" />
                   무전 예약 신청하기

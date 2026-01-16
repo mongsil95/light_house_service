@@ -231,7 +231,7 @@ export default function InquiryPage() {
                     />
                     <button
                       type="submit"
-                      className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors flex items-center gap-2 font-[Cafe24_Ssurround]"
+                      className="px-6 py-3 bg-blue-500 hover:bg-blue-300 text-white rounded-lg transition-colors flex items-center gap-2 font-[Cafe24_Ssurround]"
                     >
                       <Send className="w-5 h-5" />
                       전송

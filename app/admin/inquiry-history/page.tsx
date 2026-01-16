@@ -308,7 +308,7 @@ export default function InquiryHistory() {
                             <div
                               className={`p-3 rounded-lg ${
                                 message.role === "user"
-                                  ? "bg-blue-600 text-white"
+                                  ? "bg-blue-300 text-white"
                                   : "bg-gray-100 text-gray-900"
                               }`}
                             >
