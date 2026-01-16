@@ -21,16 +21,6 @@ export default function AdoptABeachCommunityPage() {
     { id: "운영·기타", label: "운영·기타", icon: "📋" },
   ];
 
-  // 인기 질문 (TOP 6)
-  const popularQuestions = [
-    "처음 해변 정화를 시작하는데 어떤 준비가 필요한가요?",
-    "반려해변입양 신청 자격 요건이 어떻게 되나요?",
-    "정화 활동 후 수거한 쓰레기는 어떻게 처리하나요?",
-    "단체 참여 시 최소 인원이 있나요?",
-    "해봄 프로그램 참여 후 인증서를 받을 수 있나요?",
-    "월 1회 정화 활동을 못하면 어떻게 되나요?",
-  ];
-
   // 전문가 목록
   const experts = [
     {
@@ -158,6 +148,9 @@ export default function AdoptABeachCommunityPage() {
     return matchesCategory && matchesSearch;
   });
 
+  // 인기 질문 TOP 6 (좋아요 수 기준으로 정렬)
+  const popularQuestions = [...qaList].sort((a, b) => b.likes - a.likes).slice(0, 6);
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -198,17 +191,17 @@ export default function AdoptABeachCommunityPage() {
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-100">
                   <p className="text-sm text-gray-600 mb-4">01. 16. (금) 실시간 기준</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {popularQuestions.map((question, idx) => (
+                    {popularQuestions.map((qa, idx) => (
                       <Link
-                        key={idx}
-                        href="#"
+                        key={qa.id}
+                        href={`/adopt-a-beach/expertsqna/${qa.id}`}
                         className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all group"
                       >
                         <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
                           {idx + 1}
                         </div>
                         <p className="text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {question}
+                          {qa.question}
                         </p>
                       </Link>
                     ))}
