@@ -9,6 +9,8 @@ import {
   Award,
   BookOpen,
   Calendar,
+  ChevronLeft,
+  ChevronRight,
   FileText,
   Gift,
   HelpCircle,
@@ -17,8 +19,49 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
+
+  // 배너 데이터
+  const banners = [
+    {
+      id: 1,
+      image:
+        "https://png.pngtree.com/thumb_back/fh260/back_our/20190625/ourmid/pngtree-fresh-green-minimalist-plant-banner-image_255294.jpg",
+      alt: "반려해변 입양 프로그램",
+    },
+    {
+      id: 2,
+      image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1200&h=400&fit=crop",
+      alt: "깨끗한 바다 만들기",
+    },
+    {
+      id: 3,
+      image: "https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=1200&h=400&fit=crop",
+      alt: "해양 환경 보호",
+    },
+  ];
+
+  // 5초마다 자동 슬라이드
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentBannerIndex((prev) => (prev + 1) % banners.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [banners.length]);
+
+  // 배너 이전/다음 핸들러
+  const handlePrevBanner = () => {
+    setCurrentBannerIndex((prev) => (prev - 1 + banners.length) % banners.length);
+  };
+
+  const handleNextBanner = () => {
+    setCurrentBannerIndex((prev) => (prev + 1) % banners.length);
+  };
+
   // 최신 전문가 답변 (전문가 Q&A에서 가져옴)
   const recentAnswers = [
     {
@@ -213,16 +256,45 @@ export default function Home() {
       <section className="py-8 bg-gray-50">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 왼쪽 배너 */}
-            <div
-              className="lg:col-span-2 rounded-2xl overflow-hidden h-64 lg:h-80"
-              style={{
-                backgroundImage:
-                  "url(https://png.pngtree.com/thumb_back/fh260/back_our/20190625/ourmid/pngtree-fresh-green-minimalist-plant-banner-image_255294.jpg)",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-              }}
-            ></div>
+            {/* 왼쪽 배너 - 자동 슬라이드 */}
+            <div className="lg:col-span-2 rounded-2xl overflow-hidden h-64 lg:h-80 relative group">
+              {/* 배너 이미지 */}
+              {banners.map((banner, index) => (
+                <div
+                  key={banner.id}
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    index === currentBannerIndex ? "opacity-100" : "opacity-0"
+                  }`}
+                  style={{
+                    backgroundImage: `url(${banner.image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                  aria-label={banner.alt}
+                />
+              ))}
+
+              {/* 왼쪽 화살표 버튼 */}
+              <button
+                onClick={handlePrevBanner}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+                aria-label="이전 배너"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+
+              {/* 오른쪽 화살표 버튼 */}
+              <button
+                onClick={handleNextBanner}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-all opacity-0 group-hover:opacity-100 backdrop-blur-sm"
+                aria-label="다음 배너"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+
+              {/* 페이지네이션 인디케이터 (하단 중앙) */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-4 py-1.5 rounded-full text-sm font-medium backdrop-blur-sm"></div>
+            </div>
 
             {/* 오른쪽 CTA 카드 */}
             <div className="bg-white rounded-2xl p-8 border-2 border-blue-200 flex flex-col justify-center items-center text-center">
@@ -257,7 +329,7 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {recentAnswers.map((answer) => (
-              <Link key={answer.id} href="/adopt-a-beach/expertsqna">
+              <Link key={answer.id} href={`/adopt-a-beach/expertsqna/${answer.id}`}>
                 <Card className="hover:shadow-lg transition-shadow cursor-pointer border border-gray-200 h-full">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-3">
