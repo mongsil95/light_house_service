@@ -7,13 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
   Award,
-  BookOpen,
   Calendar,
   ChevronLeft,
   ChevronRight,
   FileText,
-  Gift,
-  HelpCircle,
   Phone,
   Sparkles,
   Users,
@@ -392,8 +389,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 참여광장 (퀴즈/투표) */}
-      <section className="py-16 bg-white">
+      {/* TODO: 참여광장 (퀴즈/투표) - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-white hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -440,10 +437,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 활동 노하우 (숏폼) */}
-      <section className="py-16 bg-gray-50">
+      {/* TODO: 활동 노하우 (숏폼) - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-gray-50 hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -489,10 +486,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 바로가기 */}
-      <section className="py-16 bg-white">
+      {/* TODO: 바로가기 - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-white hidden">
         <div className="max-w-7xl mx-auto px-6">
           <h2 className="text-3xl font-bold text-gray-900 mb-8">바로가기</h2>
 
@@ -514,10 +511,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 최신 외식업 소식 → 최신 해양환경 소식 */}
-      <section className="py-16 bg-gray-50">
+      {/* TODO: 최신 해양환경 소식 - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-gray-50 hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -558,10 +555,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 무료 교육 */}
-      <section className="py-16 bg-white">
+      {/* TODO: 무료 교육 - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-white hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -601,10 +598,10 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 이벤트·혜택 */}
-      <section className="py-16 bg-gradient-to-br from-orange-500 to-pink-500">
+      {/* TODO: 이벤트·혜택 - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-gradient-to-br from-orange-500 to-pink-500 hidden">
         <div className="max-w-7xl mx-auto px-6 text-center text-white">
           <Gift className="w-16 h-16 mx-auto mb-6" />
           <h2 className="text-4xl font-bold mb-4">신규 입양 기념 혜택</h2>
@@ -620,10 +617,10 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
-      {/* 전문가 Q&A */}
-      <section className="py-16 bg-gray-50">
+      {/* TODO: 전문가 Q&A - 추후 구현 예정 */}
+      {/* <section className="py-16 bg-gray-50 hidden">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <HelpCircle className="w-16 h-16 mx-auto mb-4 text-blue-600" />
@@ -636,7 +633,7 @@ export default function Home() {
             </Link>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
       <section className="py-16 md:py-20 lg:py-24 px-6 sm:px-6 bg-gradient-to-br from-blue-900 to-blue-800 text-white">
