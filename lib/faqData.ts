@@ -576,7 +576,7 @@ export function searchFAQ(userInput: string): FAQItem | null {
 // 특정 해변 입양 가능 여부 확인 함수
 export function getBeachAdoptionAnswer(beachName: string): string {
   const beach = findBeachByName(beachName);
-  
+
   if (beach) {
     return `**${beach.name}**은(는) 적합성 평가를 완료하여 입양이 가능한 해변입니다.\n\n📍 위치: ${beach.addr}\n\n다만, 입양 희망 기관이 많을 경우 상황에 따라 다른 해변을 추천드릴 수 있는 점 양해 부탁드립니다.`;
   } else {

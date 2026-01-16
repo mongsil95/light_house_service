@@ -59,7 +59,11 @@ export const beachList: Beach[] = [
   { id: 51, name: "신지명사십리해수욕장", addr: "전남 완도군 신지면 명사십리길 85-105" },
   { id: 52, name: "보성율포솔밭해수욕장", addr: "전라남도 보성군 회천면 동율리 544-13" },
   { id: 53, name: "명교해변", addr: "전라남도 보성군 회천면 벽교리 520-11" },
-  { id: 54, name: "웅천친수공원해수욕장", addr: "전라남도 여수시 시전동 예울마루로 37-26 웅천친수공원" },
+  {
+    id: 54,
+    name: "웅천친수공원해수욕장",
+    addr: "전라남도 여수시 시전동 예울마루로 37-26 웅천친수공원",
+  },
   { id: 55, name: "만성리 검은모래해수욕장", addr: "전라남도 여수시 만흥동 만성리길 15-1" },
   { id: 56, name: "쌍봉동해안", addr: "전남 여수시 시전동 708" },
   { id: 57, name: "가마미해수욕장", addr: "전라남도 영광군 홍농읍 가마미로 341-6" },
@@ -72,7 +76,11 @@ export const beachList: Beach[] = [
   { id: 64, name: "정도리(구계등)", addr: "전라남도 완도군 완도읍 중도리 976" },
   { id: 65, name: "작은짝지", addr: "전남 완도군 완도읍 정도리 152-1" },
   { id: 66, name: "지리해변", addr: "전라남도 완도군 청산면 청산로 1462-58" },
-  { id: 67, name: "유림해변(거문도)", addr: "전라남도 여수시 삼산면 거문도등대길 56 삼산면 덕촌리 322" },
+  {
+    id: 67,
+    name: "유림해변(거문도)",
+    addr: "전라남도 여수시 삼산면 거문도등대길 56 삼산면 덕촌리 322",
+  },
   { id: 68, name: "염포해변(고흥)", addr: "전라남도 고흥군 봉래면 우주로 3810-12" },
   { id: 69, name: "시목해변", addr: "전라남도 신안군 도초면 시목길 219-30" },
   { id: 70, name: "무녀도해변", addr: "전라북도 군산시 옥도면 무녀도동길" },
@@ -144,7 +152,11 @@ export const beachList: Beach[] = [
   { id: 137, name: "동복리해안", addr: "제주 제주시 구좌읍 김녕리 6155" },
   { id: 138, name: "이호해수욕장", addr: "제주특별자치도 제주시 이호일동 1665-13" },
   { id: 139, name: "관곶해안길", addr: "제주시 조천읍 조함해안로 217-1" },
-  { id: 140, name: "한경면 엉알해안 및 검은모래해변", addr: "제주특별자치도 제주시 한경면 고산리 3671-1" },
+  {
+    id: 140,
+    name: "한경면 엉알해안 및 검은모래해변",
+    addr: "제주특별자치도 제주시 한경면 고산리 3671-1",
+  },
   { id: 141, name: "남동리해변", addr: "전라남도 진도군 임회면 남동리 486-1" },
   { id: 142, name: "표선해수욕장", addr: "제주 서귀포시 표선면 민속해안로 620" },
   { id: 143, name: "닭머르해안", addr: "제주 제주시 조천읍 신촌리 3403" },
@@ -195,7 +207,7 @@ export const beachList: Beach[] = [
 // 해변 이름으로 검색
 export function findBeachByName(beachName: string): Beach | undefined {
   const normalizedInput = beachName.trim().toLowerCase();
-  
+
   return beachList.find((beach) => {
     const normalizedBeachName = beach.name.toLowerCase();
     // 정확히 일치하거나, 입력값이 해변 이름에 포함되거나, 해변 이름이 입력값에 포함되는 경우
@@ -210,7 +222,7 @@ export function findBeachByName(beachName: string): Beach | undefined {
 // 지역별 해변 검색
 export function findBeachesByRegion(region: string): Beach[] {
   const normalizedRegion = region.trim();
-  
+
   return beachList.filter((beach) => beach.addr.includes(normalizedRegion));
 }
 

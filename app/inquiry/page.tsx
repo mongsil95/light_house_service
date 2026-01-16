@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Send, Bot, User, Phone, Mail } from "lucide-react";
+import { Bot, Mail, Phone, Send, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
 interface Message {
   id: number;
@@ -17,7 +17,7 @@ export default function InquiryPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 1,
-      text: "안녕하세요! 등대 AI 어시스턴트입니다. 🌊 \n\n무엇을 도와드릴까요?",
+      text: "안녕하세요! 등대AI기 입니다. 🌊 \n\n무엇을 도와드릴까요?",
       sender: "bot",
       timestamp: new Date(),
     },
@@ -101,7 +101,7 @@ export default function InquiryPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-4xl md:text-5xl text-blue-900 mb-4 font-[Cafe24_Ssurround]">
-              등대 AI 어시스턴트
+              등대AI기와 대화하기
             </h1>
             <p className="text-lg text-gray-700 font-[Cafe24_Ssurround]">
               궁금한 점을 물어보세요. 24시간 답변드립니다! 🤖
