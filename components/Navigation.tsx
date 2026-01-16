@@ -3,7 +3,6 @@
 import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export default function Navigation() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -39,11 +38,7 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center">
-            <img
-              src="/images/logo.png"
-              alt="등대지기의 랜턴"
-              className="h-10 md:h-12 w-auto"
-            />
+            <img src="/images/logo.png" alt="등대지기의 랜턴" className="h-10 md:h-12 w-auto" />
           </Link>
 
           {/* Center: Navigation Menu (Desktop) */}

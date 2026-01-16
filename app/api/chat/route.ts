@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
-import { faqData } from "@/lib/faqData";
+import { faqData, getBeachAdoptionAnswer } from "@/lib/faqData";
+import { beachList } from "@/lib/beachData";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -10,6 +11,25 @@ const openai = new OpenAI({
 const faqContext = faqData
   .map((faq) => `Q: ${faq.question}\nA: ${faq.answer}\n카테고리: ${faq.category}`)
   .join("\n\n");
+
+// 해변 리스트를 컨텍스트로 변환 (지역별 그룹핑)
+const beachContext = `
+# 입양 가능한 해변 리스트 (총 ${beachList.length}개)
+
+**인천/경기 지역**: ${beachList.filter(b => b.addr.includes('인천') || b.addr.includes('경기')).map(b => b.name).join(', ')}
+
+**강원 지역**: ${beachList.filter(b => b.addr.includes('강원')).map(b => b.name).join(', ')}
+
+**충청 지역**: ${beachList.filter(b => b.addr.includes('충청') || b.addr.includes('충남') || b.addr.includes('충북')).map(b => b.name).join(', ')}
+
+**전라 지역**: ${beachList.filter(b => b.addr.includes('전라') || b.addr.includes('전남') || b.addr.includes('전북')).map(b => b.name).join(', ')}
+
+**경상 지역**: ${beachList.filter(b => b.addr.includes('경상') || b.addr.includes('경남') || b.addr.includes('경북')).map(b => b.name).join(', ')}
+
+**부산/울산 지역**: ${beachList.filter(b => b.addr.includes('부산') || b.addr.includes('울산')).map(b => b.name).join(', ')}
+
+**제주 지역**: ${beachList.filter(b => b.addr.includes('제주')).map(b => b.name).join(', ')}
+`.trim();
 
 const systemPrompt = `당신은 '등대(Lighthouse)'가 되어서 해변 정화를 하려는 사람들에게 정보를 알려주는 친절한 AI 어시스턴트입니다.
 
@@ -24,22 +44,29 @@ const systemPrompt = `당신은 '등대(Lighthouse)'가 되어서 해변 정화�
 - 전화: 070-8015-4120
 - 이메일: itaseoul@naver.com
 
+${beachContext}
+
 # FAQ 데이터베이스
 ${faqContext}
 
 # 응답 가이드라인
 1. 사용자의 질문이 FAQ 데이터베이스에 있는 경우, 해당 답변을 참고하여 친절하게 답변하세요.
 2. 반려해변은 반려동물과 관련이 없습니다. 해변을 입양하여 관리하는 프로그램입니다.
-3. FAQ에 명확한 답변이 없는 경우, 다음과 같이 응답하세요:
+3. **특정 해변 입양 가능 여부 질문시 중요 규칙:**
+   - 위의 입양 가능한 해변 리스트를 반드시 확인하세요
+   - 리스트에 있는 해변: "**[해변명]**은(는) 적합성 평가를 완료하여 입양이 가능한 해변입니다. 다만, 입양 희망 기관이 많을 경우 상황에 따라 다른 해변을 추천드릴 수 있는 점 양해 부탁드립니다."
+   - 리스트에 없는 해변: "**[해변명]**은(는) 현재 입양 적합성 평가가 진행되지 않은 해변입니다. 입양 신청 접수 후 적합성 평가를 거쳐 입양 가능 여부를 개별 안내드릴 예정이며, 부적합으로 판단될 경우 사전에 별도 연락을 드려 다른 해변 입양을 안내드리겠습니다."
+   - 해변 이름을 정확히 찾을 수 없는 경우: "입양 신청을 원하신다면, 해당 해변이 기존 해변 리스트에 있는지 확인해보시기 바랍니다."
+4. FAQ에 명확한 답변이 없는 경우, 다음과 같이 응답하세요:
    "죄송합니다. 해당 질문에 대한 답변이 아직 준비되지 않았습니다. 😥
    
    더 자세한 도움이 필요하시면 사무국으로 문의해주세요."
    
-4. 답변에 연락처 정보(전화번호, 이메일, 운영시간)를 직접 포함하지 마세요. 연락처는 별도로 표시됩니다.
-5. 항상 친절하고 공손한 말투를 사용하세요.
-6. 이모지를 적절히 활용하여 친근한 분위기를 만드세요.
-7. 답변은 간결하고 명확하게 작성하세요.
-8. 등대의 프로그램(반려해변, 해봄)에 대한 긍정적인 태도를 유지하세요.`;
+5. 답변에 연락처 정보(전화번호, 이메일, 운영시간)를 직접 포함하지 마세요. 연락처는 별도로 표시됩니다.
+6. 항상 친절하고 공손한 말투를 사용하세요.
+7. 이모지를 적절히 활용하여 친근한 분위기를 만드세요.
+8. 답변은 간결하고 명확하게 작성하세요.
+9. 등대의 프로그램(반려해변, 해봄)에 대한 긍정적인 태도를 유지하세요.`;
 
 export async function POST(request: NextRequest) {
   try {
