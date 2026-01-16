@@ -105,7 +105,7 @@ export default function PetBeachPage() {
         <section className="bg-gradient-to-br from-cyan-500 via-blue-500 to-blue-600 py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-6 text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
-              반려해변, 3단계로 완전정복!
+              반려해변 입양, 3단계로 완전정복!
             </h1>
             <p className="text-lg md:text-xl text-blue-50 max-w-2xl mx-auto">
               반려해변 입양 어렵지 않도록 단계별로 모아봤어요
