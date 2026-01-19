@@ -20,8 +20,8 @@ export default function PetBeachPage() {
   // 각 단계별 가이드 콘텐츠
   const step1Contents = [
     {
-      title: "반려해변 입양 신청서 작성",
-      description: "해변 정보와 입양 동기를 작성하세요",
+      title: "반려해변에 대한 정보를 알아보기",
+      description: "반려해변에 대해서 자세히 알아보세요",
       type: "가이드",
       link: "/adopt-a-beach/resources/1",
     },
@@ -32,25 +32,19 @@ export default function PetBeachPage() {
       link: "/beach-finder",
     },
     {
-      title: "입양 신청 시 필요한 정보",
-      description: "기관 정보, 담당자 연락처, 활동 계획 등",
+      title: "반려해변 기획안 준비하기",
+      description: "기획안을 이렇게 작성해보세요!",
       type: "가이드",
       link: "/adopt-a-beach/resources/3",
-    },
-    {
-      title: "단체 입양 vs 개인 입양",
-      description: "우리 기관에 맞는 입양 유형 선택하기",
-      type: "가이드",
-      link: "/adopt-a-beach/resources/4",
     },
   ];
 
   const step2Contents = [
     {
-      title: "입양 계약서 다운로드 및 작성",
-      description: "필수 서류 양식을 다운로드하고 작성하세요",
+      title: "입양서류 쉽게 작성하기",
+      description: "등대지기가 입양서류를 쉽게 작성하실 수 있게 준비해두었어요!",
       type: "가이드",
-      link: "/adopt-a-beach/resources/5",
+      link: "/application",
     },
     {
       title: "기관 증빙 서류 제출",
@@ -63,12 +57,6 @@ export default function PetBeachPage() {
       description: "승인률 높이는 활동 계획서 작성법",
       type: "가이드",
       link: "/adopt-a-beach/resources/7",
-    },
-    {
-      title: "서류 제출 방법",
-      description: "이메일, 우편, 온라인 제출 가이드",
-      type: "가이드",
-      link: "/adopt-a-beach/resources/8",
     },
   ];
 
@@ -90,12 +78,6 @@ export default function PetBeachPage() {
       description: "기부금 영수증 신청 및 발급 방법",
       type: "가이드",
       link: "/adopt-a-beach/resources/11",
-    },
-    {
-      title: "정기 후원 신청",
-      description: "지속적인 해변 관리를 위한 정기 후원 안내",
-      type: "가이드",
-      link: "/adopt-a-beach/resources/12",
     },
   ];
 
@@ -244,7 +226,7 @@ export default function PetBeachPage() {
                   </h2>
                 </div>
                 <p className="text-gray-600 ml-15">
-                  우리 기관에 맞는 해변과 입양 절차를 먼저 확인해보세요
+                  반려해변이 무엇인지, 입양 신청 전 알아두면 좋은 정보를 소개해드려요
                 </p>
               </div>
 

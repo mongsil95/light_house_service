@@ -7,8 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import type { Beach } from "@/types/beach";
-import { MapPin } from "lucide-react";
+import { Copy, MapPin } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 interface BeachMapDialogProps {
@@ -166,15 +167,35 @@ export function BeachMapDialog({ beach, open, onOpenChange }: BeachMapDialogProp
 
   if (!beach) return null;
 
+  // 해변명과 주소 복사
+  const handleCopyInfo = () => {
+    const info = `${beach.name}\n${beach.addr}`;
+    navigator.clipboard.writeText(info);
+    alert("해변명과 주소가 복사되었습니다!");
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl bg-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-gray-900">
-            <MapPin className="w-5 h-5 text-blue-600" />
-            {beach.name}
+          <DialogTitle className="flex items-center justify-between text-gray-900">
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-blue-600" />
+              {beach.name}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleCopyInfo}
+              className="h-8 px-3 text-xs flex items-center gap-1.5"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              복사
+            </Button>
           </DialogTitle>
-          <DialogDescription className="text-gray-600">{beach.addr}</DialogDescription>
+          <DialogDescription className="text-gray-600">
+            {beach.addr}
+          </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
           {/* 해변 정보 */}

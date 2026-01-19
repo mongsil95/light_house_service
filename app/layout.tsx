@@ -34,7 +34,6 @@ export const metadata: Metadata = {
     description: "반려해변, 더 이상 혼자 고민하지 마세요. 등대지기가 함께합니다.",
   },
   other: {
-    contact: "0507-1855-3148",
     email: "itaseoul@naver.com",
   },
 };
@@ -44,6 +43,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || "";
+  
   return (
     <html lang="ko">
       <head>
@@ -55,21 +56,18 @@ export default function RootLayout({
               "@type": "Organization",
               name: "2026 반려해변 라이트하우스 서비스",
               description: "반려해변 라이트하우스 서비스",
-              telephone: "0507-1855-3148",
               email: "itaseoul@naver.com",
               areaServed: "KR",
               availableLanguage: "Korean",
             }),
           }}
         />
-      </head>
-      <body className="font-cafe24">
         <Script
-          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&libraries=services&autoload=false`}
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoApiKey}&libraries=services&autoload=false`}
           strategy="beforeInteractive"
         />
-        {children}
-      </body>
+      </head>
+      <body className="font-cafe24">{children}</body>
     </html>
   );
 }

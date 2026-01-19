@@ -15,8 +15,8 @@ export default function AdoptABeachResourcesPage() {
   const demoResources = [
     {
       id: 1,
-      title: "반려해변 입양 가이드 - 해변을 책임지는 방법",
-      date: "2025-01-10",
+      title: "반려해변이란? - 해변이 우리를 기다려요!",
+      date: "2026-01-10",
       category: "가이드",
       views: 1234,
       comments: 15,
