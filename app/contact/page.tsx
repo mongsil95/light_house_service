@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Calendar } from "lucide-react";
+import { Calendar, Clock } from "lucide-react";
+import { useState } from "react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({

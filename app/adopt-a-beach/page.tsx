@@ -12,8 +12,11 @@ import {
 } from "@/components/ui/carousel";
 import { CheckCircle2, CreditCard, ExternalLink, FileText } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function PetBeachPage() {
+  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1);
+
   // 각 단계별 가이드 콘텐츠
   const step1Contents = [
     {
@@ -26,7 +29,7 @@ export default function PetBeachPage() {
       title: "입양 가능한 해변 찾기",
       description: "전국 반려해변 지도에서 원하는 해변을 선택하세요",
       type: "가이드",
-      link: "/adopt-a-beach/resources/2",
+      link: "/beach-finder",
     },
     {
       title: "입양 신청 시 필요한 정보",
@@ -115,204 +118,301 @@ export default function PetBeachPage() {
 
         <div className="max-w-7xl mx-auto px-6">
           {/* 단계 네비게이션 */}
-          <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 -mx-6 px-6 py-4 mb-12">
-            <div className="flex items-center gap-4 overflow-x-auto">
-              <a
-                href="#step1"
-                className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap font-semibold"
+          <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 -mx-6 px-6 py-6 mb-12">
+            <div className="flex justify-center items-center gap-8 max-w-4xl mx-auto">
+              {/* 1단계 */}
+              <button
+                onClick={() => setActiveStep(1)}
+                className={`flex flex-col items-center gap-2 transition-all ${
+                  activeStep === 1 ? "scale-110" : "opacity-50 hover:opacity-75"
+                }`}
               >
-                <FileText className="w-5 h-5" />
-                <span>반려해변 알아보기</span>
-              </a>
-              <a
-                href="#step2"
-                className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap font-semibold"
+                <div
+                  className={`flex items-center justify-center w-16 h-16 rounded-full font-bold text-2xl transition-all ${
+                    activeStep === 1
+                      ? "bg-blue-500 text-white shadow-lg"
+                      : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  1
+                </div>
+                <span
+                  className={`text-sm font-semibold whitespace-nowrap ${
+                    activeStep === 1 ? "text-blue-600" : "text-gray-500"
+                  }`}
+                >
+                  반려해변 알아보기
+                </span>
+              </button>
+
+              {/* 화살표 */}
+              <div className="flex items-center">
+                <svg
+                  className="w-12 h-12 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </div>
+
+              {/* 2단계 */}
+              <button
+                onClick={() => setActiveStep(2)}
+                className={`flex flex-col items-center gap-2 transition-all ${
+                  activeStep === 2 ? "scale-110" : "opacity-50 hover:opacity-75"
+                }`}
               >
-                <CheckCircle2 className="w-5 h-5" />
-                <span>반려해변 신청하기</span>
-              </a>
-              <a
-                href="#step3"
-                className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap font-semibold"
+                <div
+                  className={`flex items-center justify-center w-16 h-16 rounded-full font-bold text-2xl transition-all ${
+                    activeStep === 2
+                      ? "bg-green-500 text-white shadow-lg"
+                      : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  2
+                </div>
+                <span
+                  className={`text-sm font-semibold whitespace-nowrap ${
+                    activeStep === 2 ? "text-green-600" : "text-gray-500"
+                  }`}
+                >
+                  반려해변 신청하기
+                </span>
+              </button>
+
+              {/* 화살표 */}
+              <div className="flex items-center">
+                <svg
+                  className="w-12 h-12 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
+                </svg>
+              </div>
+
+              {/* 3단계 */}
+              <button
+                onClick={() => setActiveStep(3)}
+                className={`flex flex-col items-center gap-2 transition-all ${
+                  activeStep === 3 ? "scale-110" : "opacity-50 hover:opacity-75"
+                }`}
               >
-                <CreditCard className="w-5 h-5" />
-                <span>해변입양 선정이후</span>
-              </a>
+                <div
+                  className={`flex items-center justify-center w-16 h-16 rounded-full font-bold text-2xl transition-all ${
+                    activeStep === 3
+                      ? "bg-purple-500 text-white shadow-lg"
+                      : "bg-gray-200 text-gray-500"
+                  }`}
+                >
+                  3
+                </div>
+                <span
+                  className={`text-sm font-semibold whitespace-nowrap ${
+                    activeStep === 3 ? "text-purple-600" : "text-gray-500"
+                  }`}
+                >
+                  반려해변 선정이후
+                </span>
+              </button>
             </div>
           </div>
 
           {/* 1단계 - 입양 신청하기 */}
-          <section id="step1" className="mb-20 scroll-mt-32">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white font-bold text-xl">
-                  1
+          {activeStep === 1 && (
+            <section id="step1" className="mb-20 scroll-mt-32">
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white font-bold text-xl">
+                    1
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    반려해변 알아보기
+                  </h2>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">반려해변 알아보기</h2>
+                <p className="text-gray-600 ml-15">
+                  우리 기관에 맞는 해변과 입양 절차를 먼저 확인해보세요
+                </p>
               </div>
-              <p className="text-gray-600 ml-15">
-                우리 기관에 맞는 해변과 입양 절차를 먼저 확인해보세요
-              </p>
-            </div>
 
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {step1Contents.map((content, idx) => (
-                  <CarouselItem
-                    key={idx}
-                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
-                  >
-                    <Link href={content.link} className="block h-full">
-                      <Card className="border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all group cursor-pointer h-full">
-                        <CardContent className="p-6">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
-                              <FileText className="w-5 h-5 text-blue-600" />
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {step1Contents.map((content, idx) => (
+                    <CarouselItem
+                      key={idx}
+                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
+                    >
+                      <Link href={content.link} className="block h-full">
+                        <Card className="border border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all group cursor-pointer h-full">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors">
+                                <FileText className="w-5 h-5 text-blue-600" />
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {content.type}
+                              </Badge>
                             </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {content.type}
-                            </Badge>
-                          </div>
-                          <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
-                            {content.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-4">{content.description}</p>
-                          <div className="text-blue-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                            자세히 보기
-                            <ExternalLink className="w-4 h-4" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-4" />
-              <CarouselNext className="-right-4" />
-            </Carousel>
-          </section>
+                            <h3 className="font-bold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
+                              {content.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-4">{content.description}</p>
+                            <div className="text-blue-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                              자세히 보기
+                              <ExternalLink className="w-4 h-4" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="-left-4" />
+                <CarouselNext className="-right-4" />
+              </Carousel>
+            </section>
+          )}
 
           {/* 2단계 - 서류 제출하기 */}
-          <section id="step2" className="mb-20 scroll-mt-32">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white font-bold text-xl">
-                  2
+          {activeStep === 2 && (
+            <section id="step2" className="mb-20 scroll-mt-32">
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white font-bold text-xl">
+                    2
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    반려해변 신청하기
+                  </h2>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">반려해변 신청하기</h2>
+                <p className="text-gray-600 ml-15">
+                  우리 기관에 맞는 반려해변을 입양 신청을 시작하세요
+                </p>
               </div>
-              <p className="text-gray-600 ml-15">
-                우리 기관에 맞는 반려해변을 입양 신청을 시작하세요
-              </p>
-            </div>
 
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {step2Contents.map((content, idx) => (
-                  <CarouselItem
-                    key={idx}
-                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
-                  >
-                    <Link href={content.link} className="block h-full">
-                      <Card className="border border-gray-200 hover:border-green-300 hover:shadow-lg transition-all group cursor-pointer h-full">
-                        <CardContent className="p-6">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
-                              <CheckCircle2 className="w-5 h-5 text-green-600" />
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {step2Contents.map((content, idx) => (
+                    <CarouselItem
+                      key={idx}
+                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
+                    >
+                      <Link href={content.link} className="block h-full">
+                        <Card className="border border-gray-200 hover:border-green-300 hover:shadow-lg transition-all group cursor-pointer h-full">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors">
+                                <CheckCircle2 className="w-5 h-5 text-green-600" />
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {content.type}
+                              </Badge>
                             </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {content.type}
-                            </Badge>
-                          </div>
-                          <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
-                            {content.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-4">{content.description}</p>
-                          <div className="text-green-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                            자세히 보기
-                            <ExternalLink className="w-4 h-4" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-4" />
-              <CarouselNext className="-right-4" />
-            </Carousel>
-          </section>
+                            <h3 className="font-bold text-gray-900 mb-2 group-hover:text-green-600 transition-colors">
+                              {content.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-4">{content.description}</p>
+                            <div className="text-green-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                              자세히 보기
+                              <ExternalLink className="w-4 h-4" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="-left-4" />
+                <CarouselNext className="-right-4" />
+              </Carousel>
+            </section>
+          )}
 
           {/* 3단계 - 기금 납부하기 */}
-          <section id="step3" className="mb-20 scroll-mt-32">
-            <div className="mb-8">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500 text-white font-bold text-xl">
-                  3
+          {activeStep === 3 && (
+            <section id="step3" className="mb-20 scroll-mt-32">
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-purple-500 text-white font-bold text-xl">
+                    3
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                    반려해변 입양 선정 이후
+                  </h2>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  반려해변 입양 선정 이후
-                </h2>
+                <p className="text-gray-600 ml-15">
+                  반려해변 입양 선정 후 필요한 서류 및 기금 납부 절차를 안내해드려요
+                </p>
               </div>
-              <p className="text-gray-600 ml-15">
-                반려해변 입양 선정 후 필요한 서류 및 기금 납부 절차를 안내해드려요
-              </p>
-            </div>
 
-            <Carousel
-              opts={{
-                align: "start",
-                loop: true,
-              }}
-              className="w-full"
-            >
-              <CarouselContent className="-ml-2 md:-ml-4">
-                {step3Contents.map((content, idx) => (
-                  <CarouselItem
-                    key={idx}
-                    className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
-                  >
-                    <Link href={content.link} className="block h-full">
-                      <Card className="border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group cursor-pointer h-full">
-                        <CardContent className="p-6">
-                          <div className="flex items-start gap-3 mb-3">
-                            <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
-                              <CreditCard className="w-5 h-5 text-purple-600" />
+              <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent className="-ml-2 md:-ml-4">
+                  {step3Contents.map((content, idx) => (
+                    <CarouselItem
+                      key={idx}
+                      className="pl-2 md:pl-4 basis-full md:basis-1/2 lg:basis-1/3"
+                    >
+                      <Link href={content.link} className="block h-full">
+                        <Card className="border border-gray-200 hover:border-purple-300 hover:shadow-lg transition-all group cursor-pointer h-full">
+                          <CardContent className="p-6">
+                            <div className="flex items-start gap-3 mb-3">
+                              <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors">
+                                <CreditCard className="w-5 h-5 text-purple-600" />
+                              </div>
+                              <Badge variant="secondary" className="text-xs">
+                                {content.type}
+                              </Badge>
                             </div>
-                            <Badge variant="secondary" className="text-xs">
-                              {content.type}
-                            </Badge>
-                          </div>
-                          <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
-                            {content.title}
-                          </h3>
-                          <p className="text-sm text-gray-600 mb-4">{content.description}</p>
-                          <div className="text-purple-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                            자세히 보기
-                            <ExternalLink className="w-4 h-4" />
-                          </div>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious className="-left-4" />
-              <CarouselNext className="-right-4" />
-            </Carousel>
-          </section>
+                            <h3 className="font-bold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors">
+                              {content.title}
+                            </h3>
+                            <p className="text-sm text-gray-600 mb-4">{content.description}</p>
+                            <div className="text-purple-600 text-sm font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                              자세히 보기
+                              <ExternalLink className="w-4 h-4" />
+                            </div>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="-left-4" />
+                <CarouselNext className="-right-4" />
+              </Carousel>
+            </section>
+          )}
 
           {/* 하단 CTA */}
           <section className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 md:p-12 text-center">
@@ -323,7 +423,7 @@ export default function PetBeachPage() {
               반려해변 입양에 대해 더 자세히 알고 싶으시다면 전문가에게 직접 문의해보세요
             </p>
             <div className="flex flex-wrap gap-4 justify-center">
-              <Link href="/inquiry">
+              <Link href="/adopt-a-beach/expertsqna/ask">
                 <button className="px-8 py-3 bg-blue-300 text-white rounded-lg hover:bg-blue-400 transition-colors font-semibold">
                   전문가에게 질문하기
                 </button>

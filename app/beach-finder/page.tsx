@@ -1,6 +1,7 @@
 "use client";
 
 import { BeachMapDialog } from "@/components/BeachMapDialog";
+import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -21,16 +22,29 @@ import {
   searchBeachesByName,
 } from "@/lib/beachFinderUtils";
 import type { Beach, BeachWithDistance, Region } from "@/types/beach";
-import { List, MapPin, Navigation, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  Car,
+  Copy,
+  Download,
+  List,
+  MapPin,
+  Navigation as NavigationIcon,
+  Search,
+} from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+import * as XLSX from "xlsx";
 
 export default function BeachFinderPage() {
   const [searchMode, setSearchMode] = useState<"location" | "region" | "name">("location");
 
   // 위치 기반 검색
   const [companyAddress, setCompanyAddress] = useState("");
+  const [companyCoords, setCompanyCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [nearestBeaches, setNearestBeaches] = useState<BeachWithDistance[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [drivingTimes, setDrivingTimes] = useState<Record<number, number>>({});
 
   // 행정구역 기반 검색
   const [selectedRegion, setSelectedRegion] = useState<Region>({
@@ -55,6 +69,65 @@ export default function BeachFinderPage() {
     setIsMapOpen(true);
   };
 
+  // 엑셀 다운로드
+  const handleExcelDownload = () => {
+    if (nearestBeaches.length === 0) return;
+
+    const data = nearestBeaches.map((beach, index) => ({
+      순위: index + 1,
+      해변명: beach.name,
+      주소: beach.addr,
+      "시/도": beach["관리처\n(시,도)"],
+      "군/구": beach["관리처\n(군,구)"],
+      "거리(km)": beach.distance?.toFixed(1) || "-",
+      "차량 이동 시간": drivingTimes[beach.id] ? `${drivingTimes[beach.id]}분` : "-",
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "해변 목록");
+    XLSX.writeFile(wb, `해변_검색_결과_${new Date().toISOString().split("T")[0]}.xlsx`);
+  };
+
+  // 주소 복사
+  const handleCopyAddress = (e: React.MouseEvent, address: string) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(address);
+    alert("주소가 복사되었습니다!");
+  };
+
+  // 거리 기반 차량 이동 시간 계산
+  const calculateDrivingTime = (
+    origin: { lat: number; lng: number },
+    destination: { lat: number; lng: number }
+  ) => {
+    try {
+      // 거리 계산 (Haversine formula)
+      const R = 6371; // 지구 반지름 (km)
+      const dLat = ((destination.lat - origin.lat) * Math.PI) / 180;
+      const dLon = ((destination.lng - origin.lng) * Math.PI) / 180;
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos((origin.lat * Math.PI) / 180) *
+          Math.cos((destination.lat * Math.PI) / 180) *
+          Math.sin(dLon / 2) *
+          Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      const distance = R * c;
+
+      // 평균 속도 50km/h로 예상 시간 계산 (일반도로 + 고속도로 혼합)
+      // 거리에 따라 속도 조정 (장거리는 고속도로 이용 가정)
+      const avgSpeed = distance > 50 ? 70 : distance > 20 ? 60 : 50;
+      const timeInHours = distance / avgSpeed;
+      const timeInMinutes = Math.round(timeInHours * 60);
+
+      return timeInMinutes;
+    } catch (error) {
+      console.error("Failed to calculate driving time:", error);
+    }
+    return null;
+  };
+
   // 위치 기반 검색 실행
   const handleLocationSearch = async () => {
     if (!companyAddress.trim()) return;
@@ -63,6 +136,64 @@ export default function BeachFinderPage() {
     try {
       const results = await findNearestBeaches(companyAddress, 10);
       setNearestBeaches(results);
+
+      // 출발지 좌표 가져오기 (Kakao Geocoding API)
+      const geocodeResponse = await fetch(
+        `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(companyAddress)}`,
+        {
+          headers: {
+            Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`,
+          },
+        }
+      );
+
+      if (geocodeResponse.ok) {
+        const geocodeData = await geocodeResponse.json();
+        if (geocodeData.documents && geocodeData.documents.length > 0) {
+          const coords = {
+            lat: parseFloat(geocodeData.documents[0].y),
+            lng: parseFloat(geocodeData.documents[0].x),
+          };
+          setCompanyCoords(coords);
+
+          // 각 해변까지의 차량 이동 시간 계산
+          const times: Record<number, number> = {};
+          for (const beach of results) {
+            // 모든 해변 계산
+            try {
+              // 해변 주소를 좌표로 변환
+              const beachGeoResponse = await fetch(
+                `https://dapi.kakao.com/v2/local/search/address.json?query=${encodeURIComponent(beach.addr)}`,
+                {
+                  headers: {
+                    Authorization: `KakaoAK ${process.env.NEXT_PUBLIC_KAKAO_REST_API_KEY}`,
+                  },
+                }
+              );
+
+              if (beachGeoResponse.ok) {
+                const beachGeoData = await beachGeoResponse.json();
+                if (beachGeoData.documents && beachGeoData.documents.length > 0) {
+                  const beachCoords = {
+                    lat: parseFloat(beachGeoData.documents[0].y),
+                    lng: parseFloat(beachGeoData.documents[0].x),
+                  };
+
+                  const time = calculateDrivingTime(coords, beachCoords);
+                  if (time) {
+                    times[beach.id] = time;
+                    console.log(`Beach ${beach.name}: ${time}분`);
+                  }
+                }
+              }
+            } catch (error) {
+              console.error(`Failed to geocode ${beach.name}:`, error);
+            }
+          }
+          console.log("Driving times:", times);
+          setDrivingTimes(times);
+        }
+      }
     } catch (error) {
       console.error("Search error:", error);
     } finally {
@@ -107,7 +238,17 @@ export default function BeachFinderPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
-      <div className="container mx-auto px-4 py-12">
+      <Navigation />
+      <div className="container mx-auto px-4 py-12 pt-24">
+        {/* 뒤로가기 버튼 */}
+        <div className="mb-6">
+          <Link href="/adopt-a-beach">
+            <Button variant="outline" className="flex items-center gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              반려해변으로 돌아가기
+            </Button>
+          </Link>
+        </div>
         {/* 헤더 */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">🏖️ 1분 맞춤 해변 찾기 큐레이션</h1>
@@ -128,7 +269,7 @@ export default function BeachFinderPage() {
             <Tabs value={searchMode} onValueChange={(v) => setSearchMode(v as typeof searchMode)}>
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="location" className="flex items-center gap-2">
-                  <Navigation className="w-4 h-4" />
+                  <NavigationIcon className="w-4 h-4" />
                   위치 기반
                 </TabsTrigger>
                 <TabsTrigger value="region" className="flex items-center gap-2">
@@ -173,9 +314,20 @@ export default function BeachFinderPage() {
                 {/* 검색 결과 */}
                 {nearestBeaches.length > 0 && (
                   <div className="mt-6">
-                    <h3 className="text-lg font-semibold mb-4 text-gray-900">
-                      🎯 가까운 순으로 추천 해변
-                    </h3>
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        🎯 가까운 순으로 추천 해변
+                      </h3>
+                      <Button
+                        onClick={handleExcelDownload}
+                        variant="outline"
+                        size="sm"
+                        className="flex items-center gap-2"
+                      >
+                        <Download className="w-4 h-4" />
+                        엑셀 다운로드
+                      </Button>
+                    </div>
                     <div className="space-y-3">
                       {nearestBeaches.map((beach, index) => (
                         <Card
@@ -192,7 +344,18 @@ export default function BeachFinderPage() {
                                   </span>
                                   <h4 className="text-lg font-bold text-gray-900">{beach.name}</h4>
                                 </div>
-                                <p className="text-sm text-gray-600 mb-2">{beach.addr}</p>
+                                <div className="flex items-center gap-2 mb-2">
+                                  <p className="text-sm text-gray-600 flex-1">{beach.addr}</p>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => handleCopyAddress(e, beach.addr)}
+                                    className="h-7 px-2 text-xs flex items-center gap-1"
+                                  >
+                                    <Copy className="w-3 h-3" />
+                                    주소복사
+                                  </Button>
+                                </div>
                                 <div className="flex gap-2 text-xs">
                                   <span className="bg-gray-100 px-2 py-1 rounded">
                                     {beach["관리처\n(시,도)"]}
@@ -208,6 +371,14 @@ export default function BeachFinderPage() {
                                     {beach.distance.toFixed(1)}
                                   </p>
                                   <p className="text-xs text-gray-500">km</p>
+                                  {drivingTimes[beach.id] && (
+                                    <div className="mt-2 flex items-center gap-1 justify-end">
+                                      <Car className="w-3 h-3 text-gray-500" />
+                                      <p className="text-sm text-gray-600">
+                                        {drivingTimes[beach.id]}분
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -382,6 +553,17 @@ export default function BeachFinderPage() {
             </li>
             <li>
               • <strong>해변 카드 클릭:</strong> 해변을 클릭하면 지도에서 위치를 확인할 수 있습니다
+            </li>
+            <li>
+              • <strong>주소 복사:</strong> 해변 카드의 복사 버튼을 클릭하면 주소가 클립보드에
+              복사됩니다
+            </li>
+            <li>
+              • <strong>엑셀 다운로드:</strong> 검색 결과를 엑셀 파일로 다운로드할 수 있습니다
+            </li>
+            <li>
+              • <strong>차량 이동 시간:</strong> 위치 기반 검색 시 모든 해변까지의 예상 차량 이동
+              시간을 표시합니다 (거리 기반 계산)
             </li>
           </ul>
         </div>

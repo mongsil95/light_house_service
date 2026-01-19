@@ -128,6 +128,18 @@ export default function QuestionDetailPage() {
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState("");
 
+  const handleShare = () => {
+    const url = window.location.href;
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        alert("링크가 복사되었습니다! 다른 사람들과 공유해보세요.");
+      })
+      .catch(() => {
+        alert("링크 복사에 실패했습니다. 다시 시도해주세요.");
+      });
+  };
+
   if (!question) {
     return (
       <div className="min-h-screen bg-white">
@@ -248,7 +260,7 @@ export default function QuestionDetailPage() {
                         <ThumbsUp className="w-4 h-4 mr-2" />
                         도움이 됐어요 {question.likes + (liked ? 1 : 0)}
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm" onClick={handleShare}>
                         <Share2 className="w-4 h-4 mr-2" />
                         공유하기
                       </Button>
@@ -288,7 +300,7 @@ export default function QuestionDetailPage() {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Expert Info */}
-              <Card className="border border-gray-200 sticky top-24">
+              <Card className="border border-gray-200">
                 <CardContent className="p-6">
                   <h3 className="font-bold text-gray-900 mb-4">답변 전문가</h3>
                   <div className="flex items-start gap-3">
