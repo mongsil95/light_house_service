@@ -640,40 +640,6 @@ export default function EasyGuideChatPage() {
     }
   };
 
-  // 실제 필요한 총 질문 개수 계산 (조건부 필드 제외)
-  const getTotalQuestions = () => {
-    let total = questionFlow.length;
-    
-    // 풀뿌리 환경단체 지원이 '아니오'면 grassrootsCount 제외
-    if (formData.grassrootsSupport === "아니오") {
-      total -= 1; // grassrootsCount 질문
-    }
-    
-    // 보험 가입이 '예'면 safetyMeasure 제외
-    if (formData.safetyInsurance === "예") {
-      total -= 1; // safetyMeasure 질문
-    }
-    
-    // 기부금 집행 방식이 '계좌 이체' 또는 '카드 결제'면 paymentMethodDetail 제외
-    if (formData.paymentMethod === "계좌 이체" || formData.paymentMethod === "카드 결제") {
-      total -= 1; // paymentMethodDetail 질문
-    }
-    
-    // consentRejected는 조건부이므로 기본 총 개수에서 제외
-    total -= 1;
-    
-    return total;
-  };
-
-  // 실제 답변한 필드 개수 계산
-  const getAnsweredCount = () => {
-    return formFields.filter(field => formData[field.key]).length;
-  };
-
-  const totalQuestions = getTotalQuestions();
-  const answeredCount = getAnsweredCount();
-  const progress = isCompleted ? 100 : (answeredCount / totalQuestions) * 100;
-
   // 입력 현황 데이터 구조
   const allFormFields = [
     { key: "organizationName" as keyof FormData, label: "기관명" },
@@ -727,6 +693,15 @@ export default function EasyGuideChatPage() {
     
     return true;
   });
+
+  // 실제 필요한 총 질문 개수 = 필터링된 필드 개수
+  const totalQuestions = formFields.length;
+  
+  // 실제 답변한 필드 개수 계산
+  const answeredCount = formFields.filter(field => formData[field.key]).length;
+  
+  // 진행률 계산
+  const progress = isCompleted ? 100 : (answeredCount / totalQuestions) * 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white py-12 px-4">
