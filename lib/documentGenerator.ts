@@ -273,7 +273,7 @@ export const generateWord = async (formData: FormData) => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `연락처: ${formData.contact || ""}`,
+                text: `연락처: ${formData.officePhone || formData.mobilePhone || ""}`,
               }),
             ],
             spacing: { after: 100 },
