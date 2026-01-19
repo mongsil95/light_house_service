@@ -676,30 +676,30 @@ export default function EasyGuideChatPage() {
         return false;
       }
     }
-    
+
     // 보험 가입이 '예'인 경우 안전대책 필드 제외
     if (formData.safetyInsurance === "예") {
       if (field.key === "safetyMeasure") {
         return false;
       }
     }
-    
+
     // 기부금 집행 방식이 '계좌 이체' 또는 '카드 결제'인 경우 상세 필드 제외
     if (formData.paymentMethod === "계좌 이체" || formData.paymentMethod === "카드 결제") {
       if (field.key === "paymentMethodDetail") {
         return false;
       }
     }
-    
+
     return true;
   });
 
   // 실제 필요한 총 질문 개수 = 필터링된 필드 개수
   const totalQuestions = formFields.length;
-  
+
   // 실제 답변한 필드 개수 계산
-  const answeredCount = formFields.filter(field => formData[field.key]).length;
-  
+  const answeredCount = formFields.filter((field) => formData[field.key]).length;
+
   // 진행률 계산
   const progress = isCompleted ? 100 : (answeredCount / totalQuestions) * 100;
 
@@ -1062,9 +1062,9 @@ export default function EasyGuideChatPage() {
                                     <p className="leading-relaxed mb-3">
                                       반려해변 사무국은 입양기관과 기금조성사의 개인정보를
                                       중요시하며 효과적으로 보호하고 있습니다. 반려해변 사무국은
-                                      "개인정보 보호법"에 의거 지정기부 집행 이행에 따른 최소한의
-                                      개인정보를 수집하며, 반드시 적법한 절차에 따라 동의를 받으며
-                                      표기된 목적을 위해서만 사용됩니다.
+                                      &quot;개인정보 보호법&quot;에 의거 지정기부 집행 이행에 따른
+                                      최소한의 개인정보를 수집하며, 반드시 적법한 절차에 따라 동의를
+                                      받으며 표기된 목적을 위해서만 사용됩니다.
                                     </p>
                                     <p className="leading-relaxed">
                                       수집된 개인정보 및 콘텐츠는 비영리 목적 외에는 사용되지
