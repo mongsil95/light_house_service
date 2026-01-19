@@ -44,7 +44,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const kakaoApiKey = process.env.NEXT_PUBLIC_KAKAO_JS_KEY || "";
-  
+
   return (
     <html lang="ko">
       <head>

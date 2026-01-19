@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +8,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import type { Beach } from "@/types/beach";
 import { Copy, MapPin } from "lucide-react";
 import { useEffect, useRef } from "react";
@@ -178,11 +178,15 @@ export function BeachMapDialog({ beach, open, onOpenChange }: BeachMapDialogProp
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl bg-white">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between text-gray-900">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-blue-600" />
-              {beach.name}
-            </div>
+          <DialogTitle className="flex items-center gap-2 text-gray-900">
+            <MapPin className="w-5 h-5 text-blue-600" />
+            {beach.name}
+          </DialogTitle>
+          <DialogDescription className="text-gray-600">{beach.addr}</DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          {/* 복사 버튼 */}
+          <div className="flex justify-end">
             <Button
               variant="outline"
               size="sm"
@@ -190,14 +194,10 @@ export function BeachMapDialog({ beach, open, onOpenChange }: BeachMapDialogProp
               className="h-8 px-3 text-xs flex items-center gap-1.5"
             >
               <Copy className="w-3.5 h-3.5" />
-              복사
+              해변 정보 복사
             </Button>
-          </DialogTitle>
-          <DialogDescription className="text-gray-600">
-            {beach.addr}
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-4">
+          </div>
+
           {/* 해변 정보 */}
           <div className="flex gap-2">
             <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
