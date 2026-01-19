@@ -119,7 +119,7 @@ export const generatePDF = async (formData: FormData) => {
   const orgInfo = [
     `기관명: ${formData.organizationName || ""}`,
     `대표자: ${formData.representativeName || ""}`,
-    `연락처: ${formData.contact || ""}`,
+    `연락처: ${formData.officePhone || formData.mobilePhone || ""}`,
     `이메일: ${formData.email || ""}`,
     `주소: ${formData.address || ""}`,
   ];
