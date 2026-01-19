@@ -13,6 +13,14 @@ interface Message {
   showContact?: boolean; // 연락처 표시 여부
 }
 
+interface ChatSession {
+  messages: Message[];
+  savedAt: number; // 타임스탬프
+}
+
+const CHAT_STORAGE_KEY = "lighthouse_chat_session";
+const SESSION_DURATION = 2 * 60 * 60 * 1000; // 2시간 (밀리초)
+
 export default function InquiryPage() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -25,6 +33,53 @@ export default function InquiryPage() {
   const [inputMessage, setInputMessage] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // 컴포넌트 마운트 시 localStorage에서 대화 내용 불러오기
+  useEffect(() => {
+    const loadChatSession = () => {
+      try {
+        const savedSession = localStorage.getItem(CHAT_STORAGE_KEY);
+        if (savedSession) {
+          const session: ChatSession = JSON.parse(savedSession);
+          const now = Date.now();
+          const timeDiff = now - session.savedAt;
+
+          // 2시간 이내의 세션이면 복원
+          if (timeDiff < SESSION_DURATION) {
+            const restoredMessages = session.messages.map((msg) => ({
+              ...msg,
+              timestamp: new Date(msg.timestamp),
+            }));
+            setMessages(restoredMessages);
+          } else {
+            // 2시간이 지났으면 localStorage 삭제
+            localStorage.removeItem(CHAT_STORAGE_KEY);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load chat session:", error);
+        localStorage.removeItem(CHAT_STORAGE_KEY);
+      }
+    };
+
+    loadChatSession();
+  }, []);
+
+  // 메시지 변경 시 localStorage에 저장
+  useEffect(() => {
+    if (messages.length > 1) {
+      // 초기 메시지만 있는 경우 제외
+      try {
+        const session: ChatSession = {
+          messages: messages,
+          savedAt: Date.now(),
+        };
+        localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(session));
+      } catch (error) {
+        console.error("Failed to save chat session:", error);
+      }
+    }
+  }, [messages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
