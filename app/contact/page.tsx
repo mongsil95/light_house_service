@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Phone, Mail, Clock, Calendar } from "lucide-react";
+import { Clock, Calendar } from "lucide-react";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -56,8 +56,8 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 mb-12">
-            <Card className="border-2 border-blue-200">
+          <div className="flex justify-center mb-12">
+            <Card className="border-2 border-blue-200 w-full max-w-md">
               <CardContent className="p-6 text-center">
                 <Clock className="w-12 h-12 mx-auto mb-4 text-blue-500" />
                 <h3 className="text-lg text-blue-900 mb-2 font-[Cafe24_Ssurround]">
@@ -65,32 +65,6 @@ export default function ContactPage() {
                 </h3>
                 <p className="text-gray-700 font-[Cafe24_Ssurround]">매주 화요일, 목요일</p>
                 <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">13:00 - 16:00</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-blue-200">
-              <CardContent className="p-6 text-center">
-                <Phone className="w-12 h-12 mx-auto mb-4 text-blue-500" />
-                <h3 className="text-lg text-blue-900 mb-2 font-[Cafe24_Ssurround]">등대 무전기</h3>
-                <a
-                  href="tel:070-8015-4120"
-                  className="text-blue-600 hover:text-blue-800 text-lg font-[Cafe24_Ssurround] block"
-                >
-                  070-8015-4120
-                </a>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 border-blue-200">
-              <CardContent className="p-6 text-center">
-                <Mail className="w-12 h-12 mx-auto mb-4 text-blue-500" />
-                <h3 className="text-lg text-blue-900 mb-2 font-[Cafe24_Ssurround]">등대 메일</h3>
-                <a
-                  href="mailto:itaseoul@naver.com"
-                  className="text-blue-600 hover:text-blue-800 font-[Cafe24_Ssurround] block"
-                >
-                  itaseoul@naver.com
-                </a>
               </CardContent>
             </Card>
           </div>

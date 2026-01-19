@@ -215,13 +215,13 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              등대지기와 함께 성장하는
+              처음이라도 괜찮아요,
               <br />
-              <span className="text-cyan-100">해양환경 생태계</span>
+              <span className="text-cyan-100">해변 입양의 첫걸음부터 시작해봐요.</span>
             </h1>
 
             <p className="text-xl text-blue-50 mb-8 max-w-2xl mx-auto">
-              반려해변 입양부터 해봄 프로그램까지, 모든 활동을 한 곳에서
+              등대지기가 곁에서 함께 걸을게요.
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center">
@@ -295,7 +295,7 @@ export default function Home() {
 
             {/* 오른쪽 CTA 카드 */}
             <div className="bg-white rounded-2xl p-8 border-2 border-blue-200 flex flex-col justify-center items-center text-center">
-              <h4 className="text-2xl font-bold text-gray-900 mb-3">쉽고 빠른 입양을 도와드려요</h4>
+              <h4 className="text-2xl font-bold text-gray-900 mb-3">나에게 맞는 반려해변은?</h4>
               <p className="text-blue-600 font-bold text-lg mb-6">반려해변 입양 3단계</p>
               <Link href="/adopt-a-beach" className="w-full">
                 <Button className="w-full bg-blue-300 hover:bg-blue-400 text-gray-900 text-lg py-6">

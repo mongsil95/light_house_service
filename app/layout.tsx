@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import "./globals.css";
 
 export const viewport: Viewport = {
@@ -46,13 +47,6 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108-2@1.0/Cafe24Ssurround.woff"
-          as="font"
-          type="font/woff"
-          crossOrigin="anonymous"
-        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -69,7 +63,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="font-cafe24">{children}</body>
+      <body className="font-cafe24">
+        <Script
+          src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_JS_KEY}&libraries=services&autoload=false`}
+          strategy="beforeInteractive"
+        />
+        {children}
+      </body>
     </html>
   );
 }

@@ -122,21 +122,21 @@ export default function PetBeachPage() {
                 className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors whitespace-nowrap font-semibold"
               >
                 <FileText className="w-5 h-5" />
-                <span>입양 신청하기</span>
+                <span>반려해변 알아보기</span>
               </a>
               <a
                 href="#step2"
                 className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap font-semibold"
               >
                 <CheckCircle2 className="w-5 h-5" />
-                <span>서류 제출하기</span>
+                <span>반려해변 신청하기</span>
               </a>
               <a
                 href="#step3"
                 className="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors whitespace-nowrap font-semibold"
               >
                 <CreditCard className="w-5 h-5" />
-                <span>기금 납부하기</span>
+                <span>해변입양 선정이후</span>
               </a>
             </div>
           </div>
@@ -148,12 +148,10 @@ export default function PetBeachPage() {
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-blue-500 text-white font-bold text-xl">
                   1
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  반려해변 입양 신청하기
-                </h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">반려해변 알아보기</h2>
               </div>
               <p className="text-gray-600 ml-15">
-                우리 기관에 맞는 해변을 찾고 입양 신청을 시작하세요
+                우리 기관에 맞는 해변과 입양 절차를 먼저 확인해보세요
               </p>
             </div>
 
@@ -207,12 +205,10 @@ export default function PetBeachPage() {
                 <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-500 text-white font-bold text-xl">
                   2
                 </div>
-                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  반려해변 입양 서류 제출하기
-                </h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-gray-900">반려해변 신청하기</h2>
               </div>
               <p className="text-gray-600 ml-15">
-                필수 서류를 준비하고 제출하여 입양 승인을 받으세요
+                우리 기관에 맞는 반려해변을 입양 신청을 시작하세요
               </p>
             </div>
 
@@ -267,11 +263,11 @@ export default function PetBeachPage() {
                   3
                 </div>
                 <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
-                  반려해변 기금 납부하기
+                  반려해변 입양 선정 이후
                 </h2>
               </div>
               <p className="text-gray-600 ml-15">
-                해변 관리를 위한 기금을 납부하고 정식 반려해변 파트너가 되세요
+                반려해변 입양 선정 후 필요한 서류 및 기금 납부 절차를 안내해드려요
               </p>
             </div>
 
