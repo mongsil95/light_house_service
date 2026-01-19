@@ -1,4 +1,90 @@
 import { FormData } from "@/types/easyGuide";
+import Docxtemplater from "docxtemplater";
+import { saveAs } from "file-saver";
+import PizZip from "pizzip";
+
+// Word 템플릿 파일 로드 함수
+const loadTemplate = async (templatePath: string): Promise<ArrayBuffer> => {
+  const response = await fetch(templatePath);
+  if (!response.ok) {
+    throw new Error(`템플릿 파일을 로드할 수 없습니다: ${templatePath}`);
+  }
+  return await response.arrayBuffer();
+};
+
+// Word 템플릿에 데이터 삽입 및 다운로드
+export const generateWordFromTemplate = async (formData: FormData) => {
+  try {
+    // 템플릿 파일 로드
+    const templatePath = "/templates/반려해변_입양_가입서_템플릿.docx";
+    const content = await loadTemplate(templatePath);
+
+    // PizZip으로 압축 해제
+    const zip = new PizZip(content);
+
+    // Docxtemplater 인스턴스 생성
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    // 템플릿에 삽입할 데이터 준비
+    const templateData = {
+      organizationName: formData.organizationName || "",
+      organizationType: formData.organizationType || "",
+      registrationNumber: formData.registrationNumber || "",
+      representativeName: formData.representativeName || "",
+      managerName: formData.managerName || "",
+      officePhone: formData.officePhone || "",
+      mobilePhone: formData.mobilePhone || "",
+      email: formData.email || "",
+      address: formData.address || "",
+      beachCount: formData.beachCount || "",
+      fundAmount: formData.fundAmount || "",
+      grassrootsSupport: formData.grassrootsSupport || "",
+      grassrootsCount: formData.grassrootsCount || "",
+      grassrootsAmount: formData.grassrootsAmount || "",
+      paymentMethod: formData.paymentMethod || "",
+      paymentMethodDetail: formData.paymentMethodDetail || "",
+      paymentDate: formData.paymentDate || "",
+      beachLocation: formData.beachLocation || "",
+      beachAdminDistrict: formData.beachAdminDistrict || "",
+      activityPeriod: formData.activityPeriod || "",
+      safetyInsurance: formData.safetyInsurance || "",
+      safetyMeasure: formData.safetyMeasure || "",
+      consentDate: formData.consentDate || new Date().toISOString().split("T")[0],
+      currentDate: new Date().toLocaleDateString("ko-KR"),
+    };
+
+    // 데이터 삽입
+    doc.setData(templateData);
+
+    try {
+      doc.render();
+    } catch (error) {
+      console.error("템플릿 렌더링 오류:", error);
+      throw error;
+    }
+
+    // 수정된 문서 생성
+    const output = doc.getZip().generate({
+      type: "blob",
+      mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    });
+
+    // 파일명 생성
+    const fileName = `반려해변_입양_가입서_${formData.organizationName || "신청서"}_${new Date().toISOString().split("T")[0]}.docx`;
+
+    // 파일 다운로드
+    saveAs(output, fileName);
+
+    return fileName;
+  } catch (error) {
+    console.error("Word 문서 생성 중 오류:", error);
+    // 오류 발생 시 기본 방식으로 폴백
+    return await generateWord(formData);
+  }
+};
 
 // PDF 생성 함수 (jsPDF 사용)
 export const generatePDF = async (formData: FormData) => {
@@ -57,7 +143,6 @@ export const generatePDF = async (formData: FormData) => {
 
   doc.setFontSize(12);
   const safetyInfo = [
-    `활동 참여 인원: ${formData.participantCount || ""}명`,
     `활동 기간: ${formData.activityPeriod || ""}`,
     `보험 가입 여부: ${formData.safetyInsurance || ""}`,
   ];
@@ -132,8 +217,6 @@ export const generatePDF = async (formData: FormData) => {
 
   yPosition += 10;
   doc.setFontSize(12);
-  doc.text(`동의자: ${formData.consentName || ""}`, 25, yPosition);
-  yPosition += 8;
   doc.text(`날짜: ${formData.consentDate || ""}`, 25, yPosition);
 
   // PDF 파일명 생성
@@ -221,14 +304,6 @@ export const generateWord = async (formData: FormData) => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `활동 참여 인원: ${formData.participantCount || ""}명`,
-              }),
-            ],
-            spacing: { after: 100 },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
                 text: `활동 기간: ${formData.activityPeriod || ""}`,
               }),
             ],
@@ -291,14 +366,6 @@ export const generateWord = async (formData: FormData) => {
           new Paragraph({
             text: "위 내용을 충분히 이해하였으며, 개인정보 수집 및 이용에 동의합니다.",
             spacing: { after: 200 },
-          }),
-          new Paragraph({
-            children: [
-              new TextRun({
-                text: `동의자: ${formData.consentName || ""}`,
-              }),
-            ],
-            spacing: { after: 100 },
           }),
           new Paragraph({
             children: [

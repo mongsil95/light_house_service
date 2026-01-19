@@ -17,7 +17,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 // TODO: DB팀 - 게시글 상세 조회 API 구현 필요
@@ -271,6 +271,7 @@ A. 최소 5명 이상 권장합니다.`,
 
 export default function ResourceDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const id = params.id as string;
   const resource = resourceData[id];
 
@@ -328,12 +329,10 @@ export default function ResourceDetailPage() {
             {/* Main Content */}
             <div className="lg:col-span-2">
               {/* Back Button */}
-              <Link href="/adopt-a-beach/resources">
-                <Button variant="outline" className="mb-6">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  목록으로
-                </Button>
-              </Link>
+              <Button variant="outline" className="mb-6" onClick={() => router.back()}>
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                목록으로
+              </Button>
 
               {/* Article Card */}
               <Card className="mb-6 border border-gray-200">
