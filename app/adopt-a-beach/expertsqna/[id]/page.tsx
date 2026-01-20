@@ -36,6 +36,12 @@ interface Answer {
   updated_at: string;
 }
 
+interface RelatedQuestion {
+  id: number;
+  title: string;
+  category: string;
+}
+
 export default function QuestionDetailPage() {
   const params = useParams();
   const id = params.id as string;
@@ -45,7 +51,7 @@ export default function QuestionDetailPage() {
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState("");
-  const [relatedQuestions, setRelatedQuestions] = useState<QnA[]>([]);
+  const [relatedQuestions, setRelatedQuestions] = useState<RelatedQuestion[]>([]);
 
   useEffect(() => {
     if (id) {
