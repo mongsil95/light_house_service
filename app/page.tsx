@@ -177,7 +177,7 @@ export default function NewHome() {
                     <p className="text-sm text-gray-600 mb-4">{item.desc}</p>
                     {item.link !== "#" && (
                       <Button variant="link" className="text-blue-600" asChild>
-                        <Link href={item.link}>자세히 알아보기</Link>
+                        <Link href={item.link}>자세히 </Link>
                       </Button>
                     )}
                   </CardContent>
@@ -287,22 +287,24 @@ export default function NewHome() {
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="text-4xl">📦</div>
-                    <h3 className="text-xl font-bold">🌟수정 필요함</h3>
+                    <h3 className="text-xl font-bold">물품 지원</h3>
                   </div>
-                  <p className="text-gray-600 mb-4">후원품까지 사로잡기!</p>
+                  <p className="text-gray-600 mb-4">물품으로 활동을 지원해주세요!</p>
                   <ul className="space-y-2 text-sm text-gray-700 mb-6">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>후원자가 픽업 또는 현장 물품 제공</span>
+                      <span>정화활동 물품 또는 리워드를 지원해주세요.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>활동과 함께 이용 시 효과 증가 가능</span>
+                      <span>비영리단체, 학교의 활동에 도움이 됩니다</span>
                     </li>
                   </ul>
                   <div className="bg-green-50 rounded-lg p-4 mb-4">
-                    <p className="text-sm font-semibold text-green-900">참여비용 6.8%</p>
-                    <p className="text-xs text-gray-600">후원 1건 당 참여비용</p>
+                    <p className="text-sm font-semibold text-green-900">
+                      세부사항 : 사무국과 논의해주세요
+                    </p>
+                    <p className="text-xs text-gray-600">기부금 영수증 발행 가능</p>
                   </div>
                   <Button variant="link" className="text-blue-600" asChild>
                     <Link href="/adopt-a-beach/resources">자세히</Link>
