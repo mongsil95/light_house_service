@@ -10,194 +10,146 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { supabase } from "@/lib/supabase";
 import { ChevronRight, Eye, HelpCircle, ThumbsUp } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function AdoptABeachCommunityPage() {
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [sortOrder, setSortOrder] = useState("최근 답변순");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedExpert, setSelectedExpert] = useState<(typeof experts)[0] | null>(null);
+  const [selectedExpert, setSelectedExpert] = useState<any | null>(null);
+  const [qaList, setQaList] = useState<any[]>([]);
+  const [experts, setExperts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Supabase에서 Q&A 데이터 가져오기
+  useEffect(() => {
+    async function fetchQnA() {
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("qna")
+          .select("*")
+          .eq("is_public", true)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        if (data) {
+          // Q&A 데이터 포맷팅
+          const formattedQAs = data.map((qa) => ({
+            id: qa.id,
+            category: qa.category || "운영·기타",
+            question: qa.title,
+            views: qa.views || 0,
+            likes: 0, // likes 필드가 없으므로 0으로 설정
+            date: new Date(qa.created_at)
+              .toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })
+              .replace(/\. /g, ".")
+              .replace(/\.$/, ""),
+            expert: qa.author_name,
+            expertImage: getExpertImage(qa.author_name),
+            answered: qa.status === "answered",
+            content: qa.content,
+          }));
+
+          setQaList(formattedQAs);
+
+          // 전문가 목록 가져오기 (experts 테이블에서)
+          const { data: expertsData, error: expertsError } = await supabase
+            .from("experts")
+            .select("*")
+            .eq("is_active", true)
+            .order("display_order", { ascending: true });
+
+          if (!expertsError && expertsData) {
+            // 각 전문가의 답변 개수 계산
+            const { data: answersData, error: answersError } = await supabase
+              .from("qna_answers")
+              .select("answerer_name");
+
+            const answerCountMap = new Map();
+            if (!answersError && answersData) {
+              answersData.forEach((answer: any) => {
+                const count = answerCountMap.get(answer.answerer_name) || 0;
+                answerCountMap.set(answer.answerer_name, count + 1);
+              });
+            }
+
+            // 전문가 데이터 포맷팅
+            const formattedExperts = expertsData.map((expert) => {
+              const answerCount = answerCountMap.get(expert.name) || 0;
+
+              // 등급 결정
+              let tier = "숙련가";
+              let tierColor = "text-green-600";
+              let tierBgColor = "bg-green-50";
+
+              if (answerCount >= 50) {
+                tier = "마스터";
+                tierColor = "text-purple-600";
+                tierBgColor = "bg-purple-50";
+              } else if (answerCount >= 30) {
+                tier = "전문가";
+                tierColor = "text-blue-600";
+                tierBgColor = "bg-blue-50";
+              } else if (answerCount >= 10) {
+                tier = "숙련가";
+                tierColor = "text-green-600";
+                tierBgColor = "bg-green-50";
+              }
+
+              return {
+                id: expert.id,
+                name: expert.name,
+                organization: expert.organization || "전문가",
+                role: expert.role || "전문가",
+                description: expert.description || `${expert.name}의 전문가 답변을 확인해보세요.`,
+                email: expert.email || "",
+                image: expert.profile_image || "👤",
+                answerCount: answerCount,
+                tier: tier,
+                tierColor: tierColor,
+                tierBgColor: tierBgColor,
+                specialty: expert.specialty || [],
+              };
+            });
+
+            setExperts(formattedExperts);
+          } else {
+            setExperts([]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching Q&A:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchQnA();
+  }, []);
+
+  // 전문가별 아이콘 매핑
+  function getExpertImage(name: string): string {
+    return "👤";
+  }
 
   // 카테고리
   const categories = [
     { id: "전체", label: "전체", icon: "🌐" },
-    { id: "반려해변입양", label: "반려해변입양", icon: "🏖️" },
-    { id: "정화활동", label: "정화활동", icon: "♻️" },
-    { id: "해봄프로그램", label: "해봄프로그램", icon: "🌱" },
-    { id: "운영·기타", label: "운영·기타", icon: "📋" },
-  ];
-
-  // 전문가 목록
-  const experts = [
-    {
-      id: 1,
-      name: "이타서울 해양팀",
-      organization: "이타서울 비영리",
-      role: "환경 보호 전문가",
-      description: "반려해변 전국대회를 운영하며 해양환경 보호 활동을 지원합니다.",
-      email: "ocean@itaseoul.org",
-      image: "🌊",
-      logoImage: "https://via.placeholder.com/100x100?text=이타서울",
-      answerCount: 156,
-      tier: "마스터",
-      tierColor: "text-purple-600",
-      tierBgColor: "bg-purple-50",
-      specialty: ["반려해변입양", "정화활동", "해봄프로그램"],
-    },
-    {
-      id: 2,
-      name: "해양환경공단",
-      organization: "해양환경공단",
-      role: "공공기관 전문가",
-      description: "해양 생태계 보호와 환경 정화를 위한 전문 기관입니다.",
-      email: "contact@koem.or.kr",
-      image: "🐋",
-      logoImage: "https://via.placeholder.com/100x100?text=해양환경공단",
-      answerCount: 89,
-      tier: "전문가",
-      tierColor: "text-blue-600",
-      tierBgColor: "bg-blue-50",
-      specialty: ["정화활동", "운영·기타"],
-    },
-    {
-      id: 3,
-      name: "김민지 코디네이터",
-      organization: "반려해변입양 전문",
-      role: "입양 코디네이터",
-      description: "반려해변입양 신청부터 운영까지 함께 돕겠습니다.",
-      email: "minji.kim@adoptbeach.kr",
-      image: "👩‍💼",
-      logoImage: "https://via.placeholder.com/100x100?text=김민지",
-      answerCount: 234,
-      tier: "마스터",
-      tierColor: "text-purple-600",
-      tierBgColor: "bg-purple-50",
-      specialty: ["반려해변입양", "운영·기타"],
-    },
-    {
-      id: 4,
-      name: "박준호 환경전문가",
-      organization: "해양생태연구소",
-      role: "해양생태 연구원",
-      description: "해양 쓰레기 처리와 생태계 보호에 대한 전문 답변을 제공합니다.",
-      email: "juno.park@ocean-lab.kr",
-      image: "🔬",
-      logoImage: "https://via.placeholder.com/100x100?text=박준호",
-      answerCount: 67,
-      tier: "숙련가",
-      tierColor: "text-green-600",
-      tierBgColor: "bg-green-50",
-      specialty: ["정화활동", "해봄프로그램"],
-    },
-    {
-      id: 5,
-      name: "최서연 활동가",
-      organization: "바다사랑실천단",
-      role: "현장 활동 전문가",
-      description: "10년 이상의 해변 정화 활동 경험을 바탕으로 실질적인 조언을 드립니다.",
-      email: "seoyeon.choi@oceanlove.kr",
-      image: "🌟",
-      logoImage: "https://via.placeholder.com/100x100?text=최서연",
-      answerCount: 42,
-      tier: "숙련가",
-      tierColor: "text-green-600",
-      tierBgColor: "bg-green-50",
-      specialty: ["정화활동", "해봄프로그램"],
-    },
-  ];
-
-  // Q&A 목록
-  const qaList = [
-    {
-      id: 1,
-      category: "반려해변입양",
-      question: "반려해변입양 신청 시 필요한 서류는 무엇인가요?",
-      views: 308,
-      likes: 12,
-      date: "2026.01.15",
-      expert: "김민지 코디네이터",
-      expertImage: "👩‍💼",
-      answered: true,
-    },
-    {
-      id: 2,
-      category: "정화활동",
-      question: "겨울철 해변 정화 활동 시 주의사항은?",
-      views: 156,
-      likes: 8,
-      date: "2026.01.14",
-      expert: "박준호 환경전문가",
-      expertImage: "🔬",
-      answered: true,
-    },
-    {
-      id: 3,
-      category: "해봄프로그램",
-      question: "학교에서 단체로 참여하려면 어떻게 해야 하나요?",
-      views: 89,
-      likes: 5,
-      date: "2026.01.13",
-      expert: "이타서울 해양팀",
-      expertImage: "🌊",
-      answered: true,
-    },
-    {
-      id: 4,
-      category: "운영·기타",
-      question: "정화 키트 신청 방법이 궁금합니다",
-      views: 234,
-      likes: 15,
-      date: "2026.01.12",
-      expert: "김민지 코디네이터",
-      expertImage: "👩‍💼",
-      answered: true,
-    },
-    {
-      id: 5,
-      category: "반려해변입양",
-      question: "입양 후 월 1회 활동을 못하면 어떻게 되나요?",
-      views: 445,
-      likes: 28,
-      date: "2026.01.11",
-      expert: "이타서울 해양팀",
-      expertImage: "🌊",
-      answered: true,
-    },
-    {
-      id: 6,
-      category: "정화활동",
-      question: "쓰레기 분류는 어떻게 해야 하나요?",
-      views: 178,
-      likes: 9,
-      date: "2026.01.10",
-      expert: "박준호 환경전문가",
-      expertImage: "🔬",
-      answered: true,
-    },
-    {
-      id: 7,
-      category: "반려해변입양",
-      question: "개인도 반려해변입양 신청이 가능한가요?",
-      views: 523,
-      likes: 34,
-      date: "2026.01.09",
-      expert: "김민지 코디네이터",
-      expertImage: "👩‍💼",
-      answered: true,
-    },
-    {
-      id: 8,
-      category: "운영·기타",
-      question: "정화 활동 인증서 발급은 어떻게 받나요?",
-      views: 312,
-      likes: 19,
-      date: "2026.01.08",
-      expert: "이타서울 해양팀",
-      expertImage: "🌊",
-      answered: true,
-    },
+    { id: "입양절차", label: "입양절차", icon: "🏖️" },
+    { id: "활동계획", label: "활동계획", icon: "♻️" },
+    { id: "기금납부", label: "기금납부", icon: "🌱" },
+    { id: "기타", label: "기타", icon: "📋" },
   ];
 
   const filteredQAs = qaList.filter((qa) => {
@@ -207,8 +159,47 @@ export default function AdoptABeachCommunityPage() {
     return matchesCategory && matchesSearch;
   });
 
-  // 인기 질문 TOP 6 (좋아요 수 기준으로 정렬)
-  const popularQuestions = [...qaList].sort((a, b) => b.likes - a.likes).slice(0, 6);
+  // 정렬 적용
+  const sortedQAs = [...filteredQAs].sort((a, b) => {
+    if (sortOrder === "인기순") {
+      return b.views - a.views;
+    }
+    // 최근 답변순 (기본)
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
+
+  // 인기 질문 TOP 6 (조회수 기준으로 정렬)
+  const popularQuestions = [...qaList].sort((a, b) => b.views - a.views).slice(0, 6);
+
+  // 페이지네이션 계산
+  const totalPages = Math.ceil(sortedQAs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedQAs = sortedQAs.slice(startIndex, endIndex);
+
+  // 페이지 변경 시 맨 위로 스크롤
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white">
+        <Navigation />
+        <main className="pt-24 pb-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-600">로딩 중...</p>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -218,7 +209,7 @@ export default function AdoptABeachCommunityPage() {
         <div className="max-w-7xl mx-auto px-6">
           {/* 헤더 */}
           <div className="mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">전문가 Q&A</h1>
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">등대지기 Q&A</h1>
           </div>
 
           {/* 카테고리 필터 */}
@@ -248,7 +239,16 @@ export default function AdoptABeachCommunityPage() {
                   🔍 오늘 인기있는 질문
                 </h2>
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-100">
-                  <p className="text-sm text-gray-600 mb-4">01. 16. (금) 실시간 기준</p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    {new Date()
+                      .toLocaleDateString("ko-KR", {
+                        month: "2-digit",
+                        day: "2-digit",
+                        weekday: "short",
+                      })
+                      .replace(/\. /g, ". ")}{" "}
+                    실시간 기준
+                  </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {popularQuestions.map((qa, idx) => (
                       <Link
@@ -286,7 +286,7 @@ export default function AdoptABeachCommunityPage() {
               {/* 정렬 및 개수 */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-600">
-                  <span className="font-bold text-blue-600">{filteredQAs.length}</span>개
+                  <span className="font-bold text-blue-600">{sortedQAs.length}</span>개
                 </p>
                 <div className="flex items-center gap-2">
                   <button
@@ -314,7 +314,7 @@ export default function AdoptABeachCommunityPage() {
 
               {/* Q&A 리스트 */}
               <div className="space-y-4">
-                {filteredQAs.length === 0 ? (
+                {paginatedQAs.length === 0 ? (
                   <Card className="border border-gray-200">
                     <CardContent className="p-12 text-center">
                       <HelpCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
@@ -328,7 +328,7 @@ export default function AdoptABeachCommunityPage() {
                     </CardContent>
                   </Card>
                 ) : (
-                  filteredQAs.map((qa) => (
+                  paginatedQAs.map((qa) => (
                     <Link key={qa.id} href={`/adopt-a-beach/expertsqna/${qa.id}`}>
                       <Card className="hover:shadow-lg transition-all border border-gray-200 cursor-pointer group">
                         <CardContent className="p-6">
@@ -350,10 +350,6 @@ export default function AdoptABeachCommunityPage() {
                                   <span className="flex items-center gap-1">
                                     <Eye className="w-4 h-4" />
                                     조회 {qa.views}
-                                  </span>
-                                  <span className="flex items-center gap-1">
-                                    <ThumbsUp className="w-4 h-4" />
-                                    좋아요 {qa.likes}
                                   </span>
                                   <span>· {qa.date}</span>
                                 </div>
@@ -377,24 +373,57 @@ export default function AdoptABeachCommunityPage() {
               </div>
 
               {/* 페이지네이션 */}
-              <div className="flex justify-center items-center gap-2 mt-12">
-                <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                  ‹
-                </button>
-                {[1, 2, 3, 4, 5].map((page) => (
+              {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-2 mt-12">
                   <button
-                    key={page}
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
                     className={`px-4 py-2 rounded-lg transition-colors ${
-                      page === 1 ? "bg-blue-500 text-white" : "text-gray-600 hover:bg-gray-100"
+                      currentPage === 1
+                        ? "text-gray-300 cursor-not-allowed"
+                        : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    {page}
+                    ‹
                   </button>
-                ))}
-                <button className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-                  ›
-                </button>
-              </div>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = i + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = i + 1;
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + i;
+                    } else {
+                      pageNumber = currentPage - 2 + i;
+                    }
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                          pageNumber === currentPage
+                            ? "bg-blue-500 text-white"
+                            : "text-gray-600 hover:bg-gray-100"
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  })}
+                  <button
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`px-4 py-2 rounded-lg transition-colors ${
+                      currentPage === totalPages
+                        ? "text-gray-300 cursor-not-allowed"
+                        : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    ›
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* 사이드바 */}
@@ -404,7 +433,7 @@ export default function AdoptABeachCommunityPage() {
                 <div className="mb-4">
                   <HelpCircle className="w-16 h-16 mx-auto mb-4" />
                   <h3 className="text-xl font-bold mb-2">찾으시는 질문이 없으신가요?</h3>
-                  <p className="text-blue-50 text-sm mb-6">반려해변 전문가에게 질문해보세요</p>
+                  <p className="text-blue-50 text-sm mb-6">등대지기에게 질문해보세요</p>
                 </div>
                 <Link href="/adopt-a-beach/expertsqna/ask">
                   <button className="w-full px-6 py-3 bg-white text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors">
@@ -416,7 +445,7 @@ export default function AdoptABeachCommunityPage() {
               {/* 전문가 소개 */}
               <div>
                 <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">전문가 소개</h3>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">등대지기 소개</h3>
                   <div className="text-xs text-gray-500">
                     💡 답변 50개 이상: 마스터 / 30개 이상: 전문가 / 10개 이상: 숙련가
                   </div>

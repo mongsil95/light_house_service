@@ -10,15 +10,19 @@ export default function Navigation() {
 
   const menuItems = [
     { label: "홈", href: "/" },
-    {
-      label: "반려해변",
-      href: "/adopt-a-beach",
-      subItems: [
-        { label: "반려해변 입양", href: "/adopt-a-beach" },
-        { label: "반려해변 가이드", href: "/adopt-a-beach/resources" },
-        { label: "전문가 Q&A", href: "/adopt-a-beach/expertsqna" },
-      ],
-    },
+    // TODO : 반려해변 메뉴 - 추후 활성화 예정
+    //{
+    //  label: "반려해변",
+    //  href: "/adopt-a-beach",
+    //  subItems: [
+    // TODO: 반려해변 입양 메뉴만 숨김 처리
+    // { label: "반려해변 입양", href: "/adopt-a-beach" },
+    //    { label: "반려해변 가이드", href: "/adopt-a-beach/resources" },
+    //    { label: "전문가 Q&A", href: "/adopt-a-beach/expertsqna" },
+    //  ],
+    //},
+    { label: "반려해변 가이드", href: "/adopt-a-beach/resources" },
+    { label: "등대지기 Q&A", href: "/adopt-a-beach/expertsqna" },
     // TODO: 해봄 메뉴 - 추후 활성화 예정
     // {
     //   label: "해봄",
@@ -28,8 +32,9 @@ export default function Navigation() {
     //     { label: "자유 게시판", href: "/haebom/community" },
     //   ],
     // },
-    { label: "일반 문의", href: "/inquiry" },
-    { label: "등대 무전", href: "/contact" },
+    // TODO: 일반 문의, 등대무전 - 추후 활성화 예정
+    // { label: "일반 문의", href: "/inquiry" },
+    // { label: "등대 무전", href: "/contact" },
     { label: "관리자", href: "/admin" },
   ];
 

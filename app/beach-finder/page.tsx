@@ -156,10 +156,11 @@ export default function BeachFinderPage() {
           };
           setCompanyCoords(coords);
 
-          // 각 해변까지의 차량 이동 시간 계산
+          // 각 해변까지의 차량 이동 시간 계산 (병렬 처리)
           const times: Record<number, number> = {};
-          for (const beach of results) {
-            // 모든 해변 계산
+
+          // 모든 해변의 좌표 변환을 병렬로 처리
+          const beachTimePromises = results.map(async (beach) => {
             try {
               // 해변 주소를 좌표로 변환
               const beachGeoResponse = await fetch(
@@ -181,15 +182,29 @@ export default function BeachFinderPage() {
 
                   const time = calculateDrivingTime(coords, beachCoords);
                   if (time) {
-                    times[beach.id] = time;
-                    console.log(`Beach ${beach.name}: ${time}분`);
+                    return { id: beach.id, time, name: beach.name };
                   }
                 }
+              } else {
+                console.warn(`주소 검색 실패 (${beach.name}): ${beachGeoResponse.status}`);
               }
             } catch (error) {
               console.error(`Failed to geocode ${beach.name}:`, error);
             }
-          }
+            return null;
+          });
+
+          // 모든 프로미스 완료 대기
+          const beachTimeResults = await Promise.all(beachTimePromises);
+
+          // 결과를 times 객체에 저장
+          beachTimeResults.forEach((result) => {
+            if (result) {
+              times[result.id] = result.time;
+              console.log(`Beach ${result.name}: ${result.time}분`);
+            }
+          });
+
           console.log("Driving times:", times);
           setDrivingTimes(times);
         }
@@ -245,7 +260,7 @@ export default function BeachFinderPage() {
           <Link href="/adopt-a-beach">
             <Button variant="outline" className="flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
-              반려해변으로 돌아가기
+              이전페이지
             </Button>
           </Link>
         </div>
@@ -266,20 +281,66 @@ export default function BeachFinderPage() {
             <CardDescription>세 가지 방법으로 원하는 해변을 찾을 수 있습니다</CardDescription>
           </CardHeader>
           <CardContent>
+            {/* 검색 방법 선택 버튼 */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <Button
+                variant={searchMode === "location" ? "default" : "outline"}
+                className={`h-auto py-6 flex flex-col items-center gap-2 ${
+                  searchMode === "location"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                    : "bg-white hover:bg-blue-50 text-gray-700 border-2 border-gray-200"
+                }`}
+                onClick={() => setSearchMode("location")}
+              >
+                <NavigationIcon className="w-6 h-6" />
+                <div className="font-bold text-base">위치 기반 검색</div>
+                <div className="text-xs opacity-80 text-center leading-relaxed px-2">
+                  회사 주소를 입력하면
+                  <br />
+                  가장 가까운 해변을 추천해드립니다.
+                </div>
+              </Button>
+              <Button
+                variant={searchMode === "region" ? "default" : "outline"}
+                className={`h-auto py-6 flex flex-col items-center gap-2 ${
+                  searchMode === "region"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                    : "bg-white hover:bg-blue-50 text-gray-700 border-2 border-gray-200"
+                }`}
+                onClick={() => setSearchMode("region")}
+              >
+                <MapPin className="w-6 h-6" />
+                <div className="font-bold text-base">행정구역 기반 검색</div>
+                <div className="text-xs opacity-80 text-center leading-relaxed px-2">
+                  원하는 지역의 일반적으로 방문하는
+                  <br />
+                  반려해변을 확인할 수 있습니다.
+                </div>
+              </Button>
+              <Button
+                variant={searchMode === "name" ? "default" : "outline"}
+                className={`h-auto py-6 flex flex-col items-center gap-2 ${
+                  searchMode === "name"
+                    ? "bg-blue-600 hover:bg-blue-700 text-white border-2 border-blue-600"
+                    : "bg-white hover:bg-blue-50 text-gray-700 border-2 border-gray-200"
+                }`}
+                onClick={() => setSearchMode("name")}
+              >
+                <List className="w-6 h-6" />
+                <div className="font-bold text-base">해변명 기반 검색</div>
+                <div className="text-xs opacity-80 text-center leading-relaxed px-2">
+                  알고 있는 해변 이름으로
+                  <br />
+                  빠르게 찾을 수 있습니다.
+                </div>
+              </Button>
+            </div>
+
             <Tabs value={searchMode} onValueChange={(v) => setSearchMode(v as typeof searchMode)}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="location" className="flex items-center gap-2">
-                  <NavigationIcon className="w-4 h-4" />
-                  위치 기반
-                </TabsTrigger>
-                <TabsTrigger value="region" className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  행정구역
-                </TabsTrigger>
-                <TabsTrigger value="name" className="flex items-center gap-2">
-                  <List className="w-4 h-4" />
-                  해변명
-                </TabsTrigger>
+              <TabsList className="hidden">
+                <TabsTrigger value="location">위치 기반</TabsTrigger>
+                <TabsTrigger value="region">행정구역</TabsTrigger>
+                <TabsTrigger value="name">해변명</TabsTrigger>
               </TabsList>
 
               {/* 위치 기반 검색 */}
@@ -536,37 +597,6 @@ export default function BeachFinderPage() {
             </Tabs>
           </CardContent>
         </Card>
-
-        {/* 안내 메시지 */}
-        <div className="max-w-4xl mx-auto mt-8 p-6 bg-blue-50 rounded-lg">
-          <h3 className="text-lg font-semibold text-blue-900 mb-2">💡 이용 안내</h3>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>
-              • <strong>위치 기반 검색:</strong> 회사 주소를 입력하면 가장 가까운 해변을
-              추천해드립니다
-            </li>
-            <li>
-              • <strong>행정구역 검색:</strong> 원하는 지역의 모든 해변을 확인할 수 있습니다
-            </li>
-            <li>
-              • <strong>해변명 검색:</strong> 알고 있는 해변 이름으로 빠르게 찾을 수 있습니다
-            </li>
-            <li>
-              • <strong>해변 카드 클릭:</strong> 해변을 클릭하면 지도에서 위치를 확인할 수 있습니다
-            </li>
-            <li>
-              • <strong>주소 복사:</strong> 해변 카드의 복사 버튼을 클릭하면 주소가 클립보드에
-              복사됩니다
-            </li>
-            <li>
-              • <strong>엑셀 다운로드:</strong> 검색 결과를 엑셀 파일로 다운로드할 수 있습니다
-            </li>
-            <li>
-              • <strong>차량 이동 시간:</strong> 위치 기반 검색 시 모든 해변까지의 예상 차량 이동
-              시간을 표시합니다 (거리 기반 계산)
-            </li>
-          </ul>
-        </div>
       </div>
 
       {/* 지도 다이얼로그 */}

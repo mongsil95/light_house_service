@@ -5,59 +5,80 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, FileText, Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-// TODO: DB팀 - 가이드 목록 조회 API 구현 필요
-// GET /api/admin/guides
+interface Guide {
+  id: number;
+  category: string;
+  title: string;
+  content: string;
+  author: string;
+  views: number;
+  status: string;
+  created_at: string;
+  published_at: string | null;
+}
 
 export default function AdminGuidesPage() {
-  // 임시 가이드 목록 데이터
-  const [guides, setGuides] = useState([
-    {
-      id: 1,
-      category: "입양 신청하기",
-      title: "반려해변 입양 신청서 작성",
-      description: "해변 정보와 입양 동기를 작성하세요",
-      views: 1234,
-      status: "published",
-      createdAt: "2026.01.15",
-    },
-    {
-      id: 2,
-      category: "입양 신청하기",
-      title: "입양 가능한 해변 찾기",
-      description: "전국 반려해변 지도에서 원하는 해변을 선택하세요",
-      views: 987,
-      status: "published",
-      createdAt: "2026.01.14",
-    },
-    {
-      id: 5,
-      category: "서류 제출하기",
-      title: "입양 계약서 다운로드 및 작성",
-      description: "필수 서류 양식을 다운로드하고 작성하세요",
-      views: 756,
-      status: "draft",
-      createdAt: "2026.01.13",
-    },
-  ]);
-
+  const [guides, setGuides] = useState<Guide[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("전체");
 
-  const categories = ["전체", "입양 신청하기", "서류 제출하기", "기금 납부하기"];
+  const categories = ["전체", "가이드", "공지", "FAQ", "시설"];
 
-  const filteredGuides =
-    selectedCategory === "전체"
-      ? guides
-      : guides.filter((guide) => guide.category === selectedCategory);
+  useEffect(() => {
+    fetchGuides();
+  }, [selectedCategory]);
 
-  const handleDelete = (id: number) => {
-    if (confirm("정말 이 가이드를 삭제하시겠습니까?")) {
-      // TODO: DB팀 - 가이드 삭제 API 구현 필요
-      // DELETE /api/admin/guides/:id
-      setGuides(guides.filter((guide) => guide.id !== id));
-      alert("가이드가 삭제되었습니다.");
+  const fetchGuides = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams();
+      if (selectedCategory !== "전체") params.append("category", selectedCategory);
+
+      const response = await fetch(`/api/admin/guides?${params.toString()}`);
+      const result = await response.json();
+
+      if (result.data) {
+        setGuides(result.data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch guides:", error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const filteredGuides = guides;
+
+  const handleDelete = async (id: number) => {
+    if (!confirm("정말 이 가이드를 삭제하시겠습니까?")) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/admin/guides/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        alert("가이드가 삭제되었습니다.");
+        fetchGuides();
+      } else {
+        alert("삭제에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("삭제 중 오류가 발생했습니다.");
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
   };
 
   return (
@@ -97,7 +118,13 @@ export default function AdminGuidesPage() {
 
         {/* Guides List */}
         <div className="space-y-4">
-          {filteredGuides.length === 0 ? (
+          {loading ? (
+            <Card>
+              <CardContent className="p-12 text-center">
+                <p className="text-gray-600">로딩 중...</p>
+              </CardContent>
+            </Card>
+          ) : filteredGuides.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -122,13 +149,15 @@ export default function AdminGuidesPage() {
                         </Badge>
                       </div>
                       <h3 className="text-xl font-bold text-gray-900 mb-2">{guide.title}</h3>
-                      <p className="text-gray-600 mb-4">{guide.description}</p>
+                      <p className="text-gray-600 mb-4 line-clamp-2">
+                        {guide.content.substring(0, 100)}...
+                      </p>
                       <div className="flex items-center gap-4 text-sm text-gray-500">
                         <div className="flex items-center gap-1">
                           <Eye className="w-4 h-4" />
-                          <span>조회 {guide.views.toLocaleString()}</span>
+                          <span>조회 {guide.views?.toLocaleString() || 0}</span>
                         </div>
-                        <span>작성일: {guide.createdAt}</span>
+                        <span>작성일: {formatDate(guide.created_at)}</span>
                       </div>
                     </div>
 

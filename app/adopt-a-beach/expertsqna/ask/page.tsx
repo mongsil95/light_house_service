@@ -13,7 +13,19 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, ChevronRight, FileText, HelpCircle, Home, Send, Upload } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import {
+  ArrowLeft,
+  ChevronRight,
+  FileText,
+  Globe,
+  HelpCircle,
+  Home,
+  Lock,
+  Send,
+  Upload,
+  X,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -22,10 +34,9 @@ import { useState } from "react";
 // POST /api/questions
 
 const categories = [
-  { value: "반려해변입양", label: "반려해변입양" },
-  { value: "정화활동", label: "정화활동" },
-  { value: "기금운영", label: "기금운영" },
-  { value: "행사참여", label: "행사참여" },
+  { value: "입양절차", label: "입양절차" },
+  { value: "활동계획", label: "활동계획" },
+  { value: "기금납부", label: "기금납부" },
   { value: "기타", label: "기타" },
 ];
 
@@ -37,25 +48,122 @@ export default function AskQuestionPage() {
     content: "",
     askedBy: "",
     email: "",
+    phone: "",
     isPrivate: false,
   });
+  const [submitting, setSubmitting] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // TODO: DB팀 - API 연동
-    console.log("질문 제출:", formData);
-    console.log("첨부 파일:", files);
-
-    // 임시: 성공 알림 후 목록으로 이동
-    alert("질문이 성공적으로 등록되었습니다!");
-    router.push("/adopt-a-beach/expertsqna");
-  };
+  const [uploadingFiles, setUploadingFiles] = useState(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFiles(Array.from(e.target.files));
+      const newFiles = Array.from(e.target.files);
+      // 최대 5개 파일, 각 5MB 제한
+      const validFiles = newFiles.filter((file) => {
+        if (file.size > 5 * 1024 * 1024) {
+          alert(`${file.name}은(는) 5MB를 초과합니다.`);
+          return false;
+        }
+        return true;
+      });
+
+      if (files.length + validFiles.length > 5) {
+        alert("최대 5개의 파일만 첨부할 수 있습니다.");
+        return;
+      }
+
+      setFiles([...files, ...validFiles]);
+    }
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(files.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async (): Promise<string[]> => {
+    if (files.length === 0) return [];
+
+    const uploadedUrls: string[] = [];
+    setUploadingFiles(true);
+
+    try {
+      for (const file of files) {
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = `qna-attachments/${fileName}`;
+
+        const { data, error } = await supabase.storage.from("public-files").upload(filePath, file);
+
+        if (error) throw error;
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("public-files").getPublicUrl(filePath);
+
+        uploadedUrls.push(publicUrl);
+      }
+
+      return uploadedUrls;
+    } catch (error) {
+      console.error("File upload error:", error);
+      throw new Error("파일 업로드 중 오류가 발생했습니다.");
+    } finally {
+      setUploadingFiles(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (
+      !formData.category ||
+      !formData.title.trim() ||
+      !formData.content.trim() ||
+      !formData.askedBy.trim() ||
+      !formData.email.trim()
+    ) {
+      alert("모든 필수 항목을 입력해주세요.");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+
+      // 파일 업로드
+      const attachmentUrls = await uploadFiles();
+
+      // API 라우트를 통해 질문 등록 (이메일 알림 포함)
+      const response = await fetch("/api/admin/qna", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          category: formData.category,
+          author_name: formData.askedBy,
+          author_email: formData.email,
+          author_phone: formData.phone || null,
+          status: "pending",
+          is_public: !formData.isPrivate,
+          attachment_urls: attachmentUrls.length > 0 ? attachmentUrls : null,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "질문 등록에 실패했습니다.");
+      }
+
+      alert("질문이 성공적으로 등록되었습니다!");
+      router.push("/adopt-a-beach/expertsqna");
+    } catch (error) {
+      console.error("Error submitting question:", error);
+      alert("질문 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -160,7 +268,7 @@ export default function AskQuestionPage() {
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                     placeholder="질문 제목을 입력하세요"
                     required
-                    className="text-base"
+                    className="text-base placeholder:text-gray-400"
                   />
                   <p className="text-sm text-gray-500 mt-2">{formData.title.length}/100자</p>
                 </div>
@@ -177,7 +285,7 @@ export default function AskQuestionPage() {
                     placeholder="질문 내용을 자세히 작성해주세요"
                     required
                     rows={10}
-                    className="text-base"
+                    className="text-base placeholder:text-gray-400"
                   />
                   <p className="text-sm text-gray-500 mt-2">{formData.content.length}/1000자</p>
                 </div>
@@ -194,7 +302,7 @@ export default function AskQuestionPage() {
                     onChange={(e) => setFormData({ ...formData, askedBy: e.target.value })}
                     placeholder="이름 또는 단체명을 입력하세요"
                     required
-                    className="text-base"
+                    className="text-base placeholder:text-gray-400"
                   />
                 </div>
 
@@ -210,17 +318,98 @@ export default function AskQuestionPage() {
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="답변 알림을 받을 이메일을 입력하세요"
                     required
-                    className="text-base"
+                    className="text-base placeholder:text-gray-400"
                   />
                   <p className="text-sm text-gray-500 mt-2">
                     답변이 등록되면 이메일로 알림을 보내드립니다
                   </p>
                 </div>
 
+                {/* Phone */}
+                <div>
+                  <Label htmlFor="phone" className="text-base font-bold text-gray-900 mb-2 block">
+                    연락처 <span className="text-gray-500 text-sm font-normal">(선택)</span>
+                  </Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    placeholder="010-0000-0000"
+                    className="text-base placeholder:text-gray-400"
+                  />
+                </div>
+
+                {/* Privacy Toggle */}
+                <div>
+                  <Label className="text-base font-bold text-gray-900 mb-2 block">공개 설정</Label>
+                  <div className="flex items-center justify-between p-6 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border-2 border-gray-200">
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          formData.isPrivate
+                            ? "bg-orange-100 ring-2 ring-orange-300"
+                            : "bg-green-100 ring-2 ring-green-300"
+                        }`}
+                      >
+                        {formData.isPrivate ? (
+                          <Lock className="w-8 h-8 text-orange-600" />
+                        ) : (
+                          <Globe className="w-8 h-8 text-green-600" />
+                        )}
+                      </div>
+                      <div>
+                        <p
+                          className={`font-bold text-lg transition-colors duration-300 ${
+                            formData.isPrivate ? "text-orange-700" : "text-green-700"
+                          }`}
+                        >
+                          {formData.isPrivate ? "🔒 비공개 질문" : "🌐 공개 질문"}
+                        </p>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {formData.isPrivate
+                            ? "질문과 답변이 본인에게만 표시됩니다"
+                            : "질문과 답변이 다른 사용자에게도 표시됩니다"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="relative">
+                        <div
+                          className={`w-20 h-10 rounded-full transition-all duration-300 cursor-pointer ${
+                            formData.isPrivate ? "bg-orange-400" : "bg-green-500"
+                          }`}
+                          onClick={() =>
+                            setFormData({ ...formData, isPrivate: !formData.isPrivate })
+                          }
+                        >
+                          <div
+                            className={`absolute top-1 transition-all duration-300 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center ${
+                              formData.isPrivate ? "left-1" : "left-11"
+                            }`}
+                          >
+                            <span className="text-xs font-bold">
+                              {formData.isPrivate ? "OFF" : "ON"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <span
+                        className={`text-sm font-bold transition-colors duration-300 ${
+                          !formData.isPrivate ? "text-green-600" : "text-orange-600"
+                        }`}
+                      >
+                        {!formData.isPrivate ? "공개" : "비공개"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
                 {/* File Upload */}
                 <div>
                   <Label htmlFor="file" className="text-base font-bold text-gray-900 mb-2 block">
-                    파일 첨부 <span className="text-gray-500 text-sm font-normal">(선택)</span>
+                    파일 첨부{" "}
+                    <span className="text-gray-500 text-sm font-normal">(선택, 최대 5개)</span>
                   </Label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
                     <Upload className="w-8 h-8 mx-auto mb-3 text-gray-400" />
@@ -238,23 +427,32 @@ export default function AskQuestionPage() {
                       className="hidden"
                       accept="image/*,.pdf,.doc,.docx"
                     />
-                    <p className="text-xs text-gray-500 mt-2">이미지, PDF, 문서 파일 (최대 10MB)</p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      이미지, PDF, 문서 파일 (각 파일 최대 10MB)
+                    </p>
                   </div>
                   {files.length > 0 && (
                     <div className="mt-3 space-y-2">
                       {files.map((file, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between bg-gray-50 p-3 rounded-lg"
+                          className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-200"
                         >
-                          <span className="text-sm text-gray-700">{file.name}</span>
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <FileText className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                            <span className="text-xs text-gray-500 flex-shrink-0">
+                              ({(file.size / 1024 / 1024).toFixed(2)}MB)
+                            </span>
+                          </div>
                           <Button
                             type="button"
                             variant="ghost"
                             size="sm"
-                            onClick={() => setFiles(files.filter((_, i) => i !== index))}
+                            onClick={() => removeFile(index)}
+                            className="flex-shrink-0"
                           >
-                            삭제
+                            <X className="w-4 h-4" />
                           </Button>
                         </div>
                       ))}
@@ -286,12 +484,17 @@ export default function AskQuestionPage() {
                       취소
                     </Button>
                   </Link>
-                  <Button type="submit" className="flex-1 bg-blue-300 hover:bg-blue-400" size="lg">
+                  <Button
+                    type="submit"
+                    className="flex-1 bg-blue-300 hover:bg-blue-400"
+                    size="lg"
+                    disabled={submitting || uploadingFiles}
+                  >
                     <Send className="w-4 h-4 mr-2" />
-                    질문 등록
+                    {uploadingFiles ? "파일 업로드 중..." : submitting ? "등록 중..." : "질문 등록"}
                   </Button>
                 </div>
-                
+
                 {/* Response Time Notice */}
                 <div className="mt-4 text-center">
                   <p className="text-sm text-gray-500">

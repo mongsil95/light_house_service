@@ -2,10 +2,67 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BarChart3, Calendar, FileText, MessageSquare, Settings } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, FileText, MessageSquare, Settings, ArrowRight } from "lucide-react";
+import { createClient } from "@/lib/supabase";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function AdminDashboard() {
+  const [counts, setCounts] = useState({
+    guides: 0,
+    resources: 0,
+    inquiries: 0,
+    consultations: 0,
+    qna: 0,
+  });
+
+  useEffect(() => {
+    fetchCounts();
+  }, []);
+
+  const fetchCounts = async () => {
+    try {
+      const supabase = createClient();
+
+      // 가이드 수
+      const { count: guidesCount } = await supabase
+        .from("resources")
+        .select("*", { count: "exact", head: true })
+        .eq("category", "가이드");
+
+      // 자료 게시판 수
+      const { count: resourcesCount } = await supabase
+        .from("resources")
+        .select("*", { count: "exact", head: true });
+
+      // 일반문의 수
+      const { count: inquiriesCount } = await supabase
+        .from("inquiries")
+        .select("*", { count: "exact", head: true });
+
+      // 등대무전 신청 수
+      const { count: consultationsCount } = await supabase
+        .from("adoption_applications")
+        .select("*", { count: "exact", head: true });
+
+      // Q&A 수
+      const { count: qnaCount } = await supabase
+        .from("qna")
+        .select("*", { count: "exact", head: true });
+
+      setCounts({
+        guides: guidesCount || 0,
+        resources: resourcesCount || 0,
+        inquiries: inquiriesCount || 0,
+        consultations: consultationsCount || 0,
+        qna: qnaCount || 0,
+      });
+    } catch (error) {
+      console.error("Error fetching counts:", error);
+    }
+  };
+
   const adminSections = [
     {
       title: "가이드 관리",
@@ -14,6 +71,7 @@ export default function AdminDashboard() {
       href: "/admin/guides",
       color: "bg-blue-50 text-blue-600",
       hoverColor: "hover:bg-blue-100",
+      count: counts.guides,
     },
     {
       title: "자료 게시판 관리",
@@ -22,6 +80,7 @@ export default function AdminDashboard() {
       href: "/admin/resources",
       color: "bg-cyan-50 text-cyan-600",
       hoverColor: "hover:bg-cyan-100",
+      count: counts.resources,
     },
     {
       title: "일반문의 히스토리",
@@ -30,6 +89,7 @@ export default function AdminDashboard() {
       href: "/admin/inquiry-history",
       color: "bg-green-50 text-green-600",
       hoverColor: "hover:bg-green-100",
+      count: counts.inquiries,
     },
     {
       title: "등대무전 신청 현황",
@@ -38,6 +98,16 @@ export default function AdminDashboard() {
       href: "/admin/consultation-requests",
       color: "bg-purple-50 text-purple-600",
       hoverColor: "hover:bg-purple-100",
+      count: counts.consultations,
+    },
+    {
+      title: "전문가 Q&A 관리",
+      description: "반려해변 전문가 Q&A를 작성하고 답변을 관리할 수 있습니다.",
+      icon: MessageSquare,
+      href: "/admin/qna",
+      color: "bg-orange-50 text-orange-600",
+      hoverColor: "hover:bg-orange-100",
+      count: counts.qna,
     },
   ];
 
@@ -55,45 +125,6 @@ export default function AdminDashboard() {
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <Card className="border-l-4 border-l-blue-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 font-[Cafe24_Ssurround]">전체 자료</p>
-                  <p className="text-3xl text-gray-900 font-[Cafe24_Ssurround]">24</p>
-                </div>
-                <BarChart3 className="w-8 h-8 text-blue-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-green-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 font-[Cafe24_Ssurround]">일반문의 대화</p>
-                  <p className="text-3xl text-gray-900 font-[Cafe24_Ssurround]">156</p>
-                </div>
-                <MessageSquare className="w-8 h-8 text-green-500" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-l-4 border-l-purple-500">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 font-[Cafe24_Ssurround]">등대무전 신청</p>
-                  <p className="text-3xl text-gray-900 font-[Cafe24_Ssurround]">42</p>
-                </div>
-                <Calendar className="w-8 h-8 text-purple-500" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Admin Sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {adminSections.map((section) => {
@@ -104,22 +135,33 @@ export default function AdminDashboard() {
                   className={`h-full transition-all duration-300 hover:shadow-lg ${section.hoverColor} cursor-pointer`}
                 >
                   <CardContent className="p-6">
-                    <div className="mb-4">
+                    <div className="flex items-start justify-between mb-4">
                       <div
                         className={`inline-flex items-center justify-center w-12 h-12 rounded-lg ${section.color}`}
                       >
                         <Icon className="w-6 h-6" />
                       </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="gap-1 font-[Cafe24_Ssurround]"
+                        onClick={(e) => e.preventDefault()}
+                      >
+                        관리하기
+                        <ArrowRight className="w-4 h-4" />
+                      </Button>
                     </div>
-                    <h3 className="text-xl text-gray-900 mb-2 font-[Cafe24_Ssurround]">
-                      {section.title}
-                    </h3>
-                    <p className="text-gray-600 text-sm font-[Cafe24_Ssurround] mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <h3 className="text-xl text-gray-900 font-[Cafe24_Ssurround]">
+                        {section.title}
+                      </h3>
+                      <Badge variant="secondary" className="font-[Cafe24_Ssurround]">
+                        {section.count}건
+                      </Badge>
+                    </div>
+                    <p className="text-gray-600 text-sm font-[Cafe24_Ssurround]">
                       {section.description}
                     </p>
-                    <Button variant="ghost" className="w-full font-[Cafe24_Ssurround]">
-                      관리하기 →
-                    </Button>
                   </CardContent>
                 </Card>
               </Link>
