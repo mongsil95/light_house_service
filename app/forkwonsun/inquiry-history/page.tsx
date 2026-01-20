@@ -148,7 +148,7 @@ export default function InquiryHistory() {
         {/* Header */}
         <div className="mb-8">
           <Link
-            href="/admin"
+            href="/forkwonsun"
             className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-[Cafe24_Ssurround]"
           >
             <ArrowLeft className="w-4 h-4" />

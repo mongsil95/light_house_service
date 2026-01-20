@@ -7,6 +7,7 @@ QnA 파일 업로드 시 발생하는 `new row violates row-level security polic
 ## 1. Supabase 대시보드에서 Storage 설정
 
 ### 1.1 버킷 생성
+
 1. Supabase 대시보드 접속
 2. 좌측 메뉴에서 **Storage** 선택
 3. **New bucket** 클릭
@@ -66,17 +67,20 @@ WITH CHECK (bucket_id = 'public-files');
 5. 정책 추가:
 
 **INSERT 정책:**
+
 - Policy name: `Anyone can upload`
 - Target roles: `public`
 - USING expression: (비워둠)
 - WITH CHECK expression: `bucket_id = 'public-files'`
 
 **SELECT 정책:**
+
 - Policy name: `Anyone can view`
 - Target roles: `public`
 - USING expression: `bucket_id = 'public-files'`
 
 **DELETE 정책 (선택사항):**
+
 - Policy name: `Anyone can delete`
 - Target roles: `public`
 - USING expression: `bucket_id = 'public-files'`
@@ -84,11 +88,13 @@ WITH CHECK (bucket_id = 'public-files');
 ## 2. 설정 확인
 
 ### 2.1 Storage 정책 확인
+
 ```sql
 SELECT * FROM pg_policies WHERE tablename = 'objects';
 ```
 
 ### 2.2 버킷 확인
+
 ```sql
 SELECT * FROM storage.buckets WHERE id = 'public-files';
 ```
@@ -102,32 +108,35 @@ SELECT * FROM storage.buckets WHERE id = 'public-files';
 ## 4. 보안 고려사항
 
 ### 현재 설정 (누구나 업로드 가능)
+
 - 장점: 사용자 인증 없이 바로 사용 가능
 - 단점: 스팸 파일 업로드 가능
 
 ### 보안 강화 옵션
 
 #### Option 1: 파일 크기 제한
+
 ```sql
 CREATE POLICY "File size limit 5MB"
 ON storage.objects
 FOR INSERT
 TO public
 WITH CHECK (
-  bucket_id = 'public-files' 
+  bucket_id = 'public-files'
   AND (storage.foldername(name))[1] = 'qna-attachments'
   AND octet_length(decode(encode(metadata->'size', 'escape'), 'escape')) < 5242880
 );
 ```
 
 #### Option 2: 파일 타입 제한
+
 ```sql
 CREATE POLICY "Only allow specific file types"
 ON storage.objects
 FOR INSERT
 TO public
 WITH CHECK (
-  bucket_id = 'public-files' 
+  bucket_id = 'public-files'
   AND (
     lower((storage.extension(name))) IN ('jpg', 'jpeg', 'png', 'pdf', 'doc', 'docx', 'hwp')
   )
@@ -135,6 +144,7 @@ WITH CHECK (
 ```
 
 #### Option 3: 인증된 사용자만 업로드
+
 ```sql
 -- 기존 정책 삭제
 DROP POLICY IF EXISTS "Anyone can upload to public-files" ON storage.objects;
@@ -152,6 +162,7 @@ WITH CHECK (bucket_id = 'public-files');
 ### 여전히 에러가 발생하는 경우
 
 1. **정책 충돌 확인**
+
 ```sql
 -- 기존 정책 모두 삭제
 DROP POLICY IF EXISTS "Anyone can upload to public-files" ON storage.objects;
@@ -167,14 +178,16 @@ WITH CHECK (bucket_id = 'public-files');
 ```
 
 2. **캐시 삭제**
+
 - 브라우저 캐시 삭제
 - 개발 서버 재시작
 
 3. **Supabase 클라이언트 확인**
+
 ```typescript
 // lib/supabase.ts에서 올바른 URL과 anon key 확인
-console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
-console.log('Supabase Key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...');
+console.log("Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
+console.log("Supabase Key:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + "...");
 ```
 
 ## 6. 추가 참고자료

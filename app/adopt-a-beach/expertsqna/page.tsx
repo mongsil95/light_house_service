@@ -1,5 +1,6 @@
 "use client";
 
+import CategorySidebar from "@/components/CategorySidebar";
 import Navigation from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,10 +14,13 @@ import {
 import { supabase } from "@/lib/supabase";
 import { ChevronRight, Eye, HelpCircle, ThumbsUp } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AdoptABeachCommunityPage() {
-  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam || "전체");
   const [sortOrder, setSortOrder] = useState("최근 답변순");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExpert, setSelectedExpert] = useState<any | null>(null);
@@ -25,6 +29,73 @@ export default function AdoptABeachCommunityPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  const extractText = (html: string) => {
+    // HTML 태그 제거
+    let text = html.replace(/<[^>]*>/g, "");
+    // 마크다운 문법 제거
+    text = text.replace(/#{1,6}\s/g, ""); // 헤더 (#, ##, ###)
+    text = text.replace(/\*\*([^*]+)\*\*/g, "$1"); // 굵게 (**text**)
+    text = text.replace(/__([^_]+)__/g, "$1"); // 굵게 (__text__)
+    text = text.replace(/\*([^*]+)\*/g, "$1"); // 기울임 (*text*)
+    text = text.replace(/_([^_]+)_/g, "$1"); // 기울임 (_text_)
+    text = text.replace(/~~([^~]+)~~/g, "$1"); // 취소선 (~~text~~)
+    text = text.replace(/`([^`]+)`/g, "$1"); // 인라인 코드 (`code`)
+    text = text.replace(/^\s*[-*+]\s/gm, ""); // 리스트 (-,*,+)
+    text = text.replace(/^\s*\d+\.\s/gm, ""); // 숫자 리스트 (1. 2.)
+    text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1"); // 링크 [text](url)
+    // 연속된 공백과 줄바꿈 정리
+    return text.replace(/\s+/g, " ").trim();
+  };
+
+  // Q&A 카테고리 구조
+  const qnaCategories = [
+    {
+      label: "입양 관련",
+      value: "입양관련",
+      subItems: [
+        { label: "전체", value: "입양관련" },
+        { label: "입양 절차", value: "입양절차" },
+        { label: "참여 조건", value: "참여조건" },
+        { label: "계약 관련", value: "계약관련" },
+      ],
+    },
+    {
+      label: "활동 운영",
+      value: "활동운영",
+      subItems: [
+        { label: "전체", value: "활동운영" },
+        { label: "활동 계획", value: "활동계획" },
+        { label: "정화 활동", value: "정화활동" },
+        { label: "캠페인", value: "캠페인" },
+        { label: "보고서 작성", value: "보고서작성" },
+      ],
+    },
+    {
+      label: "지원/기금",
+      value: "지원기금",
+      subItems: [
+        { label: "전체", value: "지원기금" },
+        { label: "기금 납부", value: "기금납부" },
+        { label: "지원 프로그램", value: "지원프로그램" },
+        { label: "혜택", value: "혜택" },
+      ],
+    },
+    {
+      label: "기타",
+      value: "기타",
+      subItems: [
+        { label: "전체", value: "기타" },
+        { label: "일반 문의", value: "일반문의" },
+        { label: "제안", value: "제안" },
+      ],
+    },
+  ];
+
+  // URL 파라미터 변경 감지
+  useEffect(() => {
+    setSelectedCategory(categoryParam || "전체");
+  }, [categoryParam]);
 
   // Supabase에서 Q&A 데이터 가져오기
   useEffect(() => {
@@ -35,6 +106,7 @@ export default function AdoptABeachCommunityPage() {
           .from("qna")
           .select("*")
           .eq("is_public", true)
+          .eq("status", "answered")
           .order("created_at", { ascending: false });
 
         if (error) throw error;
@@ -55,8 +127,8 @@ export default function AdoptABeachCommunityPage() {
               })
               .replace(/\. /g, ".")
               .replace(/\.$/, ""),
-            expert: qa.author_name,
-            expertImage: getExpertImage(qa.author_name),
+            expert: "익명",
+            expertImage: "👤",
             answered: qa.status === "answered",
             content: qa.content,
           }));
@@ -208,77 +280,71 @@ export default function AdoptABeachCommunityPage() {
       <main className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-6">
           {/* 헤더 */}
-          <div className="mb-12">
+          <div className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-2">등대지기 Q&A</h1>
+            <p className="text-gray-600">반려해변 관련 궁금한 점을 전문가에게 물어보세요</p>
           </div>
 
-          {/* 카테고리 필터 */}
-          <div className="flex items-center gap-3 mb-8 overflow-x-auto pb-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-full whitespace-nowrap font-semibold transition-all border-2 ${
-                  selectedCategory === category.id
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-blue-300 hover:bg-blue-50"
-                }`}
-              >
-                <span className="text-xl">{category.icon}</span>
-                <span>{category.label}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 메인 콘텐츠 */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* 왼쪽 사이드바 */}
             <div className="lg:col-span-2">
+              <CategorySidebar
+                categories={qnaCategories}
+                selectedCategory={selectedCategory}
+                basePath="/adopt-a-beach/expertsqna"
+              />
+            </div>
+
+            {/* 메인 콘텐츠 */}
+            <div className="lg:col-span-7">
+              {/* 검색 및 정렬 */}
+              <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+                  <div className="flex-1 w-full">
+                    <input
+                      type="text"
+                      placeholder="질문 검색..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  <select
+                    value={sortOrder}
+                    onChange={(e) => setSortOrder(e.target.value)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option>최근 답변순</option>
+                    <option>인기순</option>
+                  </select>
+                </div>
+              </div>
               {/* 인기 질문 */}
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                  🔍 오늘 인기있는 질문
+              <div className="mb-8">
+                <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  🔥 인기 질문
                 </h2>
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl p-6 border border-blue-100">
-                  <p className="text-sm text-gray-600 mb-4">
-                    {new Date()
-                      .toLocaleDateString("ko-KR", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        weekday: "short",
-                      })
-                      .replace(/\. /g, ". ")}{" "}
-                    실시간 기준
-                  </p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {popularQuestions.map((qa, idx) => (
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-100">
+                  <div className="grid grid-cols-1 gap-2">
+                    {popularQuestions.slice(0, 3).map((qa, idx) => (
                       <Link
                         key={qa.id}
                         href={`/adopt-a-beach/expertsqna/${qa.id}`}
-                        className="flex items-start gap-3 p-4 bg-white rounded-lg hover:shadow-md transition-all group"
+                        className="flex items-start gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-all group"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-sm">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs">
                           {idx + 1}
                         </div>
-                        <p className="text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">
-                          {qa.question}
+                        <p className="text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1 flex-1">
+                          {extractText(qa.question)}
                         </p>
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                          <Eye className="w-3 h-3" />
+                          {qa.views}
+                        </span>
                       </Link>
                     ))}
                   </div>
-                </div>
-              </div>
-
-              {/* 검색 바 */}
-              <div className="mb-6">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="질문을 검색하세요..."
-                    className="w-full px-6 py-4 pr-12 rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:outline-none text-gray-900 placeholder-gray-400"
-                  />
-                  <HelpCircle className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 </div>
               </div>
 
@@ -342,8 +408,8 @@ export default function AdoptABeachCommunityPage() {
                                   {qa.category}
                                 </Badge>
                               </div>
-                              <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
-                                {qa.question}
+                              <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors truncate">
+                                {extractText(qa.question)}
                               </h3>
                               <div className="flex items-center justify-between text-sm text-gray-500">
                                 <div className="flex items-center gap-4">
@@ -354,14 +420,6 @@ export default function AdoptABeachCommunityPage() {
                                   <span>· {qa.date}</span>
                                 </div>
                                 <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600 transition-colors" />
-                              </div>
-                              <div className="mt-3 flex items-center gap-2 text-sm">
-                                <div className="flex items-center gap-2 text-blue-600">
-                                  <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center text-sm">
-                                    {qa.expertImage}
-                                  </div>
-                                  <span className="font-semibold">{qa.expert}</span>
-                                </div>
                               </div>
                             </div>
                           </div>
@@ -426,13 +484,13 @@ export default function AdoptABeachCommunityPage() {
               )}
             </div>
 
-            {/* 사이드바 */}
-            <div className="space-y-8">
+            {/* 오른쪽 사이드바 */}
+            <div className="lg:col-span-3 space-y-8">
               {/* 질문하기 배너 */}
               <div className="bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl p-8 text-white text-center sticky top-24">
                 <div className="mb-4">
                   <HelpCircle className="w-16 h-16 mx-auto mb-4" />
-                  <h3 className="text-xl font-bold mb-2">찾으시는 질문이 없으신가요?</h3>
+                  <h3 className="text-ml font-bold mb-2">찾으시는 질문이 없으신가요?</h3>
                   <p className="text-blue-50 text-sm mb-6">등대지기에게 질문해보세요</p>
                 </div>
                 <Link href="/adopt-a-beach/expertsqna/ask">
@@ -446,9 +504,6 @@ export default function AdoptABeachCommunityPage() {
               <div>
                 <div className="mb-6">
                   <h3 className="text-xl font-bold text-gray-900 mb-2">등대지기 소개</h3>
-                  <div className="text-xs text-gray-500">
-                    💡 답변 50개 이상: 마스터 / 30개 이상: 전문가 / 10개 이상: 숙련가
-                  </div>
                 </div>
                 <div className="space-y-4">
                   {experts.map((expert) => (
@@ -483,7 +538,7 @@ export default function AdoptABeachCommunityPage() {
                     </Card>
                   ))}
                   <Link href="/adopt-a-beach/expertsqna/experts">
-                    <button className="w-full px-4 py-3 text-blue-600 font-semibold hover:bg-blue-50 rounded-lg transition-colors border-2 border-blue-200">
+                    <button className="hidden w-full px-4 py-3 text-blue-600 font-semibold hover:bg-blue-50 rounded-lg transition-colors border-2 border-blue-200">
                       전문가 전체보기 →
                     </button>
                   </Link>

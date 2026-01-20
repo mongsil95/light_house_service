@@ -14,10 +14,10 @@ import {
 import { Eye, Save } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const RichEditor = dynamic(() => import("@/components/ToastEditor"), {
+const RichEditor = dynamic(() => import("@/components/TipTapEditor"), {
   ssr: false,
   loading: () => (
     <div className="h-[600px] border border-gray-300 rounded-md flex items-center justify-center">
@@ -26,8 +26,12 @@ const RichEditor = dynamic(() => import("@/components/ToastEditor"), {
   ),
 });
 
-export default function CreateGuidePage() {
+export default function EditGuidePage() {
+  const params = useParams();
   const router = useRouter();
+  const id = params.id as string;
+
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -40,7 +44,49 @@ export default function CreateGuidePage() {
     setMounted(true);
   }, []);
 
-  const categories = ["가이드", "공지", "FAQ", "시설"];
+  const categories = [
+    "입양안내",
+    "입양절차",
+    "신청방법",
+    "자격요건",
+    "활동가이드",
+    "활동매뉴얼",
+    "안전수칙",
+    "사례공유",
+    "보고서자료",
+    "활동보고서",
+    "통계자료",
+    "연구자료",
+    "공지",
+    "중요공지",
+    "일반공지",
+  ];
+
+  // Load guide data
+  useEffect(() => {
+    const fetchGuide = async () => {
+      try {
+        const response = await fetch(`/api/forkwonsun/guides/${id}`);
+        if (!response.ok) throw new Error("Failed to fetch guide");
+
+        const result = await response.json();
+        const guide = result.data;
+
+        setCategory(guide.category || "");
+        setTitle(guide.title || "");
+        setContent(guide.content || "");
+      } catch (error) {
+        console.error("Load error:", error);
+        alert("가이드를 불러오는 중 오류가 발생했습니다.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchGuide();
+    }
+  }, [id]);
 
   const handleSave = async (status: "draft" | "published") => {
     if (!category) {
@@ -51,6 +97,7 @@ export default function CreateGuidePage() {
       alert("제목을 입력해주세요.");
       return;
     }
+
     if (!content?.trim()) {
       alert("내용을 입력해주세요.");
       return;
@@ -68,14 +115,14 @@ export default function CreateGuidePage() {
       const guideData = {
         category,
         title,
-        description: description || title, // description이 비어있으면 title 사용
+        description: description || title,
         content,
         status,
         author: "관리자",
       };
 
-      const response = await fetch("/api/admin/guides", {
-        method: "POST",
+      const response = await fetch(`/api/forkwonsun/guides/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -83,11 +130,11 @@ export default function CreateGuidePage() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to save guide");
+        throw new Error("Failed to update guide");
       }
 
       alert(status === "published" ? "가이드가 발행되었습니다." : "가이드가 임시저장되었습니다.");
-      router.push("/admin/guides");
+      router.push("/forkwonsun/guides");
     } catch (error) {
       console.error("Save error:", error);
       alert("저장 중 오류가 발생했습니다.");
@@ -96,20 +143,32 @@ export default function CreateGuidePage() {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-8">
+        <div className="container mx-auto max-w-5xl px-4">
+          <div className="text-center py-12">
+            <p className="text-gray-600">가이드를 불러오는 중...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mb-8 flex items-center justify-between">
           <div>
             <Link
-              href="/admin/guides"
+              href="/forkwonsun/guides"
               className="mb-4 inline-block text-sm text-gray-600 hover:text-gray-900"
             >
               ← 돌아가기
             </Link>
-            <h1 className="text-3xl font-bold">가이드 작성</h1>
+            <h1 className="text-3xl font-bold">가이드 수정</h1>
             <p className="mt-2 text-gray-600">
-              마크다운 문법을 사용해서 자유롭게 가이드를 작성하세요
+              마크다운 문법을 사용해서 자유롭게 가이드를 수정하세요
             </p>
           </div>
           <div className="flex gap-2">
@@ -160,8 +219,13 @@ export default function CreateGuidePage() {
               <div className="space-y-2">
                 <Label>내용 *</Label>
                 <div className="border border-gray-300 rounded-md overflow-hidden">
-                  {mounted && <RichEditor value={content} onChange={setContent} height="600px" />}
+                  {mounted && content !== undefined && (
+                    <RichEditor content={content} onChange={setContent} />
+                  )}
                 </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  * 배민 스타일의 템플릿을 활용하여 가이드를 작성할 수 있습니다.
+                </p>
               </div>
             </div>
           </CardContent>

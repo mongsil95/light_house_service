@@ -346,3 +346,19 @@ BEGIN
     ALTER TABLE qna ADD COLUMN attachment_urls TEXT[];
   END IF;
 END $$;
+
+-- ============================================
+-- 검색 기록 테이블
+-- ============================================
+CREATE TABLE IF NOT EXISTS search_history (
+  id BIGSERIAL PRIMARY KEY,
+  query VARCHAR(500) NOT NULL,
+  result_count INTEGER DEFAULT 0,
+  ip_address VARCHAR(45),
+  user_agent TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 검색 기록 인덱스
+CREATE INDEX IF NOT EXISTS idx_search_history_query ON search_history(query);
+CREATE INDEX IF NOT EXISTS idx_search_history_created ON search_history(created_at DESC);

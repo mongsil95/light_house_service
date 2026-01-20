@@ -185,7 +185,7 @@ export default function ViewQnAPage() {
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <Link href="/admin/qna">
+            <Link href="/forkwonsun/qna">
               <Button variant="ghost" className="mb-4 gap-2 font-[Cafe24_Ssurround]">
                 <ArrowLeft className="w-4 h-4" />
                 목록으로
@@ -193,7 +193,7 @@ export default function ViewQnAPage() {
             </Link>
             <h1 className="text-4xl text-gray-900 font-[Cafe24_Ssurround] mb-2">Q&A 상세보기</h1>
           </div>
-          <Link href={`/admin/qna/${qnaId}/edit`}>
+          <Link href={`/forkwonsun/qna/${qnaId}/edit`}>
             <Button className="gap-2 font-[Cafe24_Ssurround]">
               <Edit className="w-4 h-4" />
               수정하기
@@ -242,9 +242,7 @@ export default function ViewQnAPage() {
           <CardContent>
             <div
               className="prose prose-sm sm:prose lg:prose-lg max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
-              style={{
-                fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-              }}
+              style={{fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif"}}
               dangerouslySetInnerHTML={{ __html: qna.content }}
             />
           </CardContent>

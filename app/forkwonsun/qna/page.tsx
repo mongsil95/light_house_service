@@ -60,7 +60,7 @@ export default function AdminQnAPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedQnA, setSelectedQnA] = useState<number | null>(null);
 
-  const categories = ["전체", "입양절차", "활동계획", "기금납부", "기타"];
+  const categories = ["전체", "입양관련", "활동운영", "지원기금", "기타"];
   const statuses = ["전체", "pending", "answered", "closed"];
 
   useEffect(() => {
@@ -154,7 +154,7 @@ export default function AdminQnAPage() {
                 반려해변 전문가 Q&A를 작성하고 답변을 관리하세요
               </p>
             </div>
-            <Link href="/admin/qna/create">
+            <Link href="/forkwonsun/qna/create">
               <Button size="lg" className="gap-2 font-[Cafe24_Ssurround]">
                 <Plus className="w-5 h-5" />새 Q&A 작성
               </Button>
@@ -279,7 +279,7 @@ export default function AdminQnAPage() {
                       <TableCell className="font-[Cafe24_Ssurround]">{qna.id}</TableCell>
                       <TableCell className="font-[Cafe24_Ssurround] max-w-md truncate">
                         <Link
-                          href={`/admin/qna/${qna.id}`}
+                          href={`/forkwonsun/qna/${qna.id}`}
                           className="hover:text-blue-600 hover:underline cursor-pointer"
                         >
                           {qna.title}
@@ -304,7 +304,7 @@ export default function AdminQnAPage() {
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-center gap-2">
-                          <Link href={`/admin/qna/${qna.id}/edit`}>
+                          <Link href={`/forkwonsun/qna/${qna.id}/edit`}>
                             <Button variant="ghost" size="sm" className="gap-1">
                               <Edit className="w-4 h-4" />
                             </Button>

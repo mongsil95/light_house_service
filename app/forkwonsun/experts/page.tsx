@@ -102,7 +102,7 @@ export default function AdminExpertsPage() {
               <h1 className="text-4xl text-gray-900 font-[Cafe24_Ssurround] mb-2">전문가 관리</h1>
               <p className="text-gray-600 font-[Cafe24_Ssurround]">Q&A 전문가 정보를 관리하세요</p>
             </div>
-            <Link href="/admin/experts/create">
+            <Link href="/forkwonsun/experts/create">
               <Button size="lg" className="gap-2 font-[Cafe24_Ssurround]">
                 <Plus className="w-5 h-5" />새 전문가 추가
               </Button>
@@ -218,7 +218,7 @@ export default function AdminExpertsPage() {
                           )}
                         </div>
                         <div className="flex flex-col gap-2">
-                          <Link href={`/admin/experts/${expert.id}/edit`}>
+                          <Link href={`/forkwonsun/experts/${expert.id}/edit`}>
                             <Button variant="ghost" size="sm" className="gap-1">
                               <Edit className="w-4 h-4" />
                             </Button>

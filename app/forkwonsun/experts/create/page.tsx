@@ -9,28 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Plus, X } from "lucide-react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-interface Expert {
-  id: number;
-  name: string;
-  organization: string | null;
-  role: string;
-  description: string | null;
-  email: string | null;
-  specialty: string[] | null;
-  profile_image: string | null;
-  is_active: boolean;
-  display_order: number;
-}
-
-export default function EditExpertPage() {
-  const params = useParams();
+export default function CreateExpertPage() {
   const router = useRouter();
-  const id = params.id as string;
-
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -46,37 +29,6 @@ export default function EditExpertPage() {
   const [specialties, setSpecialties] = useState<string[]>([]);
 
   const categories = ["입양절차", "활동계획", "기금납부", "기타"];
-
-  useEffect(() => {
-    fetchExpert();
-  }, [id]);
-
-  const fetchExpert = async () => {
-    try {
-      const { data, error } = await supabase.from("experts").select("*").eq("id", id).single();
-
-      if (error) throw error;
-
-      if (data) {
-        setFormData({
-          name: data.name,
-          organization: data.organization || "",
-          role: data.role,
-          description: data.description || "",
-          email: data.email || "",
-          profile_image: data.profile_image || "",
-          is_active: data.is_active,
-          display_order: data.display_order,
-        });
-        setSpecialties(data.specialty || []);
-      }
-    } catch (error) {
-      console.error("Error fetching expert:", error);
-      alert("전문가 정보를 불러오는데 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const addSpecialty = (specialty: string) => {
     if (specialty && !specialties.includes(specialty)) {
@@ -100,59 +52,48 @@ export default function EditExpertPage() {
     try {
       setSaving(true);
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("experts")
-        .update({
-          name: formData.name,
-          organization: formData.organization || null,
-          role: formData.role,
-          description: formData.description || null,
-          email: formData.email || null,
-          specialty: specialties.length > 0 ? specialties : null,
-          profile_image: formData.profile_image || null,
-          is_active: formData.is_active,
-          display_order: formData.display_order,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", id);
+        .insert([
+          {
+            name: formData.name,
+            organization: formData.organization || null,
+            role: formData.role,
+            description: formData.description || null,
+            email: formData.email || null,
+            specialty: specialties.length > 0 ? specialties : null,
+            profile_image: formData.profile_image || null,
+            is_active: formData.is_active,
+            display_order: formData.display_order,
+          },
+        ])
+        .select();
 
       if (error) throw error;
 
-      alert("전문가 정보가 성공적으로 수정되었습니다.");
-      router.push("/admin/experts");
+      alert("전문가가 성공적으로 등록되었습니다.");
+      router.push("/forkwonsun/experts");
     } catch (error) {
-      console.error("Error updating expert:", error);
-      alert("전문가 정보 수정 중 오류가 발생했습니다.");
+      console.error("Error creating expert:", error);
+      alert("전문가 등록 중 오류가 발생했습니다.");
     } finally {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-24 pb-16">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center py-20">
-            <div className="text-xl text-gray-600 font-[Cafe24_Ssurround]">로딩 중...</div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-6">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin/experts">
+          <Link href="/forkwonsun/experts">
             <Button variant="ghost" className="mb-4 gap-2 font-[Cafe24_Ssurround]">
               <ArrowLeft className="w-4 h-4" />
               목록으로
             </Button>
           </Link>
-          <h1 className="text-4xl text-gray-900 font-[Cafe24_Ssurround] mb-2">전문가 정보 수정</h1>
-          <p className="text-gray-600 font-[Cafe24_Ssurround]">전문가 정보를 수정하세요</p>
+          <h1 className="text-4xl text-gray-900 font-[Cafe24_Ssurround] mb-2">새 전문가 추가</h1>
+          <p className="text-gray-600 font-[Cafe24_Ssurround]">전문가 정보를 입력하고 등록하세요</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -373,13 +314,13 @@ export default function EditExpertPage() {
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-4">
-            <Link href="/admin/experts">
+            <Link href="/forkwonsun/experts">
               <Button type="button" variant="outline" className="font-[Cafe24_Ssurround]">
                 취소
               </Button>
             </Link>
             <Button type="submit" disabled={saving} className="font-[Cafe24_Ssurround]">
-              {saving ? "저장 중..." : "수정 저장"}
+              {saving ? "저장 중..." : "전문가 등록"}
             </Button>
           </div>
         </form>

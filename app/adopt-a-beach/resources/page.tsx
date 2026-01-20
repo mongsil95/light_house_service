@@ -1,9 +1,11 @@
 "use client";
 
+import CategorySidebar from "@/components/CategorySidebar";
 import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eye, Filter, MessageCircle, Search, ThumbsUp } from "lucide-react";
+import { Eye, MessageCircle, Search, ThumbsUp } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Resource {
@@ -18,12 +20,60 @@ interface Resource {
 }
 
 export default function AdoptABeachResourcesPage() {
-  const [selectedCategory, setSelectedCategory] = useState("전체");
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const [selectedCategory, setSelectedCategory] = useState(categoryParam || "전체");
   const [searchTerm, setSearchTerm] = useState("");
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const categories = ["전체", "가이드", "공지", "FAQ", "시설"];
+  // 반려해변 가이드 카테고리 구조
+  const categories = [
+    {
+      label: "입양 안내",
+      value: "입양안내",
+      subItems: [
+        { label: "전체", value: "입양안내" },
+        { label: "입양 절차", value: "입양절차" },
+        { label: "입양 혜택", value: "입양혜택" },
+        { label: "참여 기관", value: "참여기관" },
+      ],
+    },
+    {
+      label: "활동 가이드",
+      value: "활동가이드",
+      subItems: [
+        { label: "전체", value: "활동가이드" },
+        { label: "정화 활동", value: "정화활동" },
+        { label: "캠페인", value: "캠페인" },
+        { label: "교육 프로그램", value: "교육프로그램" },
+      ],
+    },
+    {
+      label: "보고서/자료",
+      value: "보고서자료",
+      subItems: [
+        { label: "전체", value: "보고서자료" },
+        { label: "활동 보고서", value: "활동보고서" },
+        { label: "데이터 리포트", value: "데이터리포트" },
+        { label: "가이드북", value: "가이드북" },
+      ],
+    },
+    {
+      label: "공지사항",
+      value: "공지",
+      subItems: [
+        { label: "전체", value: "공지" },
+        { label: "일반 공지", value: "일반공지" },
+        { label: "행사 안내", value: "행사안내" },
+      ],
+    },
+  ];
+
+  // URL 파라미터 변경 감지
+  useEffect(() => {
+    setSelectedCategory(categoryParam || "전체");
+  }, [categoryParam]);
 
   // 데이터 로드
   useEffect(() => {
@@ -55,12 +105,6 @@ export default function AdoptABeachResourcesPage() {
     }
   };
 
-  // 카테고리별 개수 계산
-  const getCategoryCount = (category: string) => {
-    if (category === "전체") return resources.length;
-    return resources.filter((r) => r.category === category).length;
-  };
-
   // 날짜 포맷팅
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("ko-KR", {
@@ -79,44 +123,22 @@ export default function AdoptABeachResourcesPage() {
           {/* Header */}
           <div className="bg-white rounded-lg shadow-sm p-8 mb-6">
             <h1 className="text-3xl md:text-4xl text-gray-900 mb-3 font-[Cafe24_Ssurround]">
-              반려해변 자료 게시판
+              궁금했던 그 자료, 바로 찾아보세요
             </h1>
-            <p className="text-gray-600 font-[Cafe24_Ssurround]">
-              반려해변 입양 및 관리 관련 공식 자료를 확인하세요
-            </p>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Sidebar - Categories */}
-            <aside className="lg:w-64 flex-shrink-0">
-              <div className="bg-white rounded-lg shadow-sm p-6 sticky top-24">
-                <h2 className="text-lg text-gray-900 mb-4 font-[Cafe24_Ssurround] flex items-center gap-2">
-                  <Filter className="w-5 h-5" />
-                  카테고리
-                </h2>
-                <div className="space-y-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`w-full text-left px-4 py-3 rounded-lg transition-all font-[Cafe24_Ssurround] ${
-                        selectedCategory === category
-                          ? "bg-blue-50 text-blue-600 "
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      {category}
-                      <span className="float-right text-sm text-gray-400">
-                        {getCategoryCount(category)}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </aside>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* 왼쪽 사이드바 */}
+            <div className="lg:col-span-2">
+              <CategorySidebar
+                categories={categories}
+                selectedCategory={selectedCategory}
+                basePath="/adopt-a-beach/resources"
+              />
+            </div>
 
             {/* Main Content */}
-            <div className="flex-1">
+            <div className="lg:col-span-10">
               {/* Search Bar */}
               <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
                 <div className="relative">

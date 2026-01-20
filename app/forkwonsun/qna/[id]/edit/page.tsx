@@ -1,6 +1,5 @@
 "use client";
 
-import ToastEditor from "@/components/ToastEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,12 +13,21 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+
+const RichEditor = dynamic(() => import("@/components/TipTapEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[600px] border border-gray-300 rounded-md flex items-center justify-center">
+      로딩 중...
+    </div>
+  ),
+});
 
 interface Answer {
   id: number;
@@ -38,7 +46,7 @@ export default function EditQnAPage() {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    category: "입양절차",
+    category: "입양관련",
     author_name: "전문가",
     author_email: "",
     author_phone: "",
@@ -53,7 +61,24 @@ export default function EditQnAPage() {
   });
   const [showAnswerForm, setShowAnswerForm] = useState(false);
 
-  const categories = ["입양절차", "활동계획", "기금납부", "기타"];
+  const categories = [
+    "입양관련",
+    "입양절차",
+    "참여조건",
+    "계약관련",
+    "활동운영",
+    "활동계획",
+    "활동방법",
+    "참여인원",
+    "활동보고",
+    "지원기금",
+    "지원제도",
+    "기금사용",
+    "정산절차",
+    "기타",
+    "문의",
+    "제안",
+  ];
   const statuses = [
     { value: "pending", label: "답변대기" },
     { value: "answered", label: "답변완료" },
@@ -147,7 +172,7 @@ export default function EditQnAPage() {
       }
 
       alert("Q&A가 성공적으로 수정되었습니다.");
-      router.push("/admin/qna");
+      router.push("/forkwonsun/qna");
     } catch (error) {
       console.error("Error updating Q&A:", error);
       alert(
@@ -222,7 +247,7 @@ export default function EditQnAPage() {
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin/qna">
+          <Link href="/forkwonsun/qna">
             <Button variant="ghost" className="mb-4 gap-2 font-[Cafe24_Ssurround]">
               <ArrowLeft className="w-4 h-4" />
               목록으로
@@ -370,20 +395,19 @@ export default function EditQnAPage() {
               <CardTitle className="font-[Cafe24_Ssurround]">질문 내용</CardTitle>
             </CardHeader>
             <CardContent>
-              <ToastEditor
-                value={formData.content}
+              <RichEditor
+                content={formData.content}
                 onChange={(value) => setFormData({ ...formData, content: value })}
-                height="600px"
               />
               <p className="text-sm text-gray-600 font-[Cafe24_Ssurround] mt-4">
-                * 마크다운 문법을 사용하여 질문과 답변을 작성할 수 있습니다.
+                * 배민 스타일의 템플릿을 활용하여 질문과 답변을 작성할 수 있습니다.
               </p>
             </CardContent>
           </Card>
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-4 mb-6">
-            <Link href="/admin/qna">
+            <Link href="/forkwonsun/qna">
               <Button type="button" variant="outline" className="font-[Cafe24_Ssurround]">
                 취소
               </Button>
@@ -474,14 +498,13 @@ export default function EditQnAPage() {
                       답변 내용 *
                     </Label>
                     <div className="mt-2">
-                      <ToastEditor
-                        value={newAnswer.content}
+                      <RichEditor
+                        content={newAnswer.content}
                         onChange={(value) => setNewAnswer({ ...newAnswer, content: value })}
-                        height="400px"
                       />
                     </div>
                     <p className="text-sm text-gray-600 font-[Cafe24_Ssurround] mt-2">
-                      * 마크다운 문법을 사용하여 답변을 작성할 수 있습니다.
+                      * 배민 스타일의 템플릿을 활용하여 답변을 작성할 수 있습니다.
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

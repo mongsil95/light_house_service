@@ -1,6 +1,5 @@
 "use client";
 
-import ToastEditor from "@/components/ToastEditor";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,9 +14,19 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft } from "lucide-react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+
+const RichEditor = dynamic(() => import("@/components/TipTapEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-[600px] border border-gray-300 rounded-md flex items-center justify-center">
+      로딩 중...
+    </div>
+  ),
+});
 
 export default function CreateQnAPage() {
   const router = useRouter();
@@ -25,7 +34,7 @@ export default function CreateQnAPage() {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    category: "입양절차",
+    category: "입양관련",
     author_name: "전문가",
     author_email: "",
     author_phone: "",
@@ -33,7 +42,24 @@ export default function CreateQnAPage() {
     is_public: true,
   });
 
-  const categories = ["입양절차", "활동계획", "기금납부", "기타"];
+  const categories = [
+    "입양관련",
+    "입양절차",
+    "참여조건",
+    "계약관련",
+    "활동운영",
+    "활동계획",
+    "활동방법",
+    "참여인원",
+    "활동보고",
+    "지원기금",
+    "지원제도",
+    "기금사용",
+    "정산절차",
+    "기타",
+    "문의",
+    "제안",
+  ];
   const statuses = [
     { value: "pending", label: "답변대기" },
     { value: "answered", label: "답변완료" },
@@ -76,7 +102,7 @@ export default function CreateQnAPage() {
 
       console.log("Insert successful:", data);
       alert("Q&A가 성공적으로 등록되었습니다.");
-      router.push("/admin/qna");
+      router.push("/forkwonsun/qna");
     } catch (error) {
       console.error("Error creating Q&A:", error);
       alert(
@@ -92,7 +118,7 @@ export default function CreateQnAPage() {
       <div className="max-w-5xl mx-auto px-6">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/admin/qna">
+          <Link href="/forkwonsun/qna">
             <Button variant="ghost" className="mb-4 gap-2 font-[Cafe24_Ssurround]">
               <ArrowLeft className="w-4 h-4" />
               목록으로
@@ -258,20 +284,19 @@ export default function CreateQnAPage() {
               <CardTitle className="font-[Cafe24_Ssurround]">질문 및 답변 내용</CardTitle>
             </CardHeader>
             <CardContent>
-              <ToastEditor
-                value={formData.content}
+              <RichEditor
+                content={formData.content}
                 onChange={(value) => setFormData({ ...formData, content: value })}
-                height="600px"
               />
               <p className="text-sm text-gray-600 font-[Cafe24_Ssurround] mt-4">
-                * 마크다운 문법을 사용하여 질문과 답변을 작성할 수 있습니다.
+                * 배민 스타일의 템플릿을 활용하여 질문과 답변을 작성할 수 있습니다.
               </p>
             </CardContent>
           </Card>
 
           {/* Actions */}
           <div className="flex items-center justify-end gap-4">
-            <Link href="/admin/qna">
+            <Link href="/forkwonsun/qna">
               <Button type="button" variant="outline" className="font-[Cafe24_Ssurround]">
                 취소
               </Button>

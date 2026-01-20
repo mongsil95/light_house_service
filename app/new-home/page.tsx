@@ -3,11 +3,45 @@
 import Navigation from "@/components/Navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/lib/supabase";
 import { BookOpen, Calendar, CheckCircle2, PlayCircle, TrendingUp, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
+interface FAQ {
+  id: number;
+  title: string;
+  content: string;
+}
 
 export default function NewHome() {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loadingFaqs, setLoadingFaqs] = useState(true);
+
+  useEffect(() => {
+    fetchFAQs();
+  }, []);
+
+  const fetchFAQs = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("resources")
+        .select("id, title, content")
+        .eq("category", "FAQ")
+        .eq("status", "published")
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      if (data) setFaqs(data);
+    } catch (error) {
+      console.error("FAQ 로드 실패:", error);
+    } finally {
+      setLoadingFaqs(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <Navigation />
@@ -98,6 +132,61 @@ export default function NewHome() {
           </div>
         </section>
 
+        {/* Onboarding Steps Section */}
+        <section className="py-20 bg-gradient-to-b from-cyan-50 to-white">
+          <div className="max-w-7xl mx-auto px-6">
+            <h2 className="text-3xl font-bold text-center mb-12">
+              반려해변이 어색하신가요? 등대지기가 하나씩 알려드릴게요
+            </h2>
+            <div className="grid md:grid-cols-4 gap-8">
+              {[
+                {
+                  step: "Step 1",
+                  title: "반려해변에 대해서 알아보기",
+                  desc: "반려해변이 뭐지? 하신다면 여기서부터!",
+                  icon: "🏖️",
+                  link: "/adopt-a-beach/resources/1",
+                },
+                {
+                  step: "Step 2",
+                  title: "입양 가능한 해변 알아보기",
+                  desc: "우리 회사랑 가까운 해변은 어디일까요?",
+                  icon: "📍",
+                  link: "/beach-finder",
+                },
+                {
+                  step: "Step 3",
+                  title: "반려해변의 혜택 알아보기",
+                  desc: "반려해변만의 특별한 혜택이 궁금하다면?",
+                  icon: "🎁",
+                  link: "/adopt-a-beach/resources/2",
+                },
+                {
+                  step: "Step 4",
+                  title: "전담 코디네이터 알아보기",
+                  desc: "반려해변은 전문 코디네이터와 함께합니다.",
+                  icon: "🤝",
+                  link: "/adopt-a-beach/resources/#contact",
+                },
+              ].map((item, idx) => (
+                <Card key={idx} className="text-center hover:shadow-lg transition-shadow">
+                  <CardContent className="p-6">
+                    <div className="text-5xl mb-4">{item.icon}</div>
+                    <div className="text-3xl font-bold text-blue-600 mb-2">{item.step}</div>
+                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{item.desc}</p>
+                    {item.link !== "#" && (
+                      <Button variant="link" className="text-blue-600" asChild>
+                        <Link href={item.link}>자세히 </Link>
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Individual Products Section */}
         <section className="py-20 bg-gradient-to-b from-white to-cyan-50">
           <div className="max-w-7xl mx-auto px-6">
@@ -136,7 +225,7 @@ export default function NewHome() {
                     </p>
                     <p className="text-xs text-gray-600">기금 : 300만원(1개해변당)</p>
                   </div>
-                  <Button variant="link" className="text-blue-600" asChild>
+                  <Button variant="link" className="text-blue-600 hidden" asChild>
                     <Link href="/adopt-a-beach/resources">👉 2025년 반려해변 보러가기</Link>
                   </Button>
                 </CardContent>
@@ -177,7 +266,7 @@ export default function NewHome() {
                     </p>
                     <p className="text-xs text-gray-600">기금 : 150만원(단체당)</p>
                   </div>
-                  <Button variant="link" className="text-blue-600" asChild>
+                  <Button variant="link" className="text-blue-600 hidden" asChild>
                     <Link href="/adopt-a-beach/resources">
                       {" "}
                       👉 2025년 함께한 비영리단체 보러가기
@@ -198,24 +287,26 @@ export default function NewHome() {
                 <CardContent className="p-8">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="text-4xl">📦</div>
-                    <h3 className="text-xl font-bold">🌟수정 필요함</h3>
+                    <h3 className="text-xl font-bold">물품 지원</h3>
                   </div>
-                  <p className="text-gray-600 mb-4">후원품까지 사로잡기!</p>
+                  <p className="text-gray-600 mb-4">물품으로 활동을 지원해주세요!</p>
                   <ul className="space-y-2 text-sm text-gray-700 mb-6">
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>후원자가 픽업 또는 현장 물품 제공</span>
+                      <span>정화활동 물품 또는 리워드를 지원해주세요.</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <span>활동과 함께 이용 시 효과 증가 가능</span>
+                      <span>비영리단체, 학교의 활동에 도움이 됩니다</span>
                     </li>
                   </ul>
                   <div className="bg-green-50 rounded-lg p-4 mb-4">
-                    <p className="text-sm font-semibold text-green-900">참여비용 6.8%</p>
-                    <p className="text-xs text-gray-600">후원 1건 당 참여비용</p>
+                    <p className="text-sm font-semibold text-green-900">
+                      세부사항 : 사무국과 논의해주세요
+                    </p>
+                    <p className="text-xs text-gray-600">기부금 영수증 발행 가능</p>
                   </div>
-                  <Button variant="link" className="text-blue-600" asChild>
+                  <Button variant="link" className="text-blue-600 hidden" asChild>
                     <Link href="/adopt-a-beach/resources">자세히</Link>
                   </Button>
                 </CardContent>
@@ -290,66 +381,12 @@ export default function NewHome() {
           </div>
         </section>
 
-        {/* Onboarding Steps Section */}
-        <section className="py-20 bg-gradient-to-b from-cyan-50 to-white">
-          <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-12">
-              반려해변이 어색하신가요? 등대지기가 하나씩 알려드릴게요
-            </h2>
-            <div className="grid md:grid-cols-4 gap-8">
-              {[
-                {
-                  step: "1",
-                  title: "반려해변에 대해서 알아보기",
-                  desc: "반려해변은 해변을 반려동물처럼 입양하여 보호하는 활동입니다",
-                  icon: "🏖️",
-                  link: "/adopt-a-beach/resources/1",
-                },
-                {
-                  step: "2",
-                  title: "입양 가능한 해변 알아보기",
-                  desc: "우리 회사랑 가까운 해변은 어디일까요?",
-                  icon: "📍",
-                  link: "/beach-finder",
-                },
-                {
-                  step: "3",
-                  title: "신규 단체 홍보",
-                  desc: "새로운 단체를 적극 홍보해드려요",
-                  icon: "📢",
-                  link: "#",
-                },
-                {
-                  step: "4",
-                  title: "신규단체 밀착케어",
-                  desc: "전담 등대지기가 함께합니다",
-                  icon: "🤝",
-                  link: "#",
-                },
-              ].map((item, idx) => (
-                <Card key={idx} className="text-center hover:shadow-lg transition-shadow">
-                  <CardContent className="p-6">
-                    <div className="text-5xl mb-4">{item.icon}</div>
-                    <div className="text-3xl font-bold text-blue-600 mb-2">{item.step}</div>
-                    <h3 className="font-bold text-lg mb-2">{item.title}</h3>
-                    <p className="text-sm text-gray-600 mb-4">{item.desc}</p>
-                    {item.link !== "#" && (
-                      <Button variant="link" className="text-blue-600" asChild>
-                        <Link href={item.link}>자세히</Link>
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* Timing Benefits Section */}
-        <section className="py-20 bg-white">
+        {/* TODO: 디자인/카피 검토 필요 */}
+        <section className="py-20 bg-white hidden">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-12">
-              지금 해변활동을 시작하면 좋은 이유
+              지금 반려해변을 입양하면 좋은 이유
             </h2>
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
@@ -357,12 +394,12 @@ export default function NewHome() {
                   <div className="flex items-center gap-4 mb-6">
                     <Calendar className="w-12 h-12 text-blue-600" />
                     <div>
-                      <h3 className="text-2xl font-bold">높은 참여율이</h3>
-                      <h3 className="text-2xl font-bold">예상되는 시기</h3>
+                      <h3 className="text-2xl font-bold">2025년</h3>
+                      <h3 className="text-2xl font-bold">반려해변 전국대회</h3>
                     </div>
                   </div>
                   <div className="bg-white rounded-xl p-6 mb-4">
-                    <p className="text-sm text-gray-600 mb-2">*작년 참여수 기준 예상치</p>
+                    <p className="text-sm text-gray-600 mb-2">작년 함께 했던 입양기관</p>
                     <div className="flex items-baseline gap-2 mb-2">
                       <span className="text-4xl font-bold text-blue-600">1</span>
                       <span className="text-xl text-gray-700">목요일 ~ 31 토요일</span>
@@ -408,7 +445,8 @@ export default function NewHome() {
         </section>
 
         {/* Content Resources Section */}
-        <section className="py-20 bg-gradient-to-b from-white to-blue-50">
+        {/* TODO: 디자인/카피 검토 필요 */}
+        <section className="py-20 bg-gradient-to-b from-white to-blue-50 hidden">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-12">
               시작부터 첫 활동까지 도와드릴 콘텐츠
@@ -443,7 +481,8 @@ export default function NewHome() {
         </section>
 
         {/* Preparation Tools Section */}
-        <section className="py-20 bg-white">
+        {/* TODO: 디자인/카피 검토 필요 */}
+        <section className="py-20 bg-white hidden">
           <div className="max-w-7xl mx-auto px-6">
             <h2 className="text-3xl font-bold text-center mb-12">성공적인 활동 운영을 위한 준비</h2>
             <div className="grid md:grid-cols-2 gap-8">
@@ -476,30 +515,50 @@ export default function NewHome() {
         {/* FAQ Section */}
         <section className="py-20 bg-gradient-to-b from-blue-50 to-white">
           <div className="max-w-7xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-12">입양에 대해 더 궁금하신가요?</h2>
+            <h2 className="text-3xl font-bold text-center mb-12">
+              반려해변 입양에 대해 더 궁금하신가요?
+            </h2>
+            <h4 className="text-xl font-medium text-center mb-12">
+              등대지기가 자주 묻는 질문을 모아봤어요
+            </h4>
             <div className="grid md:grid-cols-2 gap-8">
               <div>
                 <h3 className="font-bold text-xl mb-6">자주 묻는 질문</h3>
-                <div className="space-y-4">
-                  {[
-                    "Q. 입양은 어떤 과정으로 진행되나요?",
-                    "Q. 해변정화, 후원물품, 활동대행은 무엇인가요?",
-                    "Q. 후원물품은 다른 활동들과 함께 이용할 수 있나요?",
-                    "Q. 반려해변 상생 요금제는 무엇인가요?",
-                    "Q. 우리해변클릭은 어떻게 가입할 수 있나요?",
-                  ].map((q, idx) => (
-                    <Card key={idx} className="hover:shadow-md transition-shadow cursor-pointer">
-                      <CardContent className="p-4">
-                        <p className="text-sm text-gray-700">{q}</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                {loadingFaqs ? (
+                  <div className="space-y-4">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Card key={i} className="animate-pulse">
+                        <CardContent className="p-4">
+                          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : faqs.length > 0 ? (
+                  <div className="space-y-4">
+                    {faqs.map((faq) => (
+                      <Link key={faq.id} href={`/adopt-a-beach/resources/${faq.id}`}>
+                        <Card className="hover:shadow-md transition-shadow cursor-pointer">
+                          <CardContent className="p-4">
+                            <p className="text-sm text-gray-700">{faq.title}</p>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <Card>
+                    <CardContent className="p-4">
+                      <p className="text-sm text-gray-500 text-center">등록된 FAQ가 없습니다.</p>
+                    </CardContent>
+                  </Card>
+                )}
                 <Button variant="link" className="text-blue-600 mt-4" asChild>
-                  <Link href="/adopt-a-beach/expertsqna">질문 전체</Link>
+                  <Link href="/adopt-a-beach/resources">질문 전체</Link>
                 </Button>
               </div>
-              <div>
+              {/* TODO: 디자인/카피 검토 필요 */}
+              <div className="hidden">
                 <h3 className="font-bold text-xl mb-6">도움 문의</h3>
                 <Card className="mb-4">
                   <CardContent className="p-6">
@@ -525,13 +584,13 @@ export default function NewHome() {
         </section>
 
         {/* Final CTA Section */}
-        <section className="py-20 bg-gradient-to-br from-blue-600 to-cyan-600 text-white hidden">
+        <section className="py-20 bg-gradient-to-br from-blue-600 to-cyan-600 text-white">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h2 className="text-4xl font-bold mb-6">지금 바로 반려해변을 입양하세요</h2>
             <p className="text-xl mb-8 text-blue-50">
               등대지기와 함께 반려해변 입양의 첫 걸음을 내딛어보세요!
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center hidden">
               <Button size="lg" variant="secondary" className="px-8 text-lg" asChild>
                 <Link href="/application">온라인 입양 신청</Link>
               </Button>

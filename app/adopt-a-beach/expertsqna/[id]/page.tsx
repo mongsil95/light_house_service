@@ -1,5 +1,6 @@
 "use client";
 
+import CategorySidebar from "@/components/CategorySidebar";
 import Navigation from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,6 @@ import { ArrowLeft, Calendar, ChevronRight, Eye, Home, Share2, ThumbsUp, User } 
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 
 interface QnA {
   id: number;
@@ -52,6 +51,50 @@ export default function QuestionDetailPage() {
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState("");
   const [relatedQuestions, setRelatedQuestions] = useState<RelatedQuestion[]>([]);
+
+  // Q&A 카테고리 구조
+  const qnaCategories = [
+    {
+      label: "입양 관련",
+      value: "입양관련",
+      subItems: [
+        { label: "전체", value: "입양관련" },
+        { label: "입양 절차", value: "입양절차" },
+        { label: "참여 조건", value: "참여조건" },
+        { label: "계약 관련", value: "계약관련" },
+      ],
+    },
+    {
+      label: "활동 운영",
+      value: "활동운영",
+      subItems: [
+        { label: "전체", value: "활동운영" },
+        { label: "활동 계획", value: "활동계획" },
+        { label: "활동 방법", value: "활동방법" },
+        { label: "참여 인원", value: "참여인원" },
+        { label: "활동 보고", value: "활동보고" },
+      ],
+    },
+    {
+      label: "지원·기금",
+      value: "지원기금",
+      subItems: [
+        { label: "전체", value: "지원기금" },
+        { label: "지원 제도", value: "지원제도" },
+        { label: "기금 사용", value: "기금사용" },
+        { label: "정산 절차", value: "정산절차" },
+      ],
+    },
+    {
+      label: "기타",
+      value: "기타",
+      subItems: [
+        { label: "전체", value: "기타" },
+        { label: "문의", value: "문의" },
+        { label: "제안", value: "제안" },
+      ],
+    },
+  ];
 
   useEffect(() => {
     if (id) {
@@ -184,9 +227,18 @@ export default function QuestionDetailPage() {
             <span className="text-gray-900 font-medium">{qna.category}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* 왼쪽 사이드바 */}
+            <div className="lg:col-span-1">
+              <CategorySidebar
+                categories={qnaCategories}
+                selectedCategory={qna?.category || ""}
+                basePath="/adopt-a-beach/expertsqna"
+              />
+            </div>
+
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               {/* Back Button */}
               <Link href="/adopt-a-beach/expertsqna">
                 <Button variant="outline" className="mb-6">
@@ -227,20 +279,19 @@ export default function QuestionDetailPage() {
 
                   <div className="bg-gray-50 rounded-lg p-6 mb-6">
                     <div
-                      className="prose max-w-none"
+                      className="prose prose-sm sm:prose lg:prose-lg max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
                       style={{
                         fontFamily:
                           "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
                       }}
-                    >
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{qna.content}</ReactMarkdown>
-                    </div>
+                      dangerouslySetInnerHTML={{ __html: qna.content }}
+                    />
                   </div>
 
                   <div className="flex items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
-                      <span>{qna.author_name}</span>
+                      <span>익명</span>
                     </div>
                     <Badge variant={qna.status === "answered" ? "default" : "secondary"}>
                       {qna.status === "answered"
@@ -287,14 +338,13 @@ export default function QuestionDetailPage() {
                       </div>
 
                       <div
-                        className="prose max-w-none text-gray-700 leading-relaxed"
+                        className="prose prose-sm sm:prose lg:prose-lg max-w-none text-gray-700 prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
                         style={{
                           fontFamily:
                             "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
                         }}
-                      >
-                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer.content}</ReactMarkdown>
-                      </div>
+                        dangerouslySetInnerHTML={{ __html: answer.content }}
+                      />
 
                       {index === 0 && (
                         <div className="flex items-center gap-3 mt-6 pt-6 border-t border-gray-200">
@@ -316,50 +366,6 @@ export default function QuestionDetailPage() {
                     </CardContent>
                   </Card>
                 ))}
-            </div>
-
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* Expert Info */}
-              <Card className="border border-gray-200">
-                <CardContent className="p-6">
-                  <h3 className="font-bold text-gray-900 mb-4">답변 전문가</h3>
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl">
-                      👤
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-900">{qna.author_name}</h4>
-                      <p className="text-xs text-gray-500 mb-2">
-                        {qna.author_email?.split("@")[1] || "전문가"}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Related Questions */}
-              {relatedQuestions.length > 0 && (
-                <Card className="border border-gray-200">
-                  <CardContent className="p-6">
-                    <h3 className="font-bold text-gray-900 mb-4">관련 질문</h3>
-                    <div className="space-y-3">
-                      {relatedQuestions.map((related) => (
-                        <Link key={related.id} href={`/adopt-a-beach/expertsqna/${related.id}`}>
-                          <div className="p-3 bg-gray-50 hover:bg-blue-50 rounded-lg transition-colors cursor-pointer group">
-                            <Badge variant="outline" className="text-xs mb-2 inline-block">
-                              {related.category}
-                            </Badge>
-                            <p className="text-sm text-gray-900 group-hover:text-blue-600 line-clamp-2">
-                              {related.title}
-                            </p>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
             </div>
           </div>
         </div>

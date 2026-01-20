@@ -24,7 +24,24 @@ export default function AdminGuidesPage() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("전체");
 
-  const categories = ["전체", "가이드", "공지", "FAQ", "시설"];
+  const categories = [
+    "전체",
+    "입양안내",
+    "입양절차",
+    "신청방법",
+    "자격요건",
+    "활동가이드",
+    "활동매뉴얼",
+    "안전수칙",
+    "사례공유",
+    "보고서자료",
+    "활동보고서",
+    "통계자료",
+    "연구자료",
+    "공지",
+    "중요공지",
+    "일반공지",
+  ];
 
   useEffect(() => {
     fetchGuides();
@@ -36,7 +53,7 @@ export default function AdminGuidesPage() {
       const params = new URLSearchParams();
       if (selectedCategory !== "전체") params.append("category", selectedCategory);
 
-      const response = await fetch(`/api/admin/guides?${params.toString()}`);
+      const response = await fetch(`/api/forkwonsun/guides?${params.toString()}`);
       const result = await response.json();
 
       if (result.data) {
@@ -57,7 +74,7 @@ export default function AdminGuidesPage() {
     }
 
     try {
-      const response = await fetch(`/api/admin/guides/${id}`, {
+      const response = await fetch(`/api/forkwonsun/guides/${id}`, {
         method: "DELETE",
       });
 
@@ -91,7 +108,7 @@ export default function AdminGuidesPage() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">가이드 관리</h1>
               <p className="text-gray-600">반려해변 입양 가이드를 작성하고 관리하세요</p>
             </div>
-            <Link href="/admin/guides/create">
+            <Link href="/forkwonsun/guides/create">
               <Button className="bg-blue-300 hover:bg-blue-400 text-white">
                 <Plus className="w-4 h-4 mr-2" />새 가이드 작성
               </Button>
@@ -129,7 +146,7 @@ export default function AdminGuidesPage() {
               <CardContent className="p-12 text-center">
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600">가이드가 없습니다.</p>
-                <Link href="/admin/guides/create">
+                <Link href="/forkwonsun/guides/create">
                   <Button className="mt-4 bg-blue-300 hover:bg-blue-400">첫 가이드 작성하기</Button>
                 </Link>
               </CardContent>
@@ -167,7 +184,7 @@ export default function AdminGuidesPage() {
                           <Eye className="w-4 h-4" />
                         </Button>
                       </Link>
-                      <Link href={`/admin/guides/edit/${guide.id}`}>
+                      <Link href={`/forkwonsun/guides/edit/${guide.id}`}>
                         <Button variant="outline" size="sm">
                           <Pencil className="w-4 h-4" />
                         </Button>
@@ -190,7 +207,7 @@ export default function AdminGuidesPage() {
 
         {/* Back to Admin */}
         <div className="mt-8">
-          <Link href="/admin">
+          <Link href="/forkwonsun">
             <Button variant="outline">← 관리자 대시보드로 돌아가기</Button>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import CategorySidebar from "@/components/CategorySidebar";
 import Navigation from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,7 +23,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-const HtmlViewer = dynamic(() => import("@/components/ToastViewer"), {
+const BaeminStyleViewer = dynamic(() => import("@/components/BaeminStyleViewer"), {
   ssr: false,
   loading: () => <div className="text-gray-500">로딩 중...</div>,
 });
@@ -57,6 +58,49 @@ export default function ResourceDetailPage() {
   const [liked, setLiked] = useState(false);
   const [comment, setComment] = useState("");
   const [mounted, setMounted] = useState(false);
+
+  // 카테고리 구조
+  const resourceCategories = [
+    {
+      label: "입양 안내",
+      value: "입양안내",
+      subItems: [
+        { label: "전체", value: "입양안내" },
+        { label: "입양 절차", value: "입양절차" },
+        { label: "신청 방법", value: "신청방법" },
+        { label: "자격 요건", value: "자격요건" },
+      ],
+    },
+    {
+      label: "활동 가이드",
+      value: "활동가이드",
+      subItems: [
+        { label: "전체", value: "활동가이드" },
+        { label: "활동 매뉴얼", value: "활동매뉴얼" },
+        { label: "안전 수칙", value: "안전수칙" },
+        { label: "사례 공유", value: "사례공유" },
+      ],
+    },
+    {
+      label: "보고서·자료",
+      value: "보고서자료",
+      subItems: [
+        { label: "전체", value: "보고서자료" },
+        { label: "활동 보고서", value: "활동보고서" },
+        { label: "통계 자료", value: "통계자료" },
+        { label: "연구 자료", value: "연구자료" },
+      ],
+    },
+    {
+      label: "공지사항",
+      value: "공지",
+      subItems: [
+        { label: "전체", value: "공지" },
+        { label: "중요 공지", value: "중요공지" },
+        { label: "일반 공지", value: "일반공지" },
+      ],
+    },
+  ];
 
   useEffect(() => {
     setMounted(true);
@@ -158,9 +202,18 @@ export default function ResourceDetailPage() {
             <span className="text-gray-900 font-medium">{resource.category}</span>
           </nav>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* 왼쪽 사이드바 */}
+            <div className="lg:col-span-1">
+              <CategorySidebar
+                categories={resourceCategories}
+                selectedCategory={resource?.category || ""}
+                basePath="/adopt-a-beach/resources"
+              />
+            </div>
+
             {/* Main Content */}
-            <div className="lg:col-span-2">
+            <div className="lg:col-span-3">
               {/* Back Button */}
               <Button variant="outline" className="mb-6" onClick={() => router.back()}>
                 <ArrowLeft className="w-4 h-4 mr-2" />
@@ -228,7 +281,7 @@ export default function ResourceDetailPage() {
                   {/* Content */}
                   <div className="mb-8">
                     {resource.content ? (
-                      mounted && <HtmlViewer content={resource.content} />
+                      mounted && <BaeminStyleViewer content={resource.content} />
                     ) : (
                       <div className="text-gray-500 italic">내용이 없습니다.</div>
                     )}

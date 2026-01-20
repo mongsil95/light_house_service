@@ -29,7 +29,7 @@ export async function sendNewQuestionNotification(questionData: {
           </div>
           
           <p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/admin/qna/${questionData.id}" 
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/forkwonsun/qna/${questionData.id}" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               질문 확인하기
             </a>
