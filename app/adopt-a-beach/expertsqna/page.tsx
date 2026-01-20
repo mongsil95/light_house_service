@@ -534,7 +534,7 @@ export default function AdoptABeachCommunityPage() {
                 <div>
                   <h3 className="text-sm font-bold text-gray-700 mb-3">전문 분야</h3>
                   <div className="flex flex-wrap gap-2">
-                    {selectedExpert.specialty.map((spec, idx) => (
+                    {selectedExpert.specialty.map((spec: string, idx: number) => (
                       <span
                         key={idx}
                         className="px-4 py-2 bg-blue-50 text-blue-600 text-sm font-semibold rounded-full"
