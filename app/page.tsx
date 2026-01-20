@@ -315,7 +315,7 @@ export default function NewHome() {
                   <Card>
                     <CardContent className="py-12 text-center">
                       <p className="text-gray-500 mb-4">
-                        <strong>'{searchQuery}'</strong>에 대한 검색 결과가 없습니다
+                        <strong>&apos;{searchQuery}&apos;</strong>에 대한 검색 결과가 없습니다
                       </p>
                       <p className="text-gray-400 text-sm">다른 키워드로 검색해보세요</p>
                     </CardContent>

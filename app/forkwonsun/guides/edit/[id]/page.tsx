@@ -66,7 +66,7 @@ export default function EditGuidePage() {
   useEffect(() => {
     const fetchGuide = async () => {
       try {
-        const response = await fetch(`/api/forkwonsun/guides/${id}`);
+        const response = await fetch(`/api/admin/guides/${id}`);
         if (!response.ok) throw new Error("Failed to fetch guide");
 
         const result = await response.json();
@@ -121,7 +121,7 @@ export default function EditGuidePage() {
         author: "관리자",
       };
 
-      const response = await fetch(`/api/forkwonsun/guides/${id}`, {
+      const response = await fetch(`/api/admin/guides/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

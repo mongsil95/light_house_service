@@ -5,7 +5,6 @@ import Navigation from "@/components/Navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eye, MessageCircle, Search, ThumbsUp } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface Resource {
@@ -20,9 +19,7 @@ interface Resource {
 }
 
 export default function AdoptABeachResourcesPage() {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
-  const [selectedCategory, setSelectedCategory] = useState(categoryParam || "전체");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
   const [searchTerm, setSearchTerm] = useState("");
   const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,11 +66,6 @@ export default function AdoptABeachResourcesPage() {
       ],
     },
   ];
-
-  // URL 파라미터 변경 감지
-  useEffect(() => {
-    setSelectedCategory(categoryParam || "전체");
-  }, [categoryParam]);
 
   // 데이터 로드
   useEffect(() => {

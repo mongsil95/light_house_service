@@ -77,7 +77,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   useEffect(() => {
     if (editor && content !== undefined && content !== editor.getHTML()) {
       const { from, to } = editor.state.selection;
-      editor.commands.setContent(content, false);
+      editor.commands.setContent(content, { emitUpdate: false });
       editor.commands.setTextSelection({ from, to });
     }
   }, [content, editor]);

@@ -53,7 +53,7 @@ export default function AdminGuidesPage() {
       const params = new URLSearchParams();
       if (selectedCategory !== "전체") params.append("category", selectedCategory);
 
-      const response = await fetch(`/api/forkwonsun/guides?${params.toString()}`);
+      const response = await fetch(`/api/admin/guides?${params.toString()}`);
       const result = await response.json();
 
       if (result.data) {
@@ -74,7 +74,7 @@ export default function AdminGuidesPage() {
     }
 
     try {
-      const response = await fetch(`/api/forkwonsun/guides/${id}`, {
+      const response = await fetch(`/api/admin/guides/${id}`, {
         method: "DELETE",
       });
 

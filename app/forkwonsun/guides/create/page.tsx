@@ -90,7 +90,7 @@ export default function CreateGuidePage() {
         author: "관리자",
       };
 
-      const response = await fetch("/api/forkwonsun/guides", {
+      const response = await fetch("/api/admin/guides", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

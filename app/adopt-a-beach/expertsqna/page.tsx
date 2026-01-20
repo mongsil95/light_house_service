@@ -14,13 +14,10 @@ import {
 import { supabase } from "@/lib/supabase";
 import { ChevronRight, Eye, HelpCircle, ThumbsUp } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function AdoptABeachCommunityPage() {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get("category");
-  const [selectedCategory, setSelectedCategory] = useState(categoryParam || "전체");
+  const [selectedCategory, setSelectedCategory] = useState("전체");
   const [sortOrder, setSortOrder] = useState("최근 답변순");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedExpert, setSelectedExpert] = useState<any | null>(null);
@@ -91,11 +88,6 @@ export default function AdoptABeachCommunityPage() {
       ],
     },
   ];
-
-  // URL 파라미터 변경 감지
-  useEffect(() => {
-    setSelectedCategory(categoryParam || "전체");
-  }, [categoryParam]);
 
   // Supabase에서 Q&A 데이터 가져오기
   useEffect(() => {
