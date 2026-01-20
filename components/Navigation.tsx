@@ -4,11 +4,17 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
+interface MenuItem {
+  label: string;
+  href: string;
+  subItems?: { label: string; href: string }[];
+}
+
 export default function Navigation() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const menuItems = [
+  const menuItems: MenuItem[] = [
     { label: "홈", href: "/" },
     // TODO : 반려해변 메뉴 - 추후 활성화 예정
     //{
