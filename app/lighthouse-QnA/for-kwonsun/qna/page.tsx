@@ -213,7 +213,7 @@ export default function QnAAdmin() {
 
       alert("답변이 등록되었습니다.");
       setNewAnswer("");
-      
+
       // 답변 목록 새로고침
       const answersRes = await fetch(`/api/admin/qna/${viewingId}/answers`);
       const answersJson = await answersRes.json();
@@ -237,7 +237,7 @@ export default function QnAAdmin() {
       if (!res.ok) throw new Error("답변 삭제 실패");
 
       alert("답변이 삭제되었습니다.");
-      
+
       // 답변 목록 새로고침
       const answersRes = await fetch(`/api/admin/qna/${viewingId}/answers`);
       const answersJson = await answersRes.json();
@@ -287,7 +287,12 @@ export default function QnAAdmin() {
         {viewingId ? (
           <div className="bg-white border border-gray-200 p-6">
             <div className="mb-6">
-              <Button onClick={handleBackToList} variant="ghost" size="sm" className="font-['Pretendard']">
+              <Button
+                onClick={handleBackToList}
+                variant="ghost"
+                size="sm"
+                className="font-['Pretendard']"
+              >
                 ← 목록으로
               </Button>
             </div>
@@ -299,11 +304,20 @@ export default function QnAAdmin() {
               </h2>
               <div className="mb-4 flex items-center gap-4 text-sm text-gray-600">
                 <span>카테고리: {qnas.find((q) => q.id === viewingId)?.category}</span>
-                <span>작성일: {qnas.find((q) => q.id === viewingId)?.created_at ? new Date(qnas.find((q) => q.id === viewingId)!.created_at!).toLocaleDateString("ko-KR") : "-"}</span>
+                <span>
+                  작성일:{" "}
+                  {qnas.find((q) => q.id === viewingId)?.created_at
+                    ? new Date(
+                        qnas.find((q) => q.id === viewingId)!.created_at!
+                      ).toLocaleDateString("ko-KR")
+                    : "-"}
+                </span>
               </div>
               <div
                 className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: qnas.find((q) => q.id === viewingId)?.content || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: qnas.find((q) => q.id === viewingId)?.content || "",
+                }}
               />
             </div>
 
@@ -313,10 +327,15 @@ export default function QnAAdmin() {
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">등록된 답변</h3>
                 <div className="space-y-4">
                   {answers.map((answer) => (
-                    <div key={answer.id} className="p-4 border border-gray-200 rounded-lg bg-blue-50">
+                    <div
+                      key={answer.id}
+                      className="p-4 border border-gray-200 rounded-lg bg-blue-50"
+                    >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-900">{answer.answerer_name}</span>
+                          <span className="font-semibold text-gray-900">
+                            {answer.answerer_name}
+                          </span>
                           <span className="text-xs text-gray-500">
                             {new Date(answer.created_at).toLocaleDateString("ko-KR")}
                           </span>
@@ -355,16 +374,17 @@ export default function QnAAdmin() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">답변 내용</label>
-                <TipTapEditor
-                  content={newAnswer}
-                  onChange={(html) => setNewAnswer(html)}
-                />
+                <TipTapEditor content={newAnswer} onChange={(html) => setNewAnswer(html)} />
               </div>
               <div className="flex gap-2">
                 <Button onClick={handleAddAnswer} className="font-['Pretendard']">
                   답변 등록
                 </Button>
-                <Button onClick={handleBackToList} variant="outline" className="font-['Pretendard']">
+                <Button
+                  onClick={handleBackToList}
+                  variant="outline"
+                  className="font-['Pretendard']"
+                >
                   취소
                 </Button>
               </div>
@@ -504,10 +524,10 @@ export default function QnAAdmin() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {qnas.map((qna, index) => (
-                    <tr 
-                      key={qna.id} 
+                    <tr
+                      key={qna.id}
                       className={`transition-colors hover:bg-blue-50/50 ${
-                        index % 2 === 0 ? 'bg-white' : 'bg-gray-50/30'
+                        index % 2 === 0 ? "bg-white" : "bg-gray-50/30"
                       }`}
                     >
                       <td className="px-4 py-4 text-sm font-medium text-gray-500">#{qna.id}</td>
@@ -522,25 +542,57 @@ export default function QnAAdmin() {
                           className="text-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors text-left group"
                         >
                           <span className="group-hover:underline">{qna.title}</span>
-                          <svg className="inline-block ml-1 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          <svg
+                            className="inline-block ml-1 w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
                           </svg>
                         </button>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-sm text-gray-700 font-medium">{qna.author_name || "-"}</span>
+                        <span className="text-sm text-gray-700 font-medium">
+                          {qna.author_name || "-"}
+                        </span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex flex-col gap-1.5">
                           <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                            <svg
+                              className="w-4 h-4 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                              />
                             </svg>
                             {qna.author_phone || "-"}
                           </span>
                           <span className="flex items-center gap-1 text-sm text-gray-600">
-                            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            <svg
+                              className="w-4 h-4 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                              />
                             </svg>
                             {qna.author_email || "-"}
                           </span>
@@ -552,11 +604,15 @@ export default function QnAAdmin() {
                             qna.status === "published"
                               ? "bg-green-100 text-green-700 border border-green-200"
                               : qna.status === "answered"
-                              ? "bg-blue-100 text-blue-700 border border-blue-200"
-                              : "bg-gray-100 text-gray-700 border border-gray-200"
+                                ? "bg-blue-100 text-blue-700 border border-blue-200"
+                                : "bg-gray-100 text-gray-700 border border-gray-200"
                           }`}
                         >
-                          {qna.status === "published" ? "발행" : qna.status === "answered" ? "답변완료" : "대기중"}
+                          {qna.status === "published"
+                            ? "발행"
+                            : qna.status === "answered"
+                              ? "답변완료"
+                              : "대기중"}
                         </span>
                       </td>
                       <td className="px-4 py-4 text-center text-sm text-gray-500">

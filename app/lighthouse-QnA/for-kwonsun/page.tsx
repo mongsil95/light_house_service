@@ -57,6 +57,30 @@ export default function AdminDashboard() {
               <p className="text-sm text-gray-600">질문과 답변을 생성, 수정, 삭제할 수 있습니다.</p>
             </div>
           </Link>
+
+          <Link href="/lighthouse-QnA/for-kwonsun/banner-inquiries">
+            <div className="bg-white border border-gray-200 p-8 hover:border-gray-400 transition-colors cursor-pointer">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">가이드 다운로드 신청</h2>
+                <svg
+                  className="w-6 h-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm text-gray-600">
+                가이드 다운로드 신청 내역을 확인하고 관리할 수 있습니다.
+              </p>
+            </div>
+          </Link>
         </div>
 
         <div className="mt-8">

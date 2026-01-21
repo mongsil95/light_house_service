@@ -362,3 +362,23 @@ CREATE TABLE IF NOT EXISTS search_history (
 -- 검색 기록 인덱스
 CREATE INDEX IF NOT EXISTS idx_search_history_query ON search_history(query);
 CREATE INDEX IF NOT EXISTS idx_search_history_created ON search_history(created_at DESC);
+
+-- ============================================
+-- 배너 광고 문의 테이블
+-- ============================================
+CREATE TABLE IF NOT EXISTS banner_inquiries (
+  id BIGSERIAL PRIMARY KEY,
+  organization VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',  -- pending, contacted, completed
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 배너 문의 인덱스
+CREATE INDEX IF NOT EXISTS idx_banner_inquiries_status ON banner_inquiries(status);
+CREATE INDEX IF NOT EXISTS idx_banner_inquiries_created ON banner_inquiries(created_at DESC);
+
+-- 배너 문의 updated_at 트리거
+CREATE TRIGGER update_banner_inquiries_updated_at BEFORE UPDATE ON banner_inquiries
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();

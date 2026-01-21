@@ -3,10 +3,20 @@
 import CategorySidebar from "@/components/CategorySidebar";
 import Navigation from "@/components/Navigation";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import { supabase } from "@/lib/supabase";
-import { Calendar, ChevronDown, Eye, HelpCircle, Share2, ThumbsUp, User } from "lucide-react";
+import { Calendar, ChevronDown, Eye, HelpCircle, Send, Share2, ThumbsUp, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,6 +40,14 @@ function QnAContent() {
   const itemsPerPage = 10;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const viewedQaIds = useRef<Set<string>>(new Set());
+
+  // 배너 모달 관련 상태
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false);
+  const [bannerFormData, setBannerFormData] = useState({
+    organization: "",
+    email: "",
+  });
+  const [isSubmittingBanner, setIsSubmittingBanner] = useState(false);
 
   const extractText = (html: string) => {
     // HTML 태그 제거
@@ -304,6 +322,44 @@ function QnAContent() {
       .catch(() => {
         alert("링크 복사에 실패했습니다. 다시 시도해주세요.");
       });
+  };
+
+  // 배너 폼 제출
+  const handleBannerSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!bannerFormData.organization.trim() || !bannerFormData.email.trim()) {
+      alert("모든 항목을 입력해주세요.");
+      return;
+    }
+
+    try {
+      setIsSubmittingBanner(true);
+
+      const response = await fetch("/api/admin/banner-inquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          organization: bannerFormData.organization,
+          email: bannerFormData.email,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("제출 실패");
+      }
+
+      alert("입력해주신 이메일주소로 입양가이드를 발송해드렸습니다!\n감사합니다.");
+      setIsBannerModalOpen(false);
+      setBannerFormData({ organization: "", email: "" });
+    } catch (error) {
+      console.error("Error submitting banner inquiry:", error);
+      alert("메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.");
+    } finally {
+      setIsSubmittingBanner(false);
+    }
   };
 
   // 카테고리
@@ -849,21 +905,19 @@ function QnAContent() {
 
                 {/* 커스텀 배너 */}
                 <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                  <a 
-                    href="https://example.com" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="block group"
+                  <button
+                    onClick={() => setIsBannerModalOpen(true)}
+                    className="block w-full group cursor-pointer"
                   >
                     <div className="relative aspect-[16/13.5] bg-gray-100">
                       <Image
-                        src="/images/banner-placeholder.jpg"
+                        src="/images/banner.png"
                         alt="배너 이미지"
                         fill
                         className="object-cover group-hover:opacity-90 transition-opacity"
                       />
                     </div>
-                  </a>
+                  </button>
                 </div>
 
                 {/* 질문하기 배너 (작고 무채색) */}
@@ -888,6 +942,122 @@ function QnAContent() {
           </div>
         </div>
       </main>
+
+      {/* 배너 문의 모달 */}
+      <Dialog open={isBannerModalOpen} onOpenChange={setIsBannerModalOpen}>
+        <DialogContent
+          className="sm:max-w-md"
+          style={{
+            fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+          }}
+        >
+          <DialogHeader>
+            <DialogTitle
+              className="text-xl font-bold text-gray-900"
+              style={{
+                fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+              }}
+            >
+              2026년 반려해변 입양가이드
+            </DialogTitle>
+            <DialogDescription
+              className="text-sm text-gray-600"
+              style={{
+                fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+              }}
+            >
+              기관명과 이메일을 입력해주시면 이메일로 발송해드립니다.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleBannerSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label
+                htmlFor="organization"
+                className="text-sm font-semibold text-gray-900"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              >
+                기관명 <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="organization"
+                type="text"
+                value={bannerFormData.organization}
+                onChange={(e) =>
+                  setBannerFormData({ ...bannerFormData, organization: e.target.value })
+                }
+                placeholder="기관명을 입력하세요"
+                required
+                className="h-11"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label
+                htmlFor="bannerEmail"
+                className="text-sm font-semibold text-gray-900"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              >
+                이메일 주소 <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="bannerEmail"
+                type="email"
+                value={bannerFormData.email}
+                onChange={(e) => setBannerFormData({ ...bannerFormData, email: e.target.value })}
+                placeholder="이메일 주소를 입력하세요"
+                required
+                className="h-11"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsBannerModalOpen(false)}
+                disabled={isSubmittingBanner}
+                className="flex-1 h-11"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              >
+                취소
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmittingBanner}
+                className="flex-1 h-11 bg-blue-600 hover:bg-blue-700"
+                style={{
+                  fontFamily:
+                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                }}
+              >
+                {isSubmittingBanner ? (
+                  "전송 중..."
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    가이드 받기
+                  </>
+                )}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       {/* 전문가 모달 및 관련 UI 제거됨 */}
     </div>
