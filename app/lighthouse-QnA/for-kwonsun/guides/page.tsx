@@ -183,7 +183,7 @@ export default function GuidesAdmin() {
             </Link>
             {!editingId && (
               <Button onClick={handleNew} size="sm" className="font-['Pretendard']">
-                새 가이드
+                새 가이드 추가
               </Button>
             )}
           </div>
