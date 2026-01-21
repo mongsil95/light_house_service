@@ -73,3 +73,25 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     return NextResponse.json({ error: "Failed to add answer" }, { status: 500 });
   }
 }
+
+// DELETE /api/admin/qna/[id]/answers - Delete an answer
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const body = await request.json();
+    const supabase = createClient();
+    const { answer_id } = body;
+
+    if (!answer_id) {
+      return NextResponse.json({ error: "answer_id is required" }, { status: 400 });
+    }
+
+    const { error } = await supabase.from("qna_answers").delete().eq("id", answer_id);
+
+    if (error) throw error;
+
+    return NextResponse.json({ message: "Answer deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting answer:", error);
+    return NextResponse.json({ error: "Failed to delete answer" }, { status: 500 });
+  }
+}

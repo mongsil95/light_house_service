@@ -73,7 +73,7 @@ export default function RootLayout({
           strategy="beforeInteractive"
         />
       </head>
-      <body className="font-cafe24">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }

@@ -212,7 +212,7 @@ function QnAContent() {
   // URL 파라미터로 선택된 QA 동기화
   useEffect(() => {
     if (qaId && qaList.length > 0) {
-      const qa = qaList.find((q) => q.id === qaId);
+      const qa = qaList.find((q) => String(q.id) === String(qaId));
       setSelectedQa(qa || null);
 
       // 답변 가져오기 및 조회수 증가
@@ -245,7 +245,7 @@ function QnAContent() {
   // 조회수 증가
   const incrementViews = async (qnaId: string) => {
     try {
-      const qa = qaList.find((q) => q.id === qnaId);
+      const qa = qaList.find((q) => String(q.id) === String(qnaId));
       if (qa) {
         await supabase
           .from("qna")
@@ -470,25 +470,13 @@ function QnAContent() {
               {!selectedQa && (
                 <>
                   <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                      <div className="flex-1 w-full">
-                        <input
-                          type="text"
-                          placeholder="질문 검색..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                      </div>
-                      <select
-                        value={sortOrder}
-                        onChange={(e) => setSortOrder(e.target.value)}
-                        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option>최근 답변순</option>
-                        <option>인기순</option>
-                      </select>
-                    </div>
+                    <input
+                      type="text"
+                      placeholder="질문 검색..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                   {/* 인기 질문: 메인에서 오른쪽 사이드바로 이동 */}
 
@@ -507,7 +495,7 @@ function QnAContent() {
                             : "text-gray-600 hover:bg-gray-50"
                         }`}
                       >
-                        최근 답변순
+                        최신순
                       </button>
                       <button
                         onClick={() => setSortOrder("인기순")}
@@ -667,13 +655,7 @@ function QnAContent() {
                   </Card>
                 ) : (
                   paginatedQAs.map((qa) => (
-                    <div
-                      key={qa.id}
-                      onClick={() => {
-                        router.push(`/lighthouse-QnA?id=${qa.id}`);
-                        setQaId(qa.id);
-                      }}
-                    >
+                    <Link key={qa.id} href={`/lighthouse-QnA?id=${qa.id}`} className="block">
                       <Card className="hover:shadow-lg transition-all border border-gray-200 cursor-pointer group">
                         <CardContent className="p-6">
                           <div className="flex items-start gap-4">
@@ -742,7 +724,7 @@ function QnAContent() {
                           </div>
                         </CardContent>
                       </Card>
-                    </div>
+                    </Link>
                   ))
                 )}
               </div>
