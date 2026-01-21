@@ -199,7 +199,7 @@ export default function QuestionDetailPage() {
         <main className="pt-24 pb-16">
           <div className="max-w-4xl mx-auto px-6 text-center">
             <h1 className="text-2xl font-bold text-gray-900 mb-4">질문을 찾을 수 없습니다</h1>
-            <Link href="/adopt-a-beach/expertsqna">
+            <Link href="/lighthouse-QnA">
               <Button variant="outline">목록으로 돌아가기</Button>
             </Link>
           </div>
@@ -233,7 +233,7 @@ export default function QuestionDetailPage() {
               <CategorySidebar
                 categories={qnaCategories}
                 selectedCategory={qna?.category || ""}
-                basePath="/adopt-a-beach/expertsqna"
+                basePath="/lighthouse-QnA"
               />
             </div>
 

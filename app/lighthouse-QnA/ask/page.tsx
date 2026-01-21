@@ -171,7 +171,7 @@ export default function AskQuestionPage() {
       }
 
       alert("질문이 성공적으로 등록되었습니다!");
-      router.push("/adopt-a-beach/expertsqna");
+      router.push("/lighthouse-QnA");
     } catch (error) {
       console.error("Error submitting question:", error);
       alert("질문 등록 중 오류가 발생했습니다. 다시 시도해주세요.");

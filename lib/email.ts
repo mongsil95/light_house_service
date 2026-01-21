@@ -86,7 +86,7 @@ export async function sendAnswerNotification(answerData: {
           </div>
           
           <p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/adopt-a-beach/expertsqna/${answerData.questionId}" 
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/lighthouse-QnA?id=${answerData.questionId}" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               전체 답변 보기
             </a>

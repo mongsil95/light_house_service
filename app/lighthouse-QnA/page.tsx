@@ -282,12 +282,10 @@ function QnAContent() {
   // 검색어 확장 함수
   const expandSearchQuery = (query: string): string[][] => {
     const trimmedQuery = query.trim();
-    
+
     // 띄어쓰기가 있으면 단어별로 분리, 없으면 전체를 하나의 단어로
-    const words = trimmedQuery.includes(' ') 
-      ? trimmedQuery.split(/\s+/) 
-      : [trimmedQuery];
-    
+    const words = trimmedQuery.includes(" ") ? trimmedQuery.split(/\s+/) : [trimmedQuery];
+
     // 유사어/동의어 맵핑
     const synonyms: { [key: string]: string[] } = {
       기부금: ["기부금", "기금", "후원금", "후원", "기부"],
@@ -342,12 +340,12 @@ function QnAContent() {
 
     // 검색 대상 텍스트
     const searchableText = `${qa.question} ${qa.content}`.toLowerCase();
-    
+
     // 각 단어별로 확장된 검색어 배열
     const expandedWordGroups = expandSearchQuery(searchQuery);
-    
+
     // 모든 단어 그룹에서 최소 하나씩은 매칭되어야 함 (AND 조건)
-    const matchesSearch = expandedWordGroups.every((wordGroup) => 
+    const matchesSearch = expandedWordGroups.every((wordGroup) =>
       wordGroup.some((word) => searchableText.includes(word))
     );
 
@@ -717,7 +715,7 @@ function QnAContent() {
                                 <div className="flex items-center gap-3">
                                   <span className="flex items-center gap-1">
                                     <Eye className="w-3 h-3" />
-                                    조회 {qa.views}
+                                    {qa.views}명이 확인했어요
                                   </span>
                                   <span>· {qa.date}</span>
                                 </div>
@@ -861,21 +859,23 @@ function QnAContent() {
 
 export default function LighthouseQnAPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <main className="pt-24 pb-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center justify-center h-96">
-              <div className="text-center">
-                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">로딩 중...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white">
+          <Navigation />
+          <main className="pt-24 pb-16">
+            <div className="max-w-7xl mx-auto px-6">
+              <div className="flex items-center justify-center h-96">
+                <div className="text-center">
+                  <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                  <p className="text-gray-600">로딩 중...</p>
+                </div>
               </div>
             </div>
-          </div>
-        </main>
-      </div>
-    }>
+          </main>
+        </div>
+      }
+    >
       <QnAContent />
     </Suspense>
   );
