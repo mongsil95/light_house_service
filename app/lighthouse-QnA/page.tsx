@@ -199,12 +199,15 @@ function QnAContent() {
         }
 
         console.log("Total items:", allItems.length);
-        
+
         // 카테고리별 분포 확인
-        const categoryCounts = allItems.reduce((acc, item) => {
-          acc[item.category] = (acc[item.category] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
+        const categoryCounts = allItems.reduce(
+          (acc, item) => {
+            acc[item.category] = (acc[item.category] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>
+        );
         console.log("Category distribution:", categoryCounts);
 
         // 날짜순으로 정렬

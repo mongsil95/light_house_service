@@ -64,7 +64,6 @@ const categoryGroups = [
     items: [
       { value: "일반문의", label: "일반 문의" },
       { value: "공지사항", label: "공지사항" },
-      { value: "기타", label: "기타" },
     ],
   },
 ];
@@ -295,7 +294,7 @@ export default function AskQuestionPage() {
                       <SelectValue placeholder="질문 주제를 선택하세요" />
                     </SelectTrigger>
                     <SelectContent
-                      className="bg-white"
+                      className="bg-white max-h-[30vh] overflow-y-auto"
                       style={{
                         fontFamily:
                           "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
