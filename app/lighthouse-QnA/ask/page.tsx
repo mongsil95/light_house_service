@@ -61,10 +61,7 @@ const categoryGroups = [
   },
   {
     group: "기타",
-    items: [
-      { value: "일반문의", label: "일반 문의" },
-      { value: "공지사항", label: "공지사항" },
-    ],
+    items: [{ value: "일반문의", label: "일반 문의" }],
   },
 ];
 
