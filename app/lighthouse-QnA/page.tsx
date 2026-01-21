@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { supabase } from "@/lib/supabase";
-import { Calendar, ChevronDown, Eye, HelpCircle, Send, Share2, ThumbsUp, User } from "lucide-react";
+import { Calendar, ChevronDown, Eye, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -679,16 +679,6 @@ function QnAContent() {
                             }}
                             dangerouslySetInnerHTML={{ __html: selectedQa.content }}
                           />
-                        </div>
-
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <div className="flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            <span>익명</span>
-                          </div>
-                          <Badge variant={selectedQa.answered ? "default" : "secondary"}>
-                            {selectedQa.answered ? "답변완료" : "답변대기"}
-                          </Badge>
                         </div>
                       </CardContent>
                     </Card>
