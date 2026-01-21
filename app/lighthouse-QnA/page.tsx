@@ -263,19 +263,16 @@ function QnAContent() {
           .from("resources")
           .update({ views: newViews })
           .eq("id", resourceId);
-        
+
         if (error) {
           console.error("Error incrementing resource views:", error);
           return;
         }
-      } 
+      }
       // QnA 타입인 경우
       else if (qa.type === "qna") {
-        const { error } = await supabase
-          .from("qna")
-          .update({ views: newViews })
-          .eq("id", qnaId);
-        
+        const { error } = await supabase.from("qna").update({ views: newViews }).eq("id", qnaId);
+
         if (error) {
           console.error("Error incrementing qna views:", error);
           return;
@@ -284,9 +281,7 @@ function QnAContent() {
 
       // 로컬 상태 업데이트하여 UI에 즉시 반영
       setQaList((prevList) =>
-        prevList.map((q) =>
-          String(q.id) === String(qnaId) ? { ...q, views: newViews } : q
-        )
+        prevList.map((q) => (String(q.id) === String(qnaId) ? { ...q, views: newViews } : q))
       );
 
       // 선택된 게시물도 업데이트
@@ -850,6 +845,25 @@ function QnAContent() {
                       </Link>
                     ))}
                   </div>
+                </div>
+
+                {/* 커스텀 배너 */}
+                <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                  <a 
+                    href="https://example.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block group"
+                  >
+                    <div className="relative aspect-[16/9] bg-gray-100">
+                      <Image
+                        src="/images/banner-placeholder.jpg"
+                        alt="배너 이미지"
+                        fill
+                        className="object-cover group-hover:opacity-90 transition-opacity"
+                      />
+                    </div>
+                  </a>
                 </div>
 
                 {/* 질문하기 배너 (작고 무채색) */}
