@@ -644,7 +644,7 @@ function QnAContent() {
 
                         <div className="bg-gray-50 rounded-lg p-6 mb-6">
                           <div
-                            className="prose prose-sm sm:prose lg:prose-lg max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
+                            className="prose prose-sm sm:prose-base max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
                             style={{
                               fontFamily:
                                 "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
@@ -698,7 +698,7 @@ function QnAContent() {
                             </div>
 
                             <div
-                              className="prose prose-sm sm:prose lg:prose-lg max-w-none text-gray-700 prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
+                              className="prose prose-sm sm:prose-base max-w-none text-gray-700 prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
                               style={{
                                 fontFamily:
                                   "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
