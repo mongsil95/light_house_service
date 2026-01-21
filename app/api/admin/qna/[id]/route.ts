@@ -51,6 +51,39 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
+// PATCH /api/admin/qna/[id] - Update Q&A (alternative)
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const body = await request.json();
+    const supabase = createClient();
+    const { id } = params;
+
+    const { data, error } = await supabase
+      .from("qna")
+      .update({
+        title: body.title,
+        content: body.content,
+        category: body.category,
+        author_name: body.author_name,
+        author_email: body.author_email || null,
+        author_phone: body.author_phone || null,
+        status: body.status,
+        is_public: body.is_public,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    return NextResponse.json({ data }, { status: 200 });
+  } catch (error) {
+    console.error("Error updating Q&A:", error);
+    return NextResponse.json({ error: "Failed to update Q&A" }, { status: 500 });
+  }
+}
+
 // DELETE /api/admin/qna/[id] - Delete Q&A
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {

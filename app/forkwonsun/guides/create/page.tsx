@@ -11,8 +11,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Eye, Save } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { Eye, Save, Upload, X } from "lucide-react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,27 +37,76 @@ export default function CreateGuidePage() {
   const [category, setCategory] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [thumbnail, setThumbnail] = useState<File | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  const handleThumbnailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setThumbnail(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setThumbnailPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeThumbnail = () => {
+    setThumbnail(null);
+    setThumbnailPreview("");
+  };
+
+  const uploadThumbnail = async (): Promise<string | null> => {
+    if (!thumbnail) return null;
+
+    try {
+      setUploading(true);
+      const fileExt = thumbnail.name.split(".").pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from("thumbnails")
+        .upload(filePath, thumbnail);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("thumbnails").getPublicUrl(filePath);
+
+      return publicUrl;
+    } catch (error) {
+      console.error("Thumbnail upload error:", error);
+      alert("썸네일 업로드 중 오류가 발생했습니다.");
+      return null;
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const categories = [
-    "입양안내",
     "입양절차",
     "신청방법",
-    "자격요건",
-    "활동가이드",
+    "참여조건",
+    "입양기타",
     "활동매뉴얼",
-    "안전수칙",
+    "정화활동",
+    "캠페인",
     "사례공유",
-    "보고서자료",
-    "활동보고서",
-    "통계자료",
-    "연구자료",
-    "공지",
-    "중요공지",
-    "일반공지",
+    "보고서",
+    "기금납부",
+    "혜택",
+    "일반문의",
+    "공지사항",
   ];
 
   const handleSave = async (status: "draft" | "published") => {
@@ -75,6 +126,9 @@ export default function CreateGuidePage() {
     setSaving(true);
 
     try {
+      // 썸네일 업로드
+      const thumbnailUrl = await uploadThumbnail();
+
       // content의 첫 100자를 description으로 사용
       const description = content
         .slice(0, 100)
@@ -88,6 +142,7 @@ export default function CreateGuidePage() {
         content,
         status,
         author: "관리자",
+        thumbnail_url: thumbnailUrl,
       };
 
       const response = await fetch("/api/admin/guides", {
@@ -129,13 +184,17 @@ export default function CreateGuidePage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => handleSave("draft")} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => handleSave("draft")}
+              disabled={saving || uploading}
+            >
               <Save className="mr-2 h-4 w-4" />
-              임시저장
+              {uploading ? "업로드 중..." : "임시저장"}
             </Button>
-            <Button onClick={() => handleSave("published")} disabled={saving}>
+            <Button onClick={() => handleSave("published")} disabled={saving || uploading}>
               <Eye className="mr-2 h-4 w-4" />
-              발행하기
+              {uploading ? "업로드 중..." : "발행하기"}
             </Button>
           </div>
         </div>
@@ -169,6 +228,47 @@ export default function CreateGuidePage() {
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="예: 반려해변 입양 신청 방법"
                   />
+                </div>
+              </div>
+
+              {/* 썸네일 업로드 */}
+              <div className="space-y-2">
+                <Label htmlFor="thumbnail">썸네일 이미지</Label>
+                <div className="flex items-start gap-4">
+                  {thumbnailPreview ? (
+                    <div className="relative w-48 h-32 bg-gray-100 rounded-lg overflow-hidden">
+                      <Image
+                        src={thumbnailPreview}
+                        alt="Thumbnail preview"
+                        fill
+                        className="object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeThumbnail}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <label className="w-48 h-32 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-colors">
+                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-500">이미지 업로드</span>
+                      <input
+                        type="file"
+                        id="thumbnail"
+                        accept="image/*"
+                        onChange={handleThumbnailChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                  <p className="text-sm text-gray-500 mt-2">
+                    권장 크기: 800x450px (16:9 비율)
+                    <br />
+                    JPG, PNG 파일만 가능
+                  </p>
                 </div>
               </div>
 

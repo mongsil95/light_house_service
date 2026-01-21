@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/lib/supabase";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -62,22 +61,19 @@ export default function EditQnAPage() {
   const [showAnswerForm, setShowAnswerForm] = useState(false);
 
   const categories = [
-    "입양관련",
     "입양절차",
+    "신청방법",
     "참여조건",
-    "계약관련",
-    "활동운영",
-    "활동계획",
-    "활동방법",
-    "참여인원",
-    "활동보고",
-    "지원기금",
-    "지원제도",
-    "기금사용",
-    "정산절차",
-    "기타",
-    "문의",
-    "제안",
+    "입양기타",
+    "활동매뉴얼",
+    "정화활동",
+    "캠페인",
+    "사례공유",
+    "보고서",
+    "기금납부",
+    "혜택",
+    "일반문의",
+    "공지사항",
   ];
   const statuses = [
     { value: "pending", label: "답변대기" },
@@ -94,9 +90,15 @@ export default function EditQnAPage() {
     try {
       setLoading(true);
 
-      const { data, error } = await supabase.from("qna").select("*").eq("id", qnaId).single();
+      // Use admin API to bypass RLS
+      const response = await fetch(`/api/admin/qna/${qnaId}`);
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error("Failed to fetch Q&A");
+      }
+
+      const result = await response.json();
+      const data = result.data;
 
       if (data) {
         setFormData({
@@ -148,9 +150,13 @@ export default function EditQnAPage() {
       console.log("Updating Q&A with data:", formData);
       console.log("QnA ID:", qnaId);
 
-      const { data, error } = await supabase
-        .from("qna")
-        .update({
+      // Use admin API to bypass RLS
+      const response = await fetch(`/api/admin/qna/${qnaId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           title: formData.title,
           content: formData.content,
           category: formData.category,
@@ -159,17 +165,16 @@ export default function EditQnAPage() {
           author_phone: formData.author_phone || null,
           status: formData.status,
           is_public: formData.is_public,
-        })
-        .eq("id", parseInt(qnaId))
-        .select();
+        }),
+      });
 
-      console.log("Update result:", { data, error });
-
-      if (error) throw error;
-
-      if (!data || data.length === 0) {
-        throw new Error("업데이트된 데이터가 없습니다.");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Update failed");
       }
+
+      const result = await response.json();
+      console.log("Update result:", result);
 
       alert("Q&A가 성공적으로 수정되었습니다.");
       router.push("/forkwonsun/qna");
@@ -371,20 +376,26 @@ export default function EditQnAPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
                 <div>
-                  <Label htmlFor="is_public" className="font-[Cafe24_Ssurround] cursor-pointer">
+                  <Label
+                    htmlFor="is_public"
+                    className="font-[Cafe24_Ssurround] cursor-pointer text-base font-semibold text-gray-900"
+                  >
                     공개 여부
                   </Label>
-                  <p className="text-sm text-gray-600 font-[Cafe24_Ssurround]">
+                  <p className="text-sm text-gray-600 font-[Cafe24_Ssurround] mt-1">
                     공개 설정 시 사용자 페이지에 표시됩니다
                   </p>
                 </div>
-                <Switch
-                  id="is_public"
-                  checked={formData.is_public}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_public: checked })}
-                />
+                <Button
+                  type="button"
+                  variant={formData.is_public ? "default" : "outline"}
+                  onClick={() => setFormData({ ...formData, is_public: !formData.is_public })}
+                  className="font-[Cafe24_Ssurround] min-w-[100px] text-base h-11"
+                >
+                  {formData.is_public ? "✓ 공개" : "비공개"}
+                </Button>
               </div>
             </CardContent>
           </Card>

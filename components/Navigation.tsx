@@ -15,7 +15,7 @@ export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const menuItems: MenuItem[] = [
-    { label: "홈", href: "/" },
+    // { label: "홈", href: "/" }, // 숨김 처리
     // TODO : 반려해변 메뉴 - 추후 활성화 예정
     //{
     //  label: "반려해변",
@@ -27,8 +27,8 @@ export default function Navigation() {
     //    { label: "전문가 Q&A", href: "/adopt-a-beach/expertsqna" },
     //  ],
     //},
-    { label: "반려해변 가이드", href: "/adopt-a-beach/resources" },
-    { label: "등대지기 Q&A", href: "/adopt-a-beach/expertsqna" },
+    // { label: "반려해변 가이드", href: "/adopt-a-beach/resources" }, // 숨김 처리
+    //{ label: "등대지기 Q&A", href: "/adopt-a-beach/expertsqna" },
   ];
 
   return (
@@ -37,7 +37,11 @@ export default function Navigation() {
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
           <Link href="/" className="flex items-center">
-            <img src="/images/logo.png" alt="등대지기의 랜턴" className="h-10 md:h-12 w-auto" />
+            <img
+              src="/images/adopt-a-beach.png"
+              alt="등대지기의 랜턴"
+              className="h-10 md:h-12 w-auto"
+            />
           </Link>
 
           {/* Center: Navigation Menu (Desktop) */}

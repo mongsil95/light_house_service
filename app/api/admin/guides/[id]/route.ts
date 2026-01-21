@@ -41,6 +41,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       tags,
       status,
       author,
+      thumbnail_url,
     } = body;
 
     // content 생성
@@ -55,6 +56,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (title) updateData.title = title;
     if (finalContent) updateData.content = finalContent;
     if (author) updateData.author = author;
+    if (thumbnail_url !== undefined) updateData.thumbnail_url = thumbnail_url;
     if (status) {
       updateData.status = status;
       if (status === "published" && !updateData.published_at) {

@@ -6,12 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { supabase } from "@/lib/supabase";
-import { Calendar, Eye, HelpCircle, Share2, ThumbsUp, User } from "lucide-react";
+import { Calendar, ChevronDown, Eye, HelpCircle, Share2, ThumbsUp, User } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 
-function ExpertsQnAContent() {
+function QnAContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -27,6 +28,7 @@ function ExpertsQnAContent() {
   const [qaId, setQaId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const extractText = (html: string) => {
     // HTML 태그 제거
@@ -107,7 +109,7 @@ function ExpertsQnAContent() {
 
         console.log("QnA Data:", qnaData, "Error:", qnaError);
 
-        // Resources 데이터 가져오기
+        // Resources 데이터 가져오기 (thumbnail_url 포함)
         const { data: resourcesData, error: resourcesError } = await supabase
           .from("resources")
           .select("*")
@@ -171,6 +173,7 @@ function ExpertsQnAContent() {
             expert: "관리자",
             answered: true,
             content: resource.content,
+            thumbnail_url: resource.thumbnail_url, // 썸네일 URL 추가
           }));
           allItems.push(...formattedResources);
           console.log("Formatted Resources:", formattedResources.length);
@@ -276,10 +279,78 @@ function ExpertsQnAContent() {
     { id: "기타", label: "기타", icon: "📋" },
   ];
 
+  // 검색어 확장 함수
+  const expandSearchQuery = (query: string): string[][] => {
+    const trimmedQuery = query.trim();
+    
+    // 띄어쓰기가 있으면 단어별로 분리, 없으면 전체를 하나의 단어로
+    const words = trimmedQuery.includes(' ') 
+      ? trimmedQuery.split(/\s+/) 
+      : [trimmedQuery];
+    
+    // 유사어/동의어 맵핑
+    const synonyms: { [key: string]: string[] } = {
+      기부금: ["기부금", "기금", "후원금", "후원", "기부"],
+      기금: ["기금", "기부금", "후원금", "후원", "기부"],
+      후원: ["후원", "기부", "기부금", "기금", "후원금"],
+      입양: ["입양", "반려", "채택"],
+      조건: ["조건", "요건", "자격"],
+      절차: ["절차", "과정", "프로세스"],
+      활동: ["활동", "운영", "실천", "참여"],
+      신청: ["신청", "등록", "가입", "접수"],
+    };
+
+    // 각 단어별로 확장된 검색어 배열 생성
+    return words.map((word) => {
+      const lowerWord = word.toLowerCase();
+      const expandedWords = [lowerWord];
+
+      // 유사어 추가 - 정확히 일치하거나 포함하는 경우
+      Object.keys(synonyms).forEach((key) => {
+        if (lowerWord === key.toLowerCase() || lowerWord.includes(key.toLowerCase())) {
+          synonyms[key].forEach((syn) => {
+            if (!expandedWords.includes(syn.toLowerCase())) {
+              expandedWords.push(syn.toLowerCase());
+            }
+          });
+        }
+      });
+
+      // 연도 표현 확장
+      const yearMatch = word.match(/(\d{2,4})년?/);
+      if (yearMatch) {
+        const year = yearMatch[1];
+        if (year.length === 2) {
+          expandedWords.push(`20${year}년`);
+          expandedWords.push(`20${year}`);
+        } else if (year.length === 4) {
+          expandedWords.push(`${year.substring(2)}년`);
+          expandedWords.push(year);
+        }
+      }
+
+      return expandedWords;
+    });
+  };
+
   const filteredQAs = qaList.filter((qa) => {
     const matchesCategory = selectedCategory === "전체" || qa.category === selectedCategory;
-    const matchesSearch =
-      searchQuery === "" || qa.question.toLowerCase().includes(searchQuery.toLowerCase());
+
+    if (searchQuery === "") {
+      return matchesCategory;
+    }
+
+    // 검색 대상 텍스트
+    const searchableText = `${qa.question} ${qa.content}`.toLowerCase();
+    
+    // 각 단어별로 확장된 검색어 배열
+    const expandedWordGroups = expandSearchQuery(searchQuery);
+    
+    // 모든 단어 그룹에서 최소 하나씩은 매칭되어야 함 (AND 조건)
+    const matchesSearch = expandedWordGroups.every((wordGroup) => 
+      wordGroup.some((word) => searchableText.includes(word))
+    );
+
     return matchesCategory && matchesSearch;
   });
 
@@ -335,17 +406,68 @@ function ExpertsQnAContent() {
       <main className="pt-24 pb-16">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* 왼쪽 사이드바 */}
-            <div className="lg:col-span-2">
+            {/* 왼쪽 사이드바 - 데스크톱만 표시 */}
+            <div className="hidden lg:block lg:col-span-2">
               <CategorySidebar
                 categories={qnaCategories}
                 selectedCategory={selectedCategory}
-                basePath="/adopt-a-beach/expertsqna"
+                basePath="/lighthouse-QnA"
               />
             </div>
 
             {/* 메인 콘텐츠 */}
             <div className="lg:col-span-7">
+              {/* 모바일 카테고리 드롭다운 */}
+              <div className="lg:hidden mb-4">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-semibold text-gray-900">{selectedCategory}</span>
+                  <ChevronDown
+                    className={`w-5 h-5 text-gray-500 transition-transform ${
+                      mobileMenuOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                {mobileMenuOpen && (
+                  <div className="mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                    <Link
+                      href="/lighthouse-QnA"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block px-4 py-3 ${
+                        selectedCategory === "전체"
+                          ? "bg-blue-50 text-blue-600 font-semibold"
+                          : "text-gray-700 hover:bg-gray-50"
+                      }`}
+                    >
+                      전체
+                    </Link>
+                    {qnaCategories.map((category) => (
+                      <div key={category.value}>
+                        <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                          {category.label}
+                        </div>
+                        {category.subItems.map((subItem) => (
+                          <Link
+                            key={subItem.value}
+                            href={`/lighthouse-QnA?category=${subItem.value}`}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className={`block px-6 py-2.5 ${
+                              selectedCategory === subItem.value
+                                ? "bg-blue-50 text-blue-600 font-semibold"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* 검색 및 정렬 - 상세보기일 때 숨김 */}
               {!selectedQa && (
                 <>
@@ -538,7 +660,7 @@ function ExpertsQnAContent() {
                       <HelpCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                       <h3 className="text-lg font-bold text-gray-900 mb-2">검색 결과가 없습니다</h3>
                       <p className="text-gray-600 mb-6">다른 검색어나 카테고리를 시도해보세요</p>
-                      <Link href="/adopt-a-beach/expertsqna/ask">
+                      <Link href="/lighthouse-QnA/ask">
                         <button className="px-6 py-3 bg-blue-300 text-white rounded-lg hover:bg-blue-400 transition-colors font-semibold">
                           새 질문하기
                         </button>
@@ -550,21 +672,13 @@ function ExpertsQnAContent() {
                     <div
                       key={qa.id}
                       onClick={() => {
-                        router.push(`/adopt-a-beach/expertsqna?id=${qa.id}`);
+                        router.push(`/lighthouse-QnA?id=${qa.id}`);
                         setQaId(qa.id);
                       }}
                     >
                       <Card className="hover:shadow-lg transition-all border border-gray-200 cursor-pointer group">
                         <CardContent className="p-6">
                           <div className="flex items-start gap-4">
-                            {/* 정보 타입일 때만 사진 영역 표시 */}
-                            {qa.type === "resource" && (
-                              <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
-                                <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-gray-400">
-                                  사진 영역
-                                </div>
-                              </div>
-                            )}
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge
@@ -581,19 +695,52 @@ function ExpertsQnAContent() {
                                   {qa.category}
                                 </Badge>
                               </div>
-                              <h3 className="font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors truncate">
+                              <h3
+                                className="font-bold text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors line-clamp-1"
+                                style={{
+                                  fontFamily:
+                                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                }}
+                              >
                                 {extractText(qa.question)}
                               </h3>
-                              <div className="flex items-center text-sm text-gray-500">
-                                <div className="flex items-center gap-4">
+                              <p
+                                className="text-sm text-gray-600 mb-2 line-clamp-1"
+                                style={{
+                                  fontFamily:
+                                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                }}
+                              >
+                                {extractText(qa.content)}
+                              </p>
+                              <div className="flex items-center text-xs text-gray-400">
+                                <div className="flex items-center gap-3">
                                   <span className="flex items-center gap-1">
-                                    <Eye className="w-4 h-4" />
+                                    <Eye className="w-3 h-3" />
                                     조회 {qa.views}
                                   </span>
                                   <span>· {qa.date}</span>
                                 </div>
                               </div>
                             </div>
+                            {/* 정보 타입일 때만 사진 영역 표시 (오른쪽) */}
+                            {qa.type === "resource" && (
+                              <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                                {qa.thumbnail_url ? (
+                                  <Image
+                                    src={qa.thumbnail_url}
+                                    alt={extractText(qa.question)}
+                                    width={96}
+                                    height={96}
+                                    className="w-full h-full object-contain"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-gray-400 text-xs">
+                                    No Image
+                                  </div>
+                                )}
+                              </div>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -666,7 +813,7 @@ function ExpertsQnAContent() {
                     {popularQuestions.map((qa, idx) => (
                       <Link
                         key={qa.id}
-                        href={`/adopt-a-beach/expertsqna?id=${qa.id}`}
+                        href={`/lighthouse-QnA?id=${qa.id}`}
                         className="flex items-center gap-3 p-2 rounded hover:bg-gray-50"
                       >
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center font-semibold text-xs">
@@ -693,7 +840,7 @@ function ExpertsQnAContent() {
                     </h3>
                     <p className="text-xs text-gray-500 mb-2">등대지기에게 질문해보세요</p>
                   </div>
-                  <Link href="/adopt-a-beach/expertsqna/ask">
+                  <Link href="/lighthouse-QnA/ask">
                     <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-md text-sm font-medium hover:bg-gray-50 transition">
                       질문하기
                     </button>
@@ -712,7 +859,7 @@ function ExpertsQnAContent() {
   );
 }
 
-export default function ExpertsQnAPage() {
+export default function LighthouseQnAPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-white">
@@ -729,7 +876,7 @@ export default function ExpertsQnAPage() {
         </main>
       </div>
     }>
-      <ExpertsQnAContent />
+      <QnAContent />
     </Suspense>
   );
 }

@@ -71,16 +71,19 @@ export default function AdminQnAPage() {
     try {
       setLoading(true);
 
-      // Q&A 목록 조회
-      let query = supabase.from("qna").select("*").order("created_at", { ascending: false });
+      // Use admin API to bypass RLS
+      const response = await fetch("/api/admin/qna");
 
-      const { data: qnaData, error: qnaError } = await query;
+      if (!response.ok) {
+        throw new Error("Failed to fetch Q&A");
+      }
 
-      if (qnaError) throw qnaError;
+      const result = await response.json();
+      const qnaData = result.data || [];
 
       // 각 Q&A의 답변 개수 조회
       const qnaWithAnswers = await Promise.all(
-        (qnaData || []).map(async (qna) => {
+        qnaData.map(async (qna: QnA) => {
           const { count } = await supabase
             .from("qna_answers")
             .select("*", { count: "exact", head: true })
@@ -102,9 +105,15 @@ export default function AdminQnAPage() {
     if (!selectedQnA) return;
 
     try {
-      const { error } = await supabase.from("qna").delete().eq("id", selectedQnA);
+      // Use admin API to bypass RLS
+      const response = await fetch(`/api/admin/qna/${selectedQnA}`, {
+        method: "DELETE",
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Delete failed");
+      }
 
       setQnaList(qnaList.filter((q) => q.id !== selectedQnA));
       setDeleteDialogOpen(false);

@@ -61,12 +61,17 @@ export default function ViewQnAPage() {
     try {
       setLoading(true);
 
-      const { data, error } = await supabase.from("qna").select("*").eq("id", qnaId).single();
+      // Use admin API to bypass RLS
+      const response = await fetch(`/api/admin/qna/${qnaId}`);
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error("Failed to fetch Q&A");
+      }
 
-      if (data) {
-        setQna(data);
+      const result = await response.json();
+
+      if (result.data) {
+        setQna(result.data);
       }
     } catch (error) {
       console.error("Error fetching Q&A:", error);
@@ -242,7 +247,9 @@ export default function ViewQnAPage() {
           <CardContent>
             <div
               className="prose prose-sm sm:prose lg:prose-lg max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
-              style={{fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif"}}
+              style={{
+                fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+              }}
               dangerouslySetInnerHTML={{ __html: qna.content }}
             />
           </CardContent>

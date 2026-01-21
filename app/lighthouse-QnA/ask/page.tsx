@@ -34,10 +34,23 @@ import { useState } from "react";
 // POST /api/questions
 
 const categories = [
+  { value: "입양관련", label: "입양관련" },
   { value: "입양절차", label: "입양절차" },
-  { value: "활동계획", label: "활동계획" },
+  { value: "신청방법", label: "신청방법" },
+  { value: "참여조건", label: "참여조건" },
+  { value: "입양기타", label: "입양기타" },
+  { value: "활동운영", label: "활동운영" },
+  { value: "활동매뉴얼", label: "활동매뉴얼" },
+  { value: "정화활동", label: "정화활동" },
+  { value: "캠페인", label: "캠페인" },
+  { value: "사례공유", label: "사례공유" },
+  { value: "보고서", label: "보고서" },
+  { value: "기부금", label: "기부금" },
   { value: "기금납부", label: "기금납부" },
+  { value: "혜택", label: "혜택" },
   { value: "기타", label: "기타" },
+  { value: "일반문의", label: "일반문의" },
+  { value: "공지사항", label: "공지사항" },
 ];
 
 export default function AskQuestionPage() {

@@ -49,6 +49,7 @@ export async function POST(request: NextRequest) {
       tags,
       status,
       author,
+      thumbnail_url,
     } = body;
 
     // 필수 필드 검증
@@ -72,6 +73,7 @@ export async function POST(request: NextRequest) {
         author: author || "관리자",
         status: status || "draft",
         published_at: status === "published" ? new Date().toISOString() : null,
+        thumbnail_url: thumbnail_url || null,
       })
       .select()
       .single();
