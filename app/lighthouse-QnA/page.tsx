@@ -10,7 +10,7 @@ import { Calendar, ChevronDown, Eye, HelpCircle, Share2, ThumbsUp, User } from "
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 
 function QnAContent() {
   const router = useRouter();
@@ -29,6 +29,7 @@ function QnAContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const viewedQaIds = useRef<Set<string>>(new Set());
 
   const extractText = (html: string) => {
     // HTML 태그 제거
@@ -215,10 +216,14 @@ function QnAContent() {
       const qa = qaList.find((q) => String(q.id) === String(qaId));
       setSelectedQa(qa || null);
 
-      // 답변 가져오기 및 조회수 증가
-      if (qa) {
+      // 답변 가져오기 및 조회수 증가 (한 번만)
+      if (qa && !viewedQaIds.current.has(qaId)) {
         fetchAnswers(qaId);
         incrementViews(qaId);
+        viewedQaIds.current.add(qaId);
+      } else if (qa) {
+        // 이미 조회수를 증가시킨 경우 답변만 가져오기
+        fetchAnswers(qaId);
       }
     } else {
       setSelectedQa(null);
@@ -246,11 +251,47 @@ function QnAContent() {
   const incrementViews = async (qnaId: string) => {
     try {
       const qa = qaList.find((q) => String(q.id) === String(qnaId));
-      if (qa) {
-        await supabase
+      if (!qa) return;
+
+      const newViews = (qa.views || 0) + 1;
+
+      // Resource 타입인 경우
+      if (qa.type === "resource") {
+        // "resource-5" 형식에서 숫자 ID 추출
+        const resourceId = qnaId.replace("resource-", "");
+        const { error } = await supabase
+          .from("resources")
+          .update({ views: newViews })
+          .eq("id", resourceId);
+        
+        if (error) {
+          console.error("Error incrementing resource views:", error);
+          return;
+        }
+      } 
+      // QnA 타입인 경우
+      else if (qa.type === "qna") {
+        const { error } = await supabase
           .from("qna")
-          .update({ views: (qa.views || 0) + 1 })
+          .update({ views: newViews })
           .eq("id", qnaId);
+        
+        if (error) {
+          console.error("Error incrementing qna views:", error);
+          return;
+        }
+      }
+
+      // 로컬 상태 업데이트하여 UI에 즉시 반영
+      setQaList((prevList) =>
+        prevList.map((q) =>
+          String(q.id) === String(qnaId) ? { ...q, views: newViews } : q
+        )
+      );
+
+      // 선택된 게시물도 업데이트
+      if (selectedQa && String(selectedQa.id) === String(qnaId)) {
+        setSelectedQa({ ...selectedQa, views: newViews });
       }
     } catch (error) {
       console.error("Error incrementing views:", error);
