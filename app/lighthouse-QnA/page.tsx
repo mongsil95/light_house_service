@@ -199,6 +199,13 @@ function QnAContent() {
         }
 
         console.log("Total items:", allItems.length);
+        
+        // 카테고리별 분포 확인
+        const categoryCounts = allItems.reduce((acc, item) => {
+          acc[item.category] = (acc[item.category] || 0) + 1;
+          return acc;
+        }, {} as Record<string, number>);
+        console.log("Category distribution:", categoryCounts);
 
         // 날짜순으로 정렬
         allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -424,7 +431,25 @@ function QnAContent() {
   };
 
   const filteredQAs = qaList.filter((qa) => {
-    const matchesCategory = selectedCategory === "전체" || qa.category === selectedCategory;
+    let matchesCategory = false;
+
+    if (selectedCategory === "전체") {
+      matchesCategory = true;
+    } else {
+      // 정확히 일치하는 카테고리
+      if (qa.category === selectedCategory) {
+        matchesCategory = true;
+      } else {
+        // 상위 카테고리 선택 시 하위 카테고리도 포함
+        const parentCategory = qnaCategories.find((cat) => cat.value === selectedCategory);
+        if (parentCategory) {
+          // 해당 상위 카테고리의 하위 항목 중 하나와 일치하는지 확인
+          matchesCategory = parentCategory.subItems.some(
+            (subItem) => subItem.value === qa.category
+          );
+        }
+      }
+    }
 
     if (searchQuery === "") {
       return matchesCategory;
