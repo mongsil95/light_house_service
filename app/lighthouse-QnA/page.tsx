@@ -855,7 +855,7 @@ function QnAContent() {
                     rel="noopener noreferrer"
                     className="block group"
                   >
-                    <div className="relative aspect-[16/9] bg-gray-100">
+                    <div className="relative aspect-[16/13.5] bg-gray-100">
                       <Image
                         src="/images/banner-placeholder.jpg"
                         alt="배너 이미지"
