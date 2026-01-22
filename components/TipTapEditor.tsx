@@ -68,7 +68,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm sm:prose lg:prose-lg xl:prose-xl max-w-none focus:outline-none min-h-[400px] px-4 py-3 font-sans",
+          "prose prose-sm max-w-none focus:outline-none h-[500px] overflow-y-auto px-4 py-3 font-sans text-sm",
       },
     },
     onUpdate: handleUpdate,
@@ -84,8 +84,41 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
 
   return (
     <div className="border border-gray-300 rounded-lg overflow-hidden bg-white">
-      <MenuBar editor={editor} />
-      <EditorContent editor={editor} />
+      <style jsx>{`
+        .tiptap-editor :global(.ProseMirror) {
+          line-height: 1.8 !important;
+        }
+        .tiptap-editor :global(.ProseMirror p) {
+          margin: 16px 0 !important;
+          line-height: 1.8 !important;
+        }
+        .tiptap-editor :global(.ProseMirror h1) {
+          line-height: 1.4 !important;
+          margin: 32px 0 16px !important;
+        }
+        .tiptap-editor :global(.ProseMirror h2) {
+          line-height: 1.4 !important;
+          margin: 32px 0 16px !important;
+        }
+        .tiptap-editor :global(.ProseMirror h3) {
+          line-height: 1.4 !important;
+          margin: 24px 0 12px !important;
+        }
+        .tiptap-editor :global(.ProseMirror ul),
+        .tiptap-editor :global(.ProseMirror ol) {
+          margin: 16px 0 !important;
+        }
+        .tiptap-editor :global(.ProseMirror li) {
+          margin: 8px 0 !important;
+          line-height: 1.8 !important;
+        }
+      `}</style>
+      <div className="sticky top-0 z-10 bg-white border-b border-gray-200">
+        <MenuBar editor={editor} />
+      </div>
+      <div className="tiptap-editor">
+        <EditorContent editor={editor} />
+      </div>
     </div>
   );
 }
