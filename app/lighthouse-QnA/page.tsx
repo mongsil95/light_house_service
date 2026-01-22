@@ -785,9 +785,14 @@ function QnAContent() {
                                 href={`/lighthouse-QnA?id=${item.id}`}
                                 className="block p-3 border border-gray-200 rounded-md hover:shadow-sm bg-white"
                               >
-                                <p className="text-sm font-medium text-gray-800 truncate whitespace-nowrap overflow-hidden">
-                                  {item.question}
-                                </p>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline" className="text-xs font-semibold">
+                                    {item.category}
+                                  </Badge>
+                                  <p className="text-sm font-medium text-gray-800 truncate whitespace-nowrap overflow-hidden">
+                                    {item.question}
+                                  </p>
+                                </div>
                                 <p
                                   className="text-xs text-gray-500 mt-1 truncate whitespace-nowrap overflow-hidden"
                                   style={{

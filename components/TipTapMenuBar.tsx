@@ -1,5 +1,6 @@
 "use client";
 
+import { uploadImageFile } from "@/lib/uploadImage";
 import { Editor } from "@tiptap/react";
 import {
   AlignCenter,
@@ -25,7 +26,7 @@ import {
   Undo,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 interface MenuBarProps {
   editor: Editor | null;
@@ -40,6 +41,29 @@ export default function MenuBar({ editor }: MenuBarProps) {
       editor.chain().focus().setImage({ src: url }).run();
     }
   }, [editor]);
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleUploadClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleFileChange = useCallback(
+    async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file || !editor) return;
+      try {
+        const url = await uploadImageFile(file);
+        editor.chain().focus().setImage({ src: url }).run();
+      } catch (err) {
+        console.error("Image upload failed", err);
+        alert("이미지 업로드에 실패했습니다.");
+      } finally {
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
+    },
+    [editor]
+  );
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -135,33 +159,44 @@ export default function MenuBar({ editor }: MenuBarProps) {
     const hasNode = Boolean(editor.state.schema.nodes && editor.state.schema.nodes.ctaButton);
 
     if (hasNode) {
-      editor.chain().focus().insertContent({ type: "ctaButton", attrs: { href: url, label } }).run();
+      editor
+        .chain()
+        .focus()
+        .insertContent({ type: "ctaButton", attrs: { href: url, label } })
+        .run();
     } else {
       const html = `<a href="${url}" data-cta class="inline-block px-5 py-2 rounded-md text-base font-semibold no-underline shadow-sm bg-[#2ac1bc] text-white">${label}</a>`;
       editor.chain().focus().insertContent(html).run();
     }
   }, [editor]);
 
-  const updateCTAAttrs = useCallback((attrs: Record<string, any>) => {
-    if (!editor) return;
+  const updateCTAAttrs = useCallback(
+    (attrs: Record<string, any>) => {
+      if (!editor) return;
 
-    // If a CTA node is selected, update attributes; otherwise try to update node at the selection
-    try {
-      editor.chain().focus().updateAttributes("ctaButton", attrs).run();
-    } catch (e) {
-      // fallback: try selecting the node and setting attributes via transaction
-      const { state } = editor;
-      const { from, to } = state.selection;
-      state.tr.doc.nodesBetween(from, to, (node, pos) => {
-        if (node.type.name === "ctaButton") {
-          editor.chain().focus().command(({ tr }) => {
-            tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
-            return true;
-          }).run();
-        }
-      });
-    }
-  }, [editor]);
+      // If a CTA node is selected, update attributes; otherwise try to update node at the selection
+      try {
+        editor.chain().focus().updateAttributes("ctaButton", attrs).run();
+      } catch (e) {
+        // fallback: try selecting the node and setting attributes via transaction
+        const { state } = editor;
+        const { from, to } = state.selection;
+        state.tr.doc.nodesBetween(from, to, (node, pos) => {
+          if (node.type.name === "ctaButton") {
+            editor
+              .chain()
+              .focus()
+              .command(({ tr }) => {
+                tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+                return true;
+              })
+              .run();
+          }
+        });
+      }
+    },
+    [editor]
+  );
 
   const editSelectedCTA = useCallback(() => {
     if (!editor) return;
@@ -202,24 +237,27 @@ export default function MenuBar({ editor }: MenuBarProps) {
     editor.chain().focus().insertContent(date).run();
   }, [editor]);
 
-  const setColorCmd = useCallback((color: string) => {
-    if (!editor) return;
+  const setColorCmd = useCallback(
+    (color: string) => {
+      if (!editor) return;
 
-    // setColor is provided by @tiptap/extension-color
-    try {
-      // some versions accept a single string argument
-      // others attach as commands under textStyle; this works in common setups
-      // fall back to inline HTML if command isn't available
-      if (editor.chain().focus().setColor) {
-        // @ts-ignore
-        editor.chain().focus().setColor(color).run();
-      } else {
+      // setColor is provided by @tiptap/extension-color
+      try {
+        // some versions accept a single string argument
+        // others attach as commands under textStyle; this works in common setups
+        // fall back to inline HTML if command isn't available
+        if (editor.chain().focus().setColor) {
+          // @ts-ignore
+          editor.chain().focus().setColor(color).run();
+        } else {
+          editor.chain().focus().setMark("textStyle", { color }).run();
+        }
+      } catch (e) {
         editor.chain().focus().setMark("textStyle", { color }).run();
       }
-    } catch (e) {
-      editor.chain().focus().setMark("textStyle", { color }).run();
-    }
-  }, [editor]);
+    },
+    [editor]
+  );
 
   const unsetColorCmd = useCallback(() => {
     if (!editor) return;
@@ -270,11 +308,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
           title="글씨 색상"
           className="w-7 h-7 p-0 border rounded"
         />
-        <button
-          onClick={unsetColorCmd}
-          className="p-2 rounded hover:bg-gray-200"
-          title="색상 제거"
-        >
+        <button onClick={unsetColorCmd} className="p-2 rounded hover:bg-gray-200" title="색상 제거">
           A
         </button>
       </div>
@@ -389,9 +423,24 @@ export default function MenuBar({ editor }: MenuBarProps) {
         <LinkIcon className="w-4 h-4" />
       </button>
 
-      <button onClick={addImage} className="p-2 rounded hover:bg-gray-200" title="이미지">
+      <button onClick={addImage} className="p-2 rounded hover:bg-gray-200" title="이미지 URL 삽입">
         <ImageIcon className="w-4 h-4" />
       </button>
+
+      <button
+        onClick={handleUploadClick}
+        className="p-2 rounded hover:bg-gray-200"
+        title="이미지 업로드"
+      >
+        <ImageIcon className="w-4 h-4" />
+      </button>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
 
       <button onClick={navigateTo} className="p-2 rounded hover:bg-gray-200" title="이동">
         <ExternalLink className="w-4 h-4" />
@@ -419,7 +468,11 @@ export default function MenuBar({ editor }: MenuBarProps) {
             onChange={(e) => updateCTAAttrs({ color: (e.target as HTMLInputElement).value })}
             className="w-7 h-7 p-0 border rounded"
           />
-          <button onClick={editSelectedCTA} className="p-2 rounded hover:bg-gray-200" title="CTA 편집">
+          <button
+            onClick={editSelectedCTA}
+            className="p-2 rounded hover:bg-gray-200"
+            title="CTA 편집"
+          >
             수정
           </button>
         </div>
