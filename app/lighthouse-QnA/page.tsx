@@ -34,6 +34,7 @@ function QnAContent() {
   const [loading, setLoading] = useState(true);
   const [selectedQa, setSelectedQa] = useState<any | null>(null);
   const [answers, setAnswers] = useState<any[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
   const [liked, setLiked] = useState(false);
   const [qaId, setQaId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,7 +100,6 @@ function QnAContent() {
       subItems: [
         { label: "전체", value: "기부금" },
         { label: "기금납부", value: "기금납부" },
-        
       ],
     },
     {
@@ -155,6 +155,7 @@ function QnAContent() {
             type: "qna", // 타입 추가
             category: qa.category || "운영·기타",
             question: qa.title,
+            subtitle: extractText(qa.content).slice(0, 160),
             views: qa.views || 0,
             likes: 0,
             date: new Date(qa.created_at)
@@ -260,6 +261,21 @@ function QnAContent() {
       setAnswers([]);
     }
   }, [qaId, qaList]);
+
+  // 추천 항목 생성 (선택된 게시물 변경 시)
+  useEffect(() => {
+    if (!selectedQa) {
+      setRecommendations([]);
+      return;
+    }
+
+    const pool = qaList.filter(
+      (q) => q.type === selectedQa.type && String(q.id) !== String(selectedQa.id)
+    );
+    // 간단한 셔플
+    const shuffled = pool.sort(() => Math.random() - 0.5);
+    setRecommendations(shuffled.slice(0, 3));
+  }, [selectedQa, qaList]);
 
   // 답변 가져오기
   const fetchAnswers = async (qnaId: string) => {
@@ -751,6 +767,42 @@ function QnAContent() {
                           </CardContent>
                         </Card>
                       ))}
+
+                    {/* 추천 섹션 */}
+                    {recommendations.length > 0 && (
+                      <Card className="mb-6 border border-gray-200">
+                        <CardContent className="p-6">
+                          <h3 className="text-lg font-bold mb-4">
+                            {selectedQa.type === "resource"
+                              ? "이런 글은 어때요?"
+                              : "이런 질문도 있었어요!"}
+                          </h3>
+
+                          <div className="flex flex-col gap-2">
+                            {recommendations.map((item) => (
+                              <Link
+                                key={item.id}
+                                href={`/lighthouse-QnA?id=${item.id}`}
+                                className="block p-3 border border-gray-200 rounded-md hover:shadow-sm bg-white"
+                              >
+                                <p className="text-sm font-medium text-gray-800 truncate whitespace-nowrap overflow-hidden">
+                                  {item.question}
+                                </p>
+                                <p
+                                  className="text-xs text-gray-500 mt-1 truncate whitespace-nowrap overflow-hidden"
+                                  style={{
+                                    fontFamily:
+                                      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                  }}
+                                >
+                                  {item.subtitle || extractText(item.content || "").slice(0, 120)}
+                                </p>
+                              </Link>
+                            ))}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </>
                 ) : paginatedQAs.length === 0 ? (
                   <Card className="border border-gray-200">
@@ -854,7 +906,7 @@ function QnAContent() {
               </div>
 
               {/* 페이지네이션 */}
-              {totalPages > 1 && (
+              {totalPages > 1 && !selectedQa && (
                 <div className="flex justify-center items-center gap-2 mt-12">
                   <button
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}

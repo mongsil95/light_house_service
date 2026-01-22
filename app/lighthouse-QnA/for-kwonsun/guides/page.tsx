@@ -31,10 +31,7 @@ const categoryGroups = [
   },
   {
     group: "기부금",
-    items: [
-      { value: "기금납부", label: "기금 납부" },
-      
-    ],
+    items: [{ value: "기금납부", label: "기금 납부" }],
   },
   {
     group: "기타",
