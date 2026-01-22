@@ -8,7 +8,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "반려해변의 등대지기",
-  description: "반려해변 라이트하우스 서비스. 평일 09:00-17:00 운영.",
+  description: "반려해변의 등대지기. 평일 09:00-17:00 운영.",
   keywords: [
     "이타서울",
     "반려해변",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title: "반려해변의 등대지기",
     description:
       "반려해변, 더 이상 혼자 고민하지 마세요. 전담 등대지기가 문의 응대부터 활동 안내까지 함께합니다.",
-    siteName: "라이트하우스 서비스",
+    siteName: "반려해변의 등대지기",
     locale: "ko_KR",
   },
   twitter: {
