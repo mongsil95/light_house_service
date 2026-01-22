@@ -590,7 +590,7 @@ export default function BeachFinderPage() {
 
                 {beachNameQuery.trim() && nameSearchResults.length === 0 && (
                   <div className="text-center py-8 text-gray-500">
-                    검색 결과가 없습니다. 다른 검색어를 시도해보세요.
+                    찾으시는 해변이 없네요. 다른 검색어로 시도해보세요.
                   </div>
                 )}
               </TabsContent>

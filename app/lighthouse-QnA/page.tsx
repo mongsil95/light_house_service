@@ -327,10 +327,10 @@ function QnAContent() {
     navigator.clipboard
       .writeText(url)
       .then(() => {
-        alert("링크가 복사되었습니다! 다른 사람들과 공유해보세요.");
+        alert("링크가 복사되었어요! 다른 사람들과 공유해보세요.");
       })
       .catch(() => {
-        alert("링크 복사에 실패했습니다. 다시 시도해주세요.");
+        alert("앗, 복사에 실패했어요. 다시 한번 시도해주시겠어요?");
       });
   };
 
@@ -339,7 +339,7 @@ function QnAContent() {
     e.preventDefault();
 
     if (!bannerFormData.organization.trim() || !bannerFormData.email.trim()) {
-      alert("모든 항목을 입력해주세요.");
+      alert("필수 항목을 모두 입력해주세요.");
       return;
     }
 
@@ -361,12 +361,12 @@ function QnAContent() {
         throw new Error("제출 실패");
       }
 
-      alert("입력해주신 이메일주소로 입양가이드를 발송해드렸습니다!\n감사합니다.");
+      alert("이메일로 입양가이드를 보내드렸어요!\n감사합니다.");
       setIsBannerModalOpen(false);
       setBannerFormData({ organization: "", email: "" });
     } catch (error) {
       console.error("Error submitting banner inquiry:", error);
-      alert("메일 발송 중 오류가 발생했습니다. 다시 시도해주세요.");
+      alert("앗, 메일 발송에 문제가 생겼어요. 다시 한번 시도해주시겠어요?");
     } finally {
       setIsSubmittingBanner(false);
     }
@@ -508,7 +508,7 @@ function QnAContent() {
             <div className="flex items-center justify-center h-96">
               <div className="text-center">
                 <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">로딩 중...</p>
+                <p className="text-gray-600">잠시만 기다려주세요</p>
               </div>
             </div>
           </div>
@@ -754,11 +754,11 @@ function QnAContent() {
                   <Card className="border border-gray-200">
                     <CardContent className="p-12 text-center">
                       <HelpCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <h3 className="text-lg font-bold text-gray-900 mb-2">검색 결과가 없습니다</h3>
-                      <p className="text-gray-600 mb-6">다른 검색어나 카테고리를 시도해보세요</p>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">아직 질문이 없네요</h3>
+                      <p className="text-gray-600 mb-6">첫 질문을 남겨보세요!</p>
                       <Link href="/lighthouse-QnA/ask">
                         <button className="px-6 py-3 bg-blue-300 text-white rounded-lg hover:bg-blue-400 transition-colors font-semibold">
-                          새 질문하기
+                          질문하기
                         </button>
                       </Link>
                     </CardContent>

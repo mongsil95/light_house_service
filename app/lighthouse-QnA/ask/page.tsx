@@ -86,14 +86,14 @@ export default function AskQuestionPage() {
       const newFiles = Array.from(e.target.files);
       const validFiles = newFiles.filter((file) => {
         if (file.size > 5 * 1024 * 1024) {
-          alert(`${file.name}은(는) 5MB를 초과합니다.`);
+          alert(`${file.name}은(는) 5MB를 초과해요. 더 작은 파일로 시도해주세요.`);
           return false;
         }
         return true;
       });
 
       if (files.length + validFiles.length > 5) {
-        alert("최대 5개의 파일만 첨부할 수 있습니다.");
+        alert("파일은 최대 5개까지 첨부할 수 있어요.");
         return;
       }
 
@@ -147,12 +147,12 @@ export default function AskQuestionPage() {
       !formData.askedBy.trim() ||
       !formData.email.trim()
     ) {
-      alert("모든 필수 항목을 입력해주세요.");
+      alert("필수 항목을 모두 입력해주세요.");
       return;
     }
 
     if (!agreePrivacy) {
-      alert("개인정보 수집 및 이용에 동의해주세요.");
+      alert("개인정보 수집 및 이용에 동의가 필요해요.");
       return;
     }
 
@@ -185,11 +185,11 @@ export default function AskQuestionPage() {
         throw new Error(result.error || "질문 등록에 실패했습니다.");
       }
 
-      alert("질문이 성공적으로 등록되었습니다!\n답변은 이메일로 알려드립니다.");
+      alert("질문이 등록되었어요!\n답변은 이메일로 보내드릴게요.");
       router.push("/lighthouse-QnA");
     } catch (error) {
       console.error("Error submitting question:", error);
-      alert("질문 등록 중 오류가 발생했습니다. 다시 시도해주세요.");
+      alert("앗, 질문 등록에 문제가 생겼어요. 다시 한번 시도해주시겠어요?");
     } finally {
       setSubmitting(false);
     }

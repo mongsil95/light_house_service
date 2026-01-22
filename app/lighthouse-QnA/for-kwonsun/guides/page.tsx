@@ -252,15 +252,33 @@ export default function GuidesAdmin() {
                     </div>
                   </div>
                 ) : (
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleThumbnailUpload}
-                      disabled={uploading}
-                      className="w-full px-3 py-2 border border-gray-300 font-['Pretendard']"
-                    />
-                    {uploading && <p className="text-sm text-gray-500 mt-1">업로드 중...</p>}
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">파일 업로드</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleThumbnailUpload}
+                        disabled={uploading}
+                        className="w-full px-3 py-2 border border-gray-300 font-['Pretendard']"
+                      />
+                      {uploading && <p className="text-sm text-gray-500 mt-1">업로드 중...</p>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-px bg-gray-200"></div>
+                      <span className="text-xs text-gray-500">또는</span>
+                      <div className="flex-1 h-px bg-gray-200"></div>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-600 mb-1">URL 주소</label>
+                      <input
+                        type="text"
+                        className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
+                        value={formData.thumbnail_url || ""}
+                        onChange={(e) => setFormData({ ...formData, thumbnail_url: e.target.value })}
+                        placeholder="https://example.com/image.jpg"
+                      />
+                    </div>
                   </div>
                 )}
               </div>
