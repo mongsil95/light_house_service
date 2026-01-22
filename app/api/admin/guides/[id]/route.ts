@@ -33,6 +33,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     const {
       category,
       title,
+      subtitle,
       description,
       content,
       readTime,
@@ -54,6 +55,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     if (category) updateData.category = category;
     if (title) updateData.title = title;
+    if (subtitle !== undefined) updateData.subtitle = subtitle;
     if (finalContent) updateData.content = finalContent;
     if (author) updateData.author = author;
     if (thumbnail_url !== undefined) updateData.thumbnail_url = thumbnail_url;

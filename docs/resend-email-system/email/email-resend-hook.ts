@@ -1,26 +1,24 @@
 // 이메일 전송 유틸 src/lib/email/email-resend-hook.ts
 import { Resend } from "resend";
-import { AdoptApplyConfirmationEmail } from "./templates/AdoptApplyConfirmationEmail";
-import { ReservationProposalEmail } from "./templates/ReservationProposalEmail";
-import { SupporterSignupEmail } from "./templates/supporterSignupEmail";
-import { ReservationConfirmEmail } from "./templates/ReservationConfirmEmail";
 import { AdbGroupManagerEnrollEmail } from "./templates/AdbGroupManagerEnrollEmail";
-import { RsvCommunityProposalEmail } from "./templates/RsvCommunityProposalEmail";
-import { RsvCampaignProposalEmail } from "./templates/RsvCampaignProposalEmail";
-import { RsvCampaignCityCleanUpConfirmEmail } from "./templates/RsvCampaignCityCleanUpConfirmEmail";
-import { RsvOfficialBeachCleanConfirmMunicipal } from "./templates/RsvOfficialBeachCleanConfirmMunicipal";
-import { Conf25ParticipantEmail } from "./templates/Conf25ParticipantEmail";
-import { Conf25OfficeNotificationEmail } from "./templates/Conf25OfficeNotificationEmail";
-import { Conf25KoemNotificationEmail } from "./templates/Conf25KoemNotificationEmail";
-import { Conf25AttendeeEmail } from "./templates/Conf25AttendeeEmail";
-import { Conf25AttendanceOfficeEmail } from "./templates/Conf25AttendanceOfficeEmail";
-import { Conf25AttendanceKoemEmail } from "./templates/Conf25AttendanceKoemEmail";
-import { Conf25RejectionEmail } from "./templates/Conf25RejectionEmail";
-import { Conf25SupplementEmail } from "./templates/Conf25SupplementEmail";
-import { Conf25DailyReportEmail } from "./templates/Conf25DailyReportEmail";
-import { NewsletterBasicEmail } from "./templates/NewsletterBasicEmail";
+import { AdoptApplyConfirmationEmail } from "./templates/AdoptApplyConfirmationEmail";
 import { CoffeeChatConfirmEmail } from "./templates/CoffeeChatConfirmEmail";
 import { CoffeeChatReservedEmail } from "./templates/CoffeeChatReservedEmail";
+import { Conf25AttendanceOfficeEmail } from "./templates/Conf25AttendanceOfficeEmail";
+import { Conf25AttendeeEmail } from "./templates/Conf25AttendeeEmail";
+import { Conf25DailyReportEmail } from "./templates/Conf25DailyReportEmail";
+import { Conf25OfficeNotificationEmail } from "./templates/Conf25OfficeNotificationEmail";
+import { Conf25ParticipantEmail } from "./templates/Conf25ParticipantEmail";
+import { Conf25RejectionEmail } from "./templates/Conf25RejectionEmail";
+import { Conf25SupplementEmail } from "./templates/Conf25SupplementEmail";
+import { NewsletterBasicEmail } from "./templates/NewsletterBasicEmail";
+import { ReservationConfirmEmail } from "./templates/ReservationConfirmEmail";
+import { ReservationProposalEmail } from "./templates/ReservationProposalEmail";
+import { RsvCampaignCityCleanUpConfirmEmail } from "./templates/RsvCampaignCityCleanUpConfirmEmail";
+import { RsvCampaignProposalEmail } from "./templates/RsvCampaignProposalEmail";
+import { RsvCommunityProposalEmail } from "./templates/RsvCommunityProposalEmail";
+import { RsvOfficialBeachCleanConfirmMunicipal } from "./templates/RsvOfficialBeachCleanConfirmMunicipal";
+import { SupporterSignupEmail } from "./templates/supporterSignupEmail";
 
 const resend = new Resend(process.env.RESEND_API_KEY || "");
 
@@ -46,10 +44,7 @@ const DEFAULT_ITATEAM_EMAILS = [
   // "gksekdnjs777@itaseoul.org"
 ];
 
-const DEFAULT_SUPPORTER_TEAM_EMAILS = [
-  "sehiduo5757@itaseoul.org",
-  "gksekdnjs777@itaseoul.org",
-];
+const DEFAULT_SUPPORTER_TEAM_EMAILS = ["sehiduo5757@itaseoul.org", "gksekdnjs777@itaseoul.org"];
 const DEFAULT_MANAGER_EMAILS = [""];
 
 export async function sendEmailNotification({
@@ -60,8 +55,7 @@ export async function sendEmailNotification({
   payload,
 }: SendEmailProps) {
   // ✅ 단일 문자열이라면 배열로 변환
-  const managerList =
-    typeof managerEmail === "string" ? [managerEmail] : managerEmail;
+  const managerList = typeof managerEmail === "string" ? [managerEmail] : managerEmail;
 
   const itaList = typeof itaTeamEmails === "string" ? [itaTeamEmails] : itaTeamEmails;
 
@@ -170,10 +164,7 @@ export async function sendEmailNotification({
       const attachments = [];
       if (payload.ticketImage) {
         // Base64 데이터에서 헤더 제거 (data:image/png;base64, 부분)
-        const base64Data = payload.ticketImage.replace(
-          /^data:image\/\w+;base64,/,
-          ""
-        );
+        const base64Data = payload.ticketImage.replace(/^data:image\/\w+;base64,/, "");
         attachments.push({
           filename: `ticket_${payload.ticketNumber || "conf25"}.png`,
           content: base64Data,
@@ -248,10 +239,7 @@ export async function sendEmailNotification({
       const attachments = [];
       if (payload.ticketImage) {
         // Base64 데이터에서 헤더 제거 (data:image/png;base64, 부분)
-        const base64Data = payload.ticketImage.replace(
-          /^data:image\/\w+;base64,/,
-          ""
-        );
+        const base64Data = payload.ticketImage.replace(/^data:image\/\w+;base64,/, "");
         attachments.push({
           filename: `ticket_${payload.ticketNumber || "conf25"}.png`,
           content: base64Data,

@@ -8,10 +8,44 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+const categoryGroups = [
+  {
+    group: "입양 관련",
+    items: [
+      { value: "입양절차", label: "입양 절차" },
+      { value: "신청방법", label: "신청 방법" },
+      { value: "참여조건", label: "참여 조건" },
+      { value: "입양기타", label: "기타" },
+    ],
+  },
+  {
+    group: "활동 운영",
+    items: [
+      { value: "활동매뉴얼", label: "활동 매뉴얼" },
+      { value: "정화활동", label: "정화 활동" },
+      { value: "캠페인", label: "캠페인" },
+      { value: "사례공유", label: "사례 공유" },
+      { value: "보고서", label: "보고서" },
+    ],
+  },
+  {
+    group: "기부금",
+    items: [
+      { value: "기금납부", label: "기금 납부" },
+      { value: "혜택", label: "혜택" },
+    ],
+  },
+  {
+    group: "기타",
+    items: [{ value: "공지사항", label: "공지사항" }],
+  },
+];
+
 interface Guide {
   id: number;
   category: string;
   title: string;
+  subtitle?: string;
   content: string;
   author?: string;
   status?: string;
@@ -28,6 +62,7 @@ export default function GuidesAdmin() {
   const [formData, setFormData] = useState<Partial<Guide>>({
     category: "",
     title: "",
+    subtitle: "",
     content: "",
     status: "draft",
     thumbnail_url: "",
@@ -61,6 +96,7 @@ export default function GuidesAdmin() {
     setFormData({
       category: "",
       title: "",
+      subtitle: "",
       content: "",
       status: "draft",
       thumbnail_url: "",
@@ -72,6 +108,7 @@ export default function GuidesAdmin() {
     setFormData({
       category: "",
       title: "",
+      subtitle: "",
       content: "",
       status: "draft",
       thumbnail_url: "",
@@ -200,13 +237,22 @@ export default function GuidesAdmin() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
-                <input
-                  type="text"
+                <select
                   className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
                   value={formData.category || ""}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  placeholder="예: 해양환경"
-                />
+                >
+                  <option value="">카테고리를 선택하세요</option>
+                  {categoryGroups.map((g) => (
+                    <optgroup key={g.group} label={g.group}>
+                      {g.items.map((it) => (
+                        <option key={it.value} value={it.value}>
+                          {it.label}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -217,6 +263,17 @@ export default function GuidesAdmin() {
                   value={formData.title || ""}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                   placeholder="가이드 제목을 입력하세요"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">소제목</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
+                  value={formData.subtitle || ""}
+                  onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
+                  placeholder="간단한 설명을 입력하세요"
                 />
               </div>
 
@@ -276,7 +333,9 @@ export default function GuidesAdmin() {
                         type="text"
                         className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
                         value={formData.thumbnail_url || ""}
-                        onChange={(e) => setFormData({ ...formData, thumbnail_url: e.target.value })}
+                        onChange={(e) =>
+                          setFormData({ ...formData, thumbnail_url: e.target.value })
+                        }
                         placeholder="https://example.com/image.jpg"
                       />
                     </div>

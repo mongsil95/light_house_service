@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS beaches (
 CREATE TABLE IF NOT EXISTS resources (
   id BIGSERIAL PRIMARY KEY,
   title VARCHAR(500) NOT NULL,
+  subtitle TEXT,  -- 소제목
   content TEXT NOT NULL,
   category VARCHAR(100) NOT NULL,  -- 가이드, 공지, FAQ, 시설
   author VARCHAR(100) DEFAULT '운영팀',

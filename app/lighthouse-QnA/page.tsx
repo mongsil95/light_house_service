@@ -179,6 +179,7 @@ function QnAContent() {
             type: "resource", // 타입 추가
             category: resource.category || "기타",
             question: resource.title,
+            subtitle: resource.subtitle || "",
             views: resource.views || 0,
             likes: 0,
             date: new Date(resource.created_at)
@@ -794,15 +795,27 @@ function QnAContent() {
                               >
                                 {extractText(qa.question)}
                               </h3>
-                              <p
-                                className="text-sm text-gray-600 mb-2 line-clamp-1"
-                                style={{
-                                  fontFamily:
-                                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                                }}
-                              >
-                                {extractText(qa.content)}
-                              </p>
+                              {qa.type === "resource" && qa.subtitle ? (
+                                <p
+                                  className="text-sm text-gray-600 mb-2 line-clamp-1"
+                                  style={{
+                                    fontFamily:
+                                      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                  }}
+                                >
+                                  {qa.subtitle}
+                                </p>
+                              ) : qa.type !== "resource" ? (
+                                <p
+                                  className="text-sm text-gray-600 mb-2 line-clamp-1"
+                                  style={{
+                                    fontFamily:
+                                      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                  }}
+                                >
+                                  {extractText(qa.content)}
+                                </p>
+                              ) : null}
                               <div className="flex items-center text-xs text-gray-400">
                                 <div className="flex items-center gap-3">
                                   <span className="flex items-center gap-1">

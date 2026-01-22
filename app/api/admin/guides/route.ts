@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
     const {
       category,
       title,
+      subtitle,
       description,
       content,
       readTime,
@@ -57,8 +58,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "필수 필드가 누락되었습니다." }, { status: 400 });
     }
 
-    // description이 없으면 content의 첫 부분이나 title 사용
-    const finalDescription = description || content?.slice(0, 100) || title;
+    // description이 없으면 subtitle 또는 content의 첫 부분이나 title 사용
+    const finalDescription = description || subtitle || content?.slice(0, 100) || title;
 
     // content 생성 (sections를 문자열로 변환하거나 description 사용)
     const finalContent =
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
       .insert({
         category,
         title,
+        subtitle: subtitle || null,
         content: finalContent,
         author: author || "관리자",
         status: status || "draft",

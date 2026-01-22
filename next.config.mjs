@@ -13,7 +13,7 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     config.watchOptions = {
       ...config.watchOptions,
-      ignored: ['**/docs/**', '**/node_modules/**'],
+      ignored: ["**/docs/**", "**/node_modules/**"],
     };
     return config;
   },
@@ -22,7 +22,7 @@ const nextConfig = {
     ignoreBuildErrors: false,
   },
   eslint: {
-    dirs: ['app', 'components', 'lib', 'types'],
+    dirs: ["app", "components", "lib", "types"],
   },
 };
 
