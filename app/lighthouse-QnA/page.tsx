@@ -90,6 +90,7 @@ function QnAContent() {
         { label: "캠페인", value: "캠페인" },
         { label: "사례공유", value: "사례공유" },
         { label: "보고서", value: "보고서" },
+        { label: "활동 지원", value: "활동지원" },
       ],
     },
     {
@@ -98,7 +99,7 @@ function QnAContent() {
       subItems: [
         { label: "전체", value: "기부금" },
         { label: "기금납부", value: "기금납부" },
-        { label: "혜택", value: "혜택" },
+        
       ],
     },
     {

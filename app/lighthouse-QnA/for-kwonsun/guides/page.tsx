@@ -26,13 +26,14 @@ const categoryGroups = [
       { value: "캠페인", label: "캠페인" },
       { value: "사례공유", label: "사례 공유" },
       { value: "보고서", label: "보고서" },
+      { value: "활동지원", label: "활동 지원" },
     ],
   },
   {
     group: "기부금",
     items: [
       { value: "기금납부", label: "기금 납부" },
-      { value: "혜택", label: "혜택" },
+      
     ],
   },
   {

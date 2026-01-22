@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "250d7932a7cb02ca",
+        "id": "2eeec969f586f8b0",
         "type": "tabs",
         "children": [
           {
-            "id": "a65433a7e3a803f3",
+            "id": "c7c5206dfabc0051",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -179,8 +179,9 @@
       "bases:새 베이스 생성하기": false
     }
   },
-  "active": "a65433a7e3a803f3",
+  "active": "c7c5206dfabc0051",
   "lastOpenFiles": [
+    "참고자료/이사님/라이트하우스의-의미.md",
     "참고자료/붙임1] 반려해변 성실·참여 실천서약서 (입양기관용).pdf",
     "참고자료/붙임2] 구성원 안전 확보 및 보험 지원 확약서.pdf",
     "참고자료/붙임3] 기금 확약서.pdf",
