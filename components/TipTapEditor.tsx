@@ -74,15 +74,8 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
       if (!bg) attrs.class = attrs.class + " bg-[#2ac1bc] text-white";
       return ["a", attrs, label || "버튼"];
     },
-    addCommands() {
-      return {
-        setCTA:
-          (attrs: { href?: string; label?: string } = {}) =>
-          ({ commands }) => {
-            return commands.insertContent({ type: this.name, attrs });
-          },
-      };
-    },
+    // Commands handled via editor.chain() in the MenuBar; no custom
+    // typed commands here to avoid TypeScript mismatches.
   });
   const handleUpdate = useCallback(
     ({ editor }: any) => {
