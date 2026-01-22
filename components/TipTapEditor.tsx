@@ -67,7 +67,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
         href: href || undefined,
         "data-cta": "1",
         class:
-          "inline-block px-3 py-1 rounded text-sm no-underline hover:opacity-90",
+          "inline-block px-5 py-2 rounded-md text-base font-semibold no-underline shadow-sm hover:opacity-95",
       };
       if (style) attrs.style = style;
       // default background if none provided

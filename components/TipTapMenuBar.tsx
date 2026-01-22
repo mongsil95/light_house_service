@@ -137,7 +137,7 @@ export default function MenuBar({ editor }: MenuBarProps) {
     if (hasNode) {
       editor.chain().focus().insertContent({ type: "ctaButton", attrs: { href: url, label } }).run();
     } else {
-      const html = `<a href="${url}" data-cta class="inline-block bg-[#2ac1bc] text-white px-3 py-1 rounded text-sm no-underline">${label}</a>`;
+      const html = `<a href="${url}" data-cta class="inline-block px-5 py-2 rounded-md text-base font-semibold no-underline shadow-sm bg-[#2ac1bc] text-white">${label}</a>`;
       editor.chain().focus().insertContent(html).run();
     }
   }, [editor]);
