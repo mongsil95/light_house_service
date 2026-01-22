@@ -232,13 +232,14 @@ export default function GuidesAdmin() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">썸네일</label>
                 {formData.thumbnail_url ? (
                   <div className="space-y-2">
-                    <Image
-                      src={formData.thumbnail_url}
-                      alt="썸네일"
-                      width={300}
-                      height={180}
-                      className="object-cover border border-gray-200"
-                    />
+                    <div className="w-[300px] h-[169px] relative border border-gray-200 overflow-hidden">
+                      <Image
+                        src={formData.thumbnail_url}
+                        alt="썸네일"
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                     <div className="flex gap-2">
                       <Button
                         type="button"

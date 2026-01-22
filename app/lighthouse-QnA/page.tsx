@@ -815,14 +815,14 @@ function QnAContent() {
                             </div>
                             {/* 정보 타입일 때만 사진 영역 표시 (오른쪽) */}
                             {qa.type === "resource" && (
-                              <div className="flex-shrink-0 w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                              <div className="flex-shrink-0 w-[150px] h-[84px] bg-gray-100 rounded-lg overflow-hidden">
                                 {qa.thumbnail_url ? (
                                   <Image
                                     src={qa.thumbnail_url}
                                     alt={extractText(qa.question)}
-                                    width={96}
-                                    height={96}
-                                    className="w-full h-full object-contain"
+                                    width={150}
+                                    height={84}
+                                    className="w-full h-full object-cover"
                                   />
                                 ) : (
                                   <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-gray-400 text-xs">
