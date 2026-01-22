@@ -63,7 +63,9 @@ export async function sendEmailNotification({
   const managerList =
     typeof managerEmail === "string" ? [managerEmail] : managerEmail;
 
-  const toRecipients = [...managerList, ...itaTeamEmails];
+  const itaList = typeof itaTeamEmails === "string" ? [itaTeamEmails] : itaTeamEmails;
+
+  const toRecipients = [...managerList, ...itaList];
 
   // console.log("📬 이메일 전송 대상:", toRecipients);
 
