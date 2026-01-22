@@ -257,7 +257,7 @@ export default function BeachFinderPage() {
       <div className="container mx-auto px-4 py-12 pt-24">
         {/* 뒤로가기 버튼 */}
         <div className="mb-6">
-          <Link href="/adopt-a-beach">
+          <Link href="/">
             <Button variant="outline" className="flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
               이전페이지
@@ -266,19 +266,21 @@ export default function BeachFinderPage() {
         </div>
         {/* 헤더 */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">🏖️ 1분 맞춤 해변 찾기 큐레이션</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            🏖️ 1분이면 충분해요, 우리 해변 찾기
+          </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            우리 회사와 가장 가까운 해변을 찾아보세요!
+            우리 회사랑 가까운 해변부터 찾아봐요.
             <br />
-            행정구역이나 해변명으로도 검색할 수 있습니다.
+            지역이나 해변 이름으로도 바로 검색돼요.
           </p>
         </div>
 
         {/* 검색 섹션 */}
         <Card className="max-w-4xl mx-auto shadow-lg">
           <CardHeader>
-            <CardTitle>해변 검색 방법을 선택하세요</CardTitle>
-            <CardDescription>세 가지 방법으로 원하는 해변을 찾을 수 있습니다</CardDescription>
+            <CardTitle>해변 찾는 방법, 골라보세요</CardTitle>
+            <CardDescription>원하는 방식으로 현재 입양 가능한 해변을 찾아드려요.</CardDescription>
           </CardHeader>
           <CardContent>
             {/* 검색 방법 선택 버튼 */}
@@ -293,11 +295,12 @@ export default function BeachFinderPage() {
                 onClick={() => setSearchMode("location")}
               >
                 <NavigationIcon className="w-6 h-6" />
-                <div className="font-bold text-base">위치 기반 검색</div>
+                <div className="font-bold text-base">위치로 찾기</div>
                 <div className="text-xs opacity-80 text-center leading-relaxed px-2">
-                  회사 주소를 입력하면
-                  <br />
-                  가장 가까운 해변을 추천해드립니다.
+                  회사 주소만 입력하면 끝!
+                </div>
+                <div className="text-[10px] opacity-80 text-center leading-relaxed px-2">
+                  가장 가까운 입양 가능한 해변을 바로 추천해드려요.
                 </div>
               </Button>
               <Button
@@ -310,11 +313,12 @@ export default function BeachFinderPage() {
                 onClick={() => setSearchMode("region")}
               >
                 <MapPin className="w-6 h-6" />
-                <div className="font-bold text-base">행정구역 기반 검색</div>
+                <div className="font-bold text-base">지역으로 찾기</div>
                 <div className="text-xs opacity-80 text-center leading-relaxed px-2">
-                  원하는 지역의 일반적으로 방문하는
-                  <br />
-                  반려해변을 확인할 수 있습니다.
+                  이 동네 바다, 궁금하셨죠?
+                </div>
+                <div className="text-[10px] opacity-80 text-center leading-relaxed px-2">
+                  행정구역을 선택하면 입양 가능한 반려해변을 보여드려요.
                 </div>
               </Button>
               <Button
@@ -327,11 +331,12 @@ export default function BeachFinderPage() {
                 onClick={() => setSearchMode("name")}
               >
                 <List className="w-6 h-6" />
-                <div className="font-bold text-base">해변명 기반 검색</div>
+                <div className="font-bold text-base">이름으로 찾기</div>
                 <div className="text-xs opacity-80 text-center leading-relaxed px-2">
-                  알고 있는 해변 이름으로
-                  <br />
-                  빠르게 찾을 수 있습니다.
+                  이미 생각해둔 해변이 있나요?
+                </div>
+                <div className="text-[10px] opacity-80 text-center leading-relaxed px-2">
+                  해변 이름을 입력해 입양 가능한지 바로 확인해보세요.
                 </div>
               </Button>
             </div>

@@ -6,6 +6,8 @@ import {
   AlignLeft,
   AlignRight,
   Bold,
+  Calendar,
+  ExternalLink,
   Heading1,
   Heading2,
   Heading3,
@@ -22,6 +24,7 @@ import {
   Trash2,
   Undo,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 interface MenuBarProps {
@@ -29,6 +32,8 @@ interface MenuBarProps {
 }
 
 export default function MenuBar({ editor }: MenuBarProps) {
+  const router = useRouter();
+
   const addImage = useCallback(() => {
     const url = window.prompt("이미지 URL을 입력하세요:");
     if (url && editor) {
@@ -114,6 +119,124 @@ export default function MenuBar({ editor }: MenuBarProps) {
     editor.chain().focus().setContent(template).run();
   }, [editor]);
 
+  const insertCTA = useCallback(() => {
+    if (!editor) return;
+
+    const label = window.prompt("버튼 라벨을 입력하세요:", "자세히 보기");
+    if (label === null) return;
+
+    const url = window.prompt("버튼이 이동할 URL을 입력하세요:", "https://");
+    if (url === null) return;
+
+    // Prefer inserting using the registered node. If the CTA node isn't
+    // registered in the editor schema (for example if the extension failed
+    // to register), fall back to inserting an HTML link so the user sees
+    // the button immediately.
+    const hasNode = Boolean(editor.state.schema.nodes && editor.state.schema.nodes.ctaButton);
+
+    if (hasNode) {
+      editor.chain().focus().insertContent({ type: "ctaButton", attrs: { href: url, label } }).run();
+    } else {
+      const html = `<a href="${url}" data-cta class="inline-block bg-[#2ac1bc] text-white px-3 py-1 rounded text-sm no-underline">${label}</a>`;
+      editor.chain().focus().insertContent(html).run();
+    }
+  }, [editor]);
+
+  const updateCTAAttrs = useCallback((attrs: Record<string, any>) => {
+    if (!editor) return;
+
+    // If a CTA node is selected, update attributes; otherwise try to update node at the selection
+    try {
+      editor.chain().focus().updateAttributes("ctaButton", attrs).run();
+    } catch (e) {
+      // fallback: try selecting the node and setting attributes via transaction
+      const { state } = editor;
+      const { from, to } = state.selection;
+      state.tr.doc.nodesBetween(from, to, (node, pos) => {
+        if (node.type.name === "ctaButton") {
+          editor.chain().focus().command(({ tr }) => {
+            tr.setNodeMarkup(pos, undefined, { ...node.attrs, ...attrs });
+            return true;
+          }).run();
+        }
+      });
+    }
+  }, [editor]);
+
+  const editSelectedCTA = useCallback(() => {
+    if (!editor) return;
+    const attrs = editor.getAttributes("ctaButton");
+    if (!attrs) return;
+
+    const newLabel = window.prompt("CTA 라벨을 수정하세요:", attrs.label || "");
+    if (newLabel === null) return;
+    const newHref = window.prompt("CTA URL을 수정하세요:", attrs.href || "https://");
+    if (newHref === null) return;
+
+    updateCTAAttrs({ label: newLabel, href: newHref });
+  }, [editor, updateCTAAttrs]);
+
+  const navigateTo = useCallback(() => {
+    if (!editor) return;
+
+    const url = window.prompt("이동할 URL을 입력하세요 (예: /path 또는 https://...):");
+    if (!url) return;
+
+    try {
+      const isInternal = url.startsWith("/") || url.startsWith(window.location.origin);
+      if (isInternal) {
+        const path = url.startsWith("/") ? url : new URL(url).pathname;
+        router.push(path);
+      } else {
+        window.open(url, "_blank");
+      }
+    } catch (e) {
+      window.open(url, "_blank");
+    }
+  }, [editor, router]);
+
+  const insertDate = useCallback(() => {
+    if (!editor) return;
+
+    const date = new Date().toLocaleDateString("ko-KR");
+    editor.chain().focus().insertContent(date).run();
+  }, [editor]);
+
+  const setColorCmd = useCallback((color: string) => {
+    if (!editor) return;
+
+    // setColor is provided by @tiptap/extension-color
+    try {
+      // some versions accept a single string argument
+      // others attach as commands under textStyle; this works in common setups
+      // fall back to inline HTML if command isn't available
+      if (editor.chain().focus().setColor) {
+        // @ts-ignore
+        editor.chain().focus().setColor(color).run();
+      } else {
+        editor.chain().focus().setMark("textStyle", { color }).run();
+      }
+    } catch (e) {
+      editor.chain().focus().setMark("textStyle", { color }).run();
+    }
+  }, [editor]);
+
+  const unsetColorCmd = useCallback(() => {
+    if (!editor) return;
+
+    try {
+      // @ts-ignore
+      if (editor.chain().focus().unsetColor) {
+        // @ts-ignore
+        editor.chain().focus().unsetColor().run();
+      } else {
+        editor.chain().focus().unsetMark("textStyle").run();
+      }
+    } catch (e) {
+      editor.chain().focus().unsetMark("textStyle").run();
+    }
+  }, [editor]);
+
   if (!editor) {
     return null;
   }
@@ -138,6 +261,23 @@ export default function MenuBar({ editor }: MenuBarProps) {
       >
         <Italic className="w-4 h-4" />
       </button>
+
+      {/* Color picker */}
+      <div className="flex items-center gap-1">
+        <input
+          type="color"
+          onChange={(e) => setColorCmd((e.target as HTMLInputElement).value)}
+          title="글씨 색상"
+          className="w-7 h-7 p-0 border rounded"
+        />
+        <button
+          onClick={unsetColorCmd}
+          className="p-2 rounded hover:bg-gray-200"
+          title="색상 제거"
+        >
+          A
+        </button>
+      </div>
 
       <div className="w-px bg-gray-300 mx-1" />
 
@@ -253,6 +393,38 @@ export default function MenuBar({ editor }: MenuBarProps) {
         <ImageIcon className="w-4 h-4" />
       </button>
 
+      <button onClick={navigateTo} className="p-2 rounded hover:bg-gray-200" title="이동">
+        <ExternalLink className="w-4 h-4" />
+      </button>
+
+      <button
+        onClick={insertCTA}
+        className="px-3 py-2 rounded bg-[#2ac1bc] hover:bg-[#25a8a4] text-white text-xs"
+        title="CTA 삽입"
+      >
+        CTA
+      </button>
+      {/* If a CTA is active, show quick edit controls */}
+      {editor.isActive("ctaButton") && (
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            title="CTA 배경색"
+            onChange={(e) => updateCTAAttrs({ bg: (e.target as HTMLInputElement).value })}
+            className="w-7 h-7 p-0 border rounded"
+          />
+          <input
+            type="color"
+            title="CTA 글자색"
+            onChange={(e) => updateCTAAttrs({ color: (e.target as HTMLInputElement).value })}
+            className="w-7 h-7 p-0 border rounded"
+          />
+          <button onClick={editSelectedCTA} className="p-2 rounded hover:bg-gray-200" title="CTA 편집">
+            수정
+          </button>
+        </div>
+      )}
+
       <button onClick={insertBaeminTable} className="p-2 rounded hover:bg-gray-200" title="표 삽입">
         <TableIcon className="w-4 h-4" />
       </button>
@@ -335,6 +507,11 @@ export default function MenuBar({ editor }: MenuBarProps) {
         title="다시 실행"
       >
         <Redo className="w-4 h-4" />
+      </button>
+
+      <div className="w-px bg-gray-300 mx-1" />
+      <button onClick={insertDate} className="p-2 rounded hover:bg-gray-200" title="날짜 삽입">
+        <Calendar className="w-4 h-4" />
       </button>
 
       <div className="w-px bg-gray-300 mx-1" />

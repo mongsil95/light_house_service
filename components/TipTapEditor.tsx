@@ -10,6 +10,7 @@ import TableRow from "@tiptap/extension-table-row";
 import TextAlign from "@tiptap/extension-text-align";
 import { TextStyle } from "@tiptap/extension-text-style";
 import { EditorContent, useEditor } from "@tiptap/react";
+import { Node } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { useCallback, useEffect } from "react";
 import MenuBar from "./TipTapMenuBar";
@@ -20,6 +21,69 @@ interface TipTapEditorProps {
 }
 
 export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
+  const CTAButton = Node.create({
+    name: "ctaButton",
+    inline: true,
+    group: "inline",
+    atom: true,
+    selectable: true,
+    draggable: false,
+    addAttributes() {
+      return {
+        href: { default: null },
+        label: { default: "버튼" },
+        bg: { default: null },
+        color: { default: null },
+      };
+    },
+    parseHTML() {
+      return [
+        {
+          tag: "a[data-cta]",
+          getAttrs: (dom: any) => {
+            const href = dom.getAttribute("href");
+            const label = dom.textContent || null;
+            const style = dom.getAttribute("style") || "";
+            // try to extract background-color and color from inline style
+            const bgMatch = /background-color:\s*([^;]+)/i.exec(style);
+            const colorMatch = /color:\s*([^;]+)/i.exec(style);
+            return {
+              href: href || null,
+              label: label || null,
+              bg: bgMatch ? bgMatch[1].trim() : dom.style.backgroundColor || null,
+              color: colorMatch ? colorMatch[1].trim() : dom.style.color || null,
+            };
+          },
+        },
+      ];
+    },
+    renderHTML({ HTMLAttributes }) {
+      const { href, label, bg, color } = HTMLAttributes as any;
+      const styleParts: string[] = [];
+      if (bg) styleParts.push(`background-color: ${bg}`);
+      if (color) styleParts.push(`color: ${color}`);
+      const style = styleParts.length ? styleParts.join("; ") : undefined;
+      const attrs: any = {
+        href: href || undefined,
+        "data-cta": "1",
+        class:
+          "inline-block px-3 py-1 rounded text-sm no-underline hover:opacity-90",
+      };
+      if (style) attrs.style = style;
+      // default background if none provided
+      if (!bg) attrs.class = attrs.class + " bg-[#2ac1bc] text-white";
+      return ["a", attrs, label || "버튼"];
+    },
+    addCommands() {
+      return {
+        setCTA:
+          (attrs: { href?: string; label?: string } = {}) =>
+          ({ commands }) => {
+            return commands.insertContent({ type: this.name, attrs });
+          },
+      };
+    },
+  });
   const handleUpdate = useCallback(
     ({ editor }: any) => {
       const html = editor.getHTML();
@@ -33,6 +97,7 @@ export default function TipTapEditor({ content, onChange }: TipTapEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
+      CTAButton,
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
