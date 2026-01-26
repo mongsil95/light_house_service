@@ -439,6 +439,9 @@ export default function GuidesAdmin() {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       작성일
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      작성자
+                    </th>
                     <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       작업
                     </th>
@@ -466,6 +469,7 @@ export default function GuidesAdmin() {
                           ? new Date(guide.created_at).toLocaleDateString("ko-KR")
                           : "-"}
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{guide.author || "-"}</td>
                       <td className="px-6 py-4 text-sm text-right">
                         <Button
                           onClick={() => handleEdit(guide)}
