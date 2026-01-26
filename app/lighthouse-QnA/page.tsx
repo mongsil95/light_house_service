@@ -827,7 +827,7 @@ function QnAContent() {
                     <Link key={qa.id} href={`/lighthouse-QnA?id=${qa.id}`} className="block">
                       <Card className="hover:shadow-lg transition-all border border-gray-200 cursor-pointer group">
                         <CardContent className="p-6">
-                          <div className="flex items-start gap-4">
+                          <div className="flex flex-col md:flex-row items-start gap-4">
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-2">
                                 <Badge
@@ -886,7 +886,7 @@ function QnAContent() {
                             </div>
                             {/* 정보 타입일 때만 사진 영역 표시 (오른쪽) */}
                             {qa.type === "resource" && (
-                              <div className="flex-shrink-0 w-[150px] h-[84px] bg-gray-100 rounded-lg overflow-hidden">
+                              <div className="flex-shrink-0 w-full md:w-[150px] h-[84px] bg-gray-100 rounded-lg overflow-hidden mt-3 md:mt-0">
                                 {qa.thumbnail_url ? (
                                   <Image
                                     src={qa.thumbnail_url}
