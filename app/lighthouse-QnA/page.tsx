@@ -34,6 +34,7 @@ function QnAContent() {
   const [loading, setLoading] = useState(true);
   const [selectedQa, setSelectedQa] = useState<any | null>(null);
   const [answers, setAnswers] = useState<any[]>([]);
+  const [resourceFiles, setResourceFiles] = useState<any[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const [liked, setLiked] = useState(false);
   const [qaId, setQaId] = useState<string | null>(null);
@@ -250,12 +251,24 @@ function QnAContent() {
 
       // 답변 가져오기 및 조회수 증가 (한 번만)
       if (qa && !viewedQaIds.current.has(qaId)) {
-        fetchAnswers(qaId);
+        // qna 타입일 때만 답변을 가져오고, resource 타입은 리소스 파일만 별도 로드
+        if (qa.type === "qna") {
+          fetchAnswers(qaId);
+        } else if (qa.type === "resource") {
+          const resourceId = String(qaId).replace("resource-", "");
+          fetchResourceFiles(resourceId);
+        }
+
         incrementViews(qaId);
         viewedQaIds.current.add(qaId);
       } else if (qa) {
-        // 이미 조회수를 증가시킨 경우 답변만 가져오기
-        fetchAnswers(qaId);
+        // 이미 조회수를 증가시킨 경우
+        if (qa.type === "qna") {
+          fetchAnswers(qaId);
+        } else if (qa.type === "resource") {
+          const resourceId = String(qaId).replace("resource-", "");
+          fetchResourceFiles(resourceId);
+        }
       }
     } else {
       setSelectedQa(null);
@@ -291,6 +304,18 @@ function QnAContent() {
       setAnswers(data || []);
     } catch (error) {
       console.error("Error fetching answers:", error);
+    }
+  };
+
+  const fetchResourceFiles = async (resourceId: string) => {
+    try {
+      const res = await fetch(`/api/resources/${resourceId}`);
+      if (!res.ok) throw new Error("Failed to fetch resource files");
+      const json = await res.json();
+      setResourceFiles(json.data?.attachments || []);
+    } catch (err) {
+      console.error("fetchResourceFiles error:", err);
+      setResourceFiles([]);
     }
   };
 
@@ -578,6 +603,39 @@ function QnAContent() {
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
+                      {/* 첨부파일 목록 (없으면 표시하지 않음) */}
+                      {selectedQa?.type === "resource" && (
+                        <div
+                          className={`bg-white border border-gray-200 rounded-lg p-4 mb-6 ${
+                            resourceFiles && resourceFiles.length > 0
+                              ? "bg-yellow-50 border-yellow-300"
+                              : ""
+                          }`}
+                        >
+                          <h3 className="text-sm font-semibold mb-3">자료 받아보기</h3>
+                          <ul className="space-y-2">
+                            {resourceFiles.map((f) => (
+                              <li key={f.id} className="flex items-center justify-between gap-4">
+                                <div className="text-sm text-gray-700">{f.file_name}</div>
+                                <div className="flex items-center gap-2">
+                                  <a
+                                    href={`/api/admin/guides/files/download?path=${encodeURIComponent(
+                                      f.file_path
+                                    )}`}
+                                    className="text-sm text-blue-600"
+                                    title="받아보기"
+                                  >
+                                    받아보기
+                                  </a>
+                                  <div className="text-xs text-gray-500">
+                                    {f.file_size ? `${Math.round(f.file_size / 1024)} KB` : ""}
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
                       전체
                     </Link>
                     {qnaCategories.map((category) => (
@@ -703,6 +761,33 @@ function QnAContent() {
                             dangerouslySetInnerHTML={{ __html: selectedQa.content }}
                           />
                         </div>
+
+                        {/* 명확하게 보이는 다운로드 박스 (본문 바로 아래) */}
+                        {resourceFiles && resourceFiles.length > 0 && (
+                          <div className="mb-6 p-4 rounded-lg border border-green-200 bg-green-50">
+                            <h4 className="text-sm font-semibold text-gray-900 mb-2">
+                              자료 받아보기
+                            </h4>
+                            <div className="flex flex-col gap-2">
+                              {resourceFiles.map((f) => (
+                                <a
+                                  key={f.id}
+                                  href={`/api/admin/guides/files/download?path=${encodeURIComponent(
+                                    f.file_path
+                                  )}`}
+                                  className="inline-flex items-center justify-between w-full px-4 py-2 bg-white border border-green-200 rounded-md hover:bg-green-100 text-sm text-green-800 shadow-sm"
+                                  target="_blank"
+                                  rel="noreferrer"
+                                >
+                                  <span className="truncate">{f.file_name}</span>
+                                  <span className="text-xs text-gray-500 ml-2">
+                                    {f.file_size ? `${Math.round(f.file_size / 1024)} KB` : ""}
+                                  </span>
+                                </a>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
 

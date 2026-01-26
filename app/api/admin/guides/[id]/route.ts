@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient, supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
 // GET - 가이드 상세 조회
@@ -88,6 +88,28 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 // DELETE - 가이드 삭제
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
+    // 먼저 스토리지의 가이드 관련 모든 파일을 삭제
+    const sb = createClient();
+    const prefix = `guides/${params.id}/`;
+    try {
+      const { data: listData, error: listError } = await sb.storage
+        .from("guide-files")
+        .list(`guides/${params.id}/`, { limit: 1000 });
+
+      if (listError) {
+        console.error("Storage list error:", listError);
+      } else if (listData && listData.length > 0) {
+        const paths = listData
+          .map((item: any) => item.name || item.path || item.id)
+          .map((n: string) => `${prefix}${n}`);
+        // remove expects exact object names
+        await sb.storage.from("guide-files").remove(paths);
+      }
+    } catch (e) {
+      console.error("Error removing guide storage files:", e);
+    }
+
+    // 리소스(가이드) 레코드 삭제
     const { error } = await supabase.from("resources").delete().eq("id", params.id);
 
     if (error) {

@@ -278,6 +278,11 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('public-files', 'public-files', true)
 ON CONFLICT (id) DO NOTHING;
 
+-- guide-files 버킷 생성 (가이드 파일 전용)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('guide-files', 'guide-files', false)
+ON CONFLICT (id) DO NOTHING;
+
 -- Storage RLS 정책 설정
 -- 1. 누구나 파일 업로드 가능
 CREATE POLICY "Anyone can upload files to public-files"
@@ -307,6 +312,24 @@ INSERT INTO resources (title, content, category, author, views, likes, published
 -- 샘플 첨부파일 데이터
 INSERT INTO attachments (resource_id, file_name, file_size, file_url) VALUES
 (1, '2025 반려해변 입양기관 기본안내서.pdf', '24.4MB', '/file/1. 2025 반려해변 입양기관 기본안내서.pdf');
+
+-- ============================================
+-- Guides files table (가이드 파일 메타데이터)
+-- ============================================
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'guides_files') THEN
+    CREATE TABLE guides_files (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      resource_id BIGINT REFERENCES resources(id) ON DELETE CASCADE,
+      file_path TEXT NOT NULL,
+      file_name TEXT NOT NULL,
+      file_size BIGINT,
+      file_type TEXT,
+      created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    );
+  END IF;
+END $$;
 
 -- ============================================
 -- 함수 및 트리거

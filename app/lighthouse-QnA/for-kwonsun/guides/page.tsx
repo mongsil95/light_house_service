@@ -56,6 +56,8 @@ export default function GuidesAdmin() {
   const [guides, setGuides] = useState<Guide[]>([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<number | "new" | null>(null);
   const [formData, setFormData] = useState<Partial<Guide>>({
     category: "",
@@ -65,6 +67,8 @@ export default function GuidesAdmin() {
     status: "draft",
     thumbnail_url: "",
   });
+
+  const [hasDraft, setHasDraft] = useState(false);
 
   const [adminUsers, setAdminUsers] = useState<{ id: string; nickname: string }[]>([]);
 
@@ -120,6 +124,31 @@ export default function GuidesAdmin() {
     } else {
       setFormData({ ...guide });
     }
+
+    // 기존 파일 목록 로드
+    (async () => {
+      try {
+        const { data: files, error } = await supabase
+          .from("guides_files")
+          .select("*")
+          .eq("resource_id", guide.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setExistingFiles(files || []);
+      } catch (err) {
+        console.error("fetch existing files error:", err);
+        setExistingFiles([]);
+      }
+    })();
+    // check for existing local draft for this guide
+    try {
+      const key = `autosave:guide:${guide.id}`;
+      const raw = localStorage.getItem(key);
+      setHasDraft(!!raw);
+    } catch (e) {
+      /* ignore */
+    }
   };
 
   const handleNew = () => {
@@ -133,6 +162,52 @@ export default function GuidesAdmin() {
       thumbnail_url: "",
       author: "",
     });
+    setSelectedFiles([]);
+    setExistingFiles([]);
+    try {
+      const raw = localStorage.getItem(`autosave:guide:new`);
+      setHasDraft(!!raw);
+    } catch (e) {}
+  };
+
+  // autosave interval: save formData to localStorage every 15s while editing
+  useEffect(() => {
+    if (!editingId) return;
+    const key = `autosave:guide:${editingId}`;
+
+    // immediate check
+    try {
+      const raw = localStorage.getItem(key);
+      setHasDraft(!!raw);
+    } catch (e) {}
+
+    const save = () => {
+      try {
+        const payload = { formData, savedAt: Date.now() };
+        localStorage.setItem(key, JSON.stringify(payload));
+        setHasDraft(true);
+      } catch (e) {
+        console.error("autosave error:", e);
+      }
+    };
+
+    // Save every 15s (do not overwrite existing draft immediately on mount)
+    const id = setInterval(save, 15000);
+    return () => clearInterval(id);
+  }, [editingId, formData]);
+
+  const handleManualSave = () => {
+    if (!editingId) return;
+    try {
+      const key = `autosave:guide:${editingId}`;
+      const payload = { formData, savedAt: Date.now() };
+      localStorage.setItem(key, JSON.stringify(payload));
+      setHasDraft(true);
+      alert("임시저장이 완료되었습니다.");
+    } catch (e) {
+      console.error("manual save error:", e);
+      alert("임시저장 중 오류가 발생했습니다.");
+    }
   };
 
   const handleCancel = () => {
@@ -206,12 +281,70 @@ export default function GuidesAdmin() {
 
       if (!res.ok) throw new Error("저장 실패");
 
-      alert("저장되었습니다.");
+      const json = await res.json();
+      const created = json.data;
+
+      // 파일 업로드가 선택된 경우 별도 업로드 엔드포인트로 전송
+      const uploadSelectedFiles = async (guideId: number | string) => {
+        if (!selectedFiles || selectedFiles.length === 0) return;
+        try {
+          setUploading(true);
+          const fd = new FormData();
+          fd.append("guideId", String(guideId));
+          selectedFiles.forEach((f) => fd.append("files", f));
+
+          const up = await fetch("/api/admin/guides/upload", {
+            method: "POST",
+            body: fd,
+          });
+
+          if (!up.ok) {
+            console.error("file upload failed", await up.text());
+            alert("파일 업로드 중 일부 또는 전체가 실패했습니다.");
+          } else {
+            alert("저장 및 파일 업로드가 완료되었습니다.");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("파일 업로드 중 오류가 발생했습니다.");
+        } finally {
+          setUploading(false);
+        }
+      };
+
+      // 업로드 실행 (신규 생성이면 created.id 사용)
+      const guideId = editingId === "new" ? created?.id : editingId;
+      if (guideId) await uploadSelectedFiles(guideId);
+
+      // clear local draft after successful save
+      try {
+        const key = `autosave:guide:${editingId === "new" ? "new" : guideId}`;
+        localStorage.removeItem(String(key));
+        setHasDraft(false);
+      } catch (e) {}
+
       handleCancel();
       fetchGuides();
     } catch (e) {
       console.error(e);
       alert("저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleRestoreDraft = () => {
+    if (!editingId) return;
+    try {
+      const key = `autosave:guide:${editingId}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.formData) {
+        setFormData((prev) => ({ ...(prev || {}), ...(parsed.formData || {}) }));
+        alert("임시저장이 복원되었습니다.");
+      }
+    } catch (e) {
+      console.error("restore draft error:", e);
+      alert("임시저장 복원 중 오류가 발생했습니다.");
     }
   };
 
@@ -263,9 +396,29 @@ export default function GuidesAdmin() {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {editingId ? (
           <div className="bg-white border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              {editingId === "new" ? "새 가이드 작성" : "가이드 수정"}
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingId === "new" ? "새 가이드 작성" : "가이드 수정"}
+              </h2>
+              <div className="flex items-center gap-3">
+                {hasDraft && (
+                  <button
+                    onClick={handleRestoreDraft}
+                    className="text-sm text-blue-600 hover:underline"
+                    type="button"
+                  >
+                    임시저장 복원
+                  </button>
+                )}
+                <button
+                  onClick={handleManualSave}
+                  className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700"
+                  type="button"
+                >
+                  임시저장
+                </button>
+              </div>
+            </div>
 
             <div className="space-y-4">
               <div>
@@ -393,13 +546,79 @@ export default function GuidesAdmin() {
               </div>
 
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  첨부파일 (최대 5개)
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) => {
+                    const files = e.target.files ? Array.from(e.target.files) : [];
+                    const maxFiles = 5;
+                    if (files.length + existingFiles.length > maxFiles) {
+                      alert(`최대 ${maxFiles}개까지 업로드할 수 있습니다.`);
+                      return;
+                    }
+                    setSelectedFiles(files);
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 font-['Pretendard']"
+                />
+                {selectedFiles.length > 0 && (
+                  <div className="text-sm text-gray-600 mt-2">
+                    선택된 파일: {selectedFiles.map((f) => f.name).join(", ")}
+                  </div>
+                )}
+
+                {existingFiles.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <div className="text-xs text-gray-500">기존 첨부파일</div>
+                    {existingFiles.map((f) => (
+                      <div key={f.id} className="flex items-center justify-between gap-2">
+                        <div className="text-sm text-gray-700">{f.file_name}</div>
+                        <div className="flex items-center gap-2">
+                          <a
+                            href={`/api/admin/guides/files/download?path=${encodeURIComponent(
+                              f.file_path
+                            )}`}
+                            className="text-sm text-blue-600"
+                          >
+                            다운로드
+                          </a>
+                          <Button
+                            onClick={async () => {
+                              if (!confirm("선택한 파일을 삭제하시겠습니까?")) return;
+                              try {
+                                const res = await fetch(`/api/admin/guides/files/${f.id}`, {
+                                  method: "DELETE",
+                                });
+                                if (!res.ok) throw new Error("삭제 실패");
+                                setExistingFiles((prev) => prev.filter((p) => p.id !== f.id));
+                                alert("파일이 삭제되었습니다.");
+                              } catch (err) {
+                                console.error(err);
+                                alert("파일 삭제 중 오류가 발생했습니다.");
+                              }
+                            }}
+                            variant="outline"
+                            size="sm"
+                          >
+                            삭제
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">상태</label>
                 <select
                   className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
                   value={formData.status || "draft"}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
-                  <option value="draft">임시저장</option>
+                  <option value="draft">임시저장(서버저장)</option>
                   <option value="published">발행</option>
                 </select>
               </div>

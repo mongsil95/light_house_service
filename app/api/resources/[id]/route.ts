@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -8,8 +8,9 @@ export async function GET(request: Request, { params }: { params: { id: string }
   try {
     const { id } = params;
 
+    const sb = createClient();
     // 게시글 조회
-    const { data: resource, error: resourceError } = await supabase
+    const { data: resource, error: resourceError } = await sb
       .from("resources")
       .select("*")
       .eq("id", id)
@@ -21,18 +22,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ error: resourceError.message }, { status: 404 });
     }
 
-    // 첨부파일 조회
-    const { data: attachments, error: attachmentsError } = await supabase
-      .from("attachments")
-      .select("*")
-      .eq("resource_id", id);
+    // 첨부파일 조회 (guides_files 테이블 사용)
+    const { data: attachments, error: attachmentsError } = await sb
+      .from("guides_files")
+      .select("id, file_name, file_path, file_size, file_type, created_at")
+      .eq("resource_id", id)
+      .order("created_at", { ascending: false });
 
     if (attachmentsError) {
       console.error("Attachments error:", attachmentsError);
     }
 
     // 조회수 증가
-    await supabase
+    await sb
       .from("resources")
       .update({ views: (resource.views || 0) + 1 })
       .eq("id", id);

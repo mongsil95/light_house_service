@@ -48,6 +48,7 @@ export default function QnAAdmin() {
     status: "draft",
     thumbnail_url: "",
   });
+  const [hasDraft, setHasDraft] = useState(false);
 
   useEffect(() => {
     fetchQnas();
@@ -70,6 +71,10 @@ export default function QnAAdmin() {
   const handleEdit = (qna: QnA) => {
     setEditingId(qna.id);
     setFormData({ ...qna });
+    try {
+      const raw = localStorage.getItem(`autosave:qna:${qna.id}`);
+      setHasDraft(!!raw);
+    } catch (e) {}
   };
 
   const handleNew = () => {
@@ -81,6 +86,65 @@ export default function QnAAdmin() {
       status: "draft",
       thumbnail_url: "",
     });
+    try {
+      const raw = localStorage.getItem(`autosave:qna:new`);
+      setHasDraft(!!raw);
+    } catch (e) {}
+  };
+
+  // autosave formData to localStorage every 15s while editing
+  useEffect(() => {
+    if (!editingId) return;
+    const key = `autosave:qna:${editingId}`;
+
+    try {
+      const raw = localStorage.getItem(key);
+      setHasDraft(!!raw);
+    } catch (e) {}
+
+    const save = () => {
+      try {
+        const payload = { formData, savedAt: Date.now() };
+        localStorage.setItem(key, JSON.stringify(payload));
+        setHasDraft(true);
+      } catch (e) {
+        console.error("autosave qna error:", e);
+      }
+    };
+
+    const id = setInterval(save, 15000);
+    return () => clearInterval(id);
+  }, [editingId, formData]);
+
+  const handleManualSave = () => {
+    if (!editingId) return;
+    try {
+      const key = `autosave:qna:${editingId}`;
+      const payload = { formData, savedAt: Date.now() };
+      localStorage.setItem(key, JSON.stringify(payload));
+      setHasDraft(true);
+      alert("임시저장이 완료되었습니다.");
+    } catch (e) {
+      console.error("manual save qna error:", e);
+      alert("임시저장 중 오류가 발생했습니다.");
+    }
+  };
+
+  const handleRestoreDraft = () => {
+    if (!editingId) return;
+    try {
+      const key = `autosave:qna:${editingId}`;
+      const raw = localStorage.getItem(key);
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      if (parsed?.formData) {
+        setFormData((prev) => ({ ...(prev || {}), ...(parsed.formData || {}) }));
+        alert("임시저장이 복원되었습니다.");
+      }
+    } catch (e) {
+      console.error("restore qna draft error:", e);
+      alert("임시저장 복원 중 오류가 발생했습니다.");
+    }
   };
 
   const handleCancel = () => {
@@ -153,6 +217,13 @@ export default function QnAAdmin() {
       if (!res.ok) throw new Error("저장 실패");
 
       alert("저장되었습니다.");
+      // clear local draft after successful save
+      try {
+        const key = `autosave:qna:${editingId === "new" ? "new" : editingId}`;
+        localStorage.removeItem(String(key));
+        setHasDraft(false);
+      } catch (e) {}
+
       handleCancel();
       fetchQnas();
     } catch (e) {
@@ -392,9 +463,29 @@ export default function QnAAdmin() {
           </div>
         ) : editingId ? (
           <div className="bg-white border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">
-              {editingId === "new" ? "새 QnA 작성" : "QnA 수정"}
-            </h2>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">
+                {editingId === "new" ? "새 QnA 작성" : "QnA 수정"}
+              </h2>
+              <div className="flex items-center gap-3">
+                {hasDraft && (
+                  <button
+                    onClick={handleRestoreDraft}
+                    className="text-sm text-blue-600 hover:underline"
+                    type="button"
+                  >
+                    임시저장 복원
+                  </button>
+                )}
+                <button
+                  onClick={handleManualSave}
+                  className="text-sm bg-gray-100 px-2 py-1 rounded text-gray-700"
+                  type="button"
+                >
+                  임시저장
+                </button>
+              </div>
+            </div>
 
             <div className="space-y-4">
               <div>
@@ -471,7 +562,7 @@ export default function QnAAdmin() {
                   value={formData.status || "draft"}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
                 >
-                  <option value="draft">임시저장</option>
+                  <option value="draft">임시저장(서버저장)</option>
                   <option value="published">발행</option>
                 </select>
               </div>
