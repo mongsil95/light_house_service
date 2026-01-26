@@ -34,10 +34,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 
     // 조회수 증가
-    await sb
-      .from("resources")
-      .update({ views: (resource.views || 0) + 1 })
-      .eq("id", id);
+    // 조회수는 클라이언트에서 처리하도록 변경 (중복 증가 방지)
 
     return NextResponse.json({
       data: {
