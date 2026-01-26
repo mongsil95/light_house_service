@@ -11,13 +11,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "guideId is required" }, { status: 400 });
     }
 
-    const files: File[] = [];
-    // formData의 키를 순회해 files 수집 (files 또는 files[] 허용)
-    for (const entry of form.entries()) {
-      const [key, value] = entry as [string, any];
-      if (value instanceof File) files.push(value);
-      if (Array.isArray(value)) value.forEach((v) => v instanceof File && files.push(v));
-    }
+    // prefer explicit 'files' or 'files[]' fields
+    const rawFiles: FormDataEntryValue[] = [
+      ...form.getAll("files"),
+      ...form.getAll("files[]"),
+      ...form.getAll("file"),
+    ];
+
+    const files: File[] = rawFiles.filter((v): v is File => v instanceof File);
 
     if (files.length === 0) {
       return NextResponse.json({ error: "No files provided" }, { status: 400 });
