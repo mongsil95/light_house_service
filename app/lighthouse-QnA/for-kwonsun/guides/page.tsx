@@ -66,9 +66,23 @@ export default function GuidesAdmin() {
     thumbnail_url: "",
   });
 
+  const [adminUsers, setAdminUsers] = useState<{ id: string; nickname: string }[]>([]);
+
   useEffect(() => {
     fetchGuides();
+    fetchAdminUsers();
   }, []);
+
+  const fetchAdminUsers = async () => {
+    try {
+      const res = await fetch("/api/admin/users");
+      if (!res.ok) throw new Error("Failed to fetch admin users");
+      const json = await res.json();
+      setAdminUsers(json.data || []);
+    } catch (err) {
+      console.error("fetchAdminUsers error:", err);
+    }
+  };
 
   const fetchGuides = async () => {
     setLoading(true);
@@ -86,7 +100,26 @@ export default function GuidesAdmin() {
 
   const handleEdit = (guide: Guide) => {
     setEditingId(guide.id);
-    setFormData({ ...guide });
+    // If stored author is a UUID (user id), try to resolve to nickname
+    const isUUID = typeof guide.author === "string" && /^[0-9a-fA-F-]{36}$/.test(guide.author);
+    if (isUUID) {
+      // optimistic set id for now, then resolve
+      setFormData({ ...guide, author: "" });
+      (async () => {
+        try {
+          const res = await fetch(`/api/admin/users?id=${guide.author}`);
+          if (!res.ok) throw new Error("Failed to fetch user");
+          const json = await res.json();
+          const nickname = json.data?.nickname;
+          setFormData((prev) => ({ ...prev, author: nickname || "" }));
+        } catch (err) {
+          console.error("Failed to resolve author nickname:", err);
+          setFormData((prev) => ({ ...prev, author: "" }));
+        }
+      })();
+    } else {
+      setFormData({ ...guide });
+    }
   };
 
   const handleNew = () => {
@@ -98,6 +131,7 @@ export default function GuidesAdmin() {
       content: "",
       status: "draft",
       thumbnail_url: "",
+      author: "",
     });
   };
 
@@ -110,6 +144,7 @@ export default function GuidesAdmin() {
       content: "",
       status: "draft",
       thumbnail_url: "",
+      author: "",
     });
   };
 
@@ -273,6 +308,22 @@ export default function GuidesAdmin() {
                   onChange={(e) => setFormData({ ...formData, subtitle: e.target.value })}
                   placeholder="간단한 설명을 입력하세요"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">작성자</label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
+                  value={formData.author || ""}
+                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                >
+                  <option value="">작성자를 선택하세요</option>
+                  {adminUsers.map((u) => (
+                    <option key={u.id} value={u.nickname}>
+                      {u.nickname}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>

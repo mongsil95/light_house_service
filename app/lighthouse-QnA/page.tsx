@@ -196,6 +196,7 @@ function QnAContent() {
             answered: true,
             content: resource.content,
             thumbnail_url: resource.thumbnail_url, // 썸네일 URL 추가
+            author: resource.author || "운영팀",
           }));
           allItems.push(...formattedResources);
           console.log("Formatted Resources:", formattedResources.length);
@@ -688,6 +689,10 @@ function QnAContent() {
                           {selectedQa.question}
                         </h1>
 
+                        {selectedQa.type === "resource" && selectedQa.author && (
+                          <p className="text-sm text-gray-600 mb-4">작성자: {selectedQa.author}</p>
+                        )}
+
                         <div className="bg-gray-50 rounded-lg p-6 mb-6">
                           <div
                             className="prose prose-sm sm:prose-base max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
@@ -880,7 +885,9 @@ function QnAContent() {
                                     <Eye className="w-3 h-3" />
                                     {qa.views}명이 확인했어요
                                   </span>
-                                  <span>· {qa.date}</span>
+                                  <span>
+                                    · {qa.type === "resource" ? qa.author || "운영팀" : qa.date}
+                                  </span>
                                 </div>
                               </div>
                             </div>

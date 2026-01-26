@@ -17,6 +17,21 @@ CREATE TABLE IF NOT EXISTS organizations (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 0. 사용자 테이블 (Auth 외 별도 사용자 메타 데이터)
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS users (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT,
+  email TEXT UNIQUE,
+  nickname TEXT,
+  role TEXT DEFAULT 'user', -- 'admin' | 'user'
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- users 인덱스
+CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
+
 -- 2. 해변 정보 테이블
 CREATE TABLE IF NOT EXISTS beaches (
   id BIGSERIAL PRIMARY KEY,
