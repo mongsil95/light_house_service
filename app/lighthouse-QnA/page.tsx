@@ -666,23 +666,17 @@ function QnAContent() {
               {/* 검색 및 정렬 - 상세보기일 때 숨김 */}
               {!selectedQa && (
                 <>
-                  <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
-                    <input
-                      type="text"
-                      placeholder="질문 검색..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  {/* 인기 질문: 메인에서 오른쪽 사이드바로 이동 */}
-
-                  {/* Q&A 목록 */}
-                  {/* 정렬 및 개수 */}
-                  <div className="flex items-center justify-between mb-6">
-                    <p className="text-gray-600">
-                      <span className="font-bold text-blue-600">{sortedQAs.length}</span>개
-                    </p>
+                  {/* 검색창과 정렬 버튼을 한 줄에 배치 */}
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="flex-1 bg-white rounded-lg shadow-sm p-4">
+                      <input
+                        type="text"
+                        placeholder="질문 검색..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                    </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => setSortOrder("최근 답변순")}
@@ -704,6 +698,36 @@ function QnAContent() {
                       >
                         인기순
                       </button>
+                    </div>
+                  </div>
+
+                  {/* 사무국이 추천하는 글 3가지 */}
+                  <div className="border border-[#cecece] rounded-[10px] overflow-hidden mb-6">
+                    <p className="text-base font-bold text-black px-6 py-5" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
+                      사무국이 추천하는 글 3가지
+                    </p>
+                    <div className="space-y-3 pb-4">
+                      {sortedQAs.slice(0, 3).map((qa) => (
+                        <Link
+                          key={qa.id}
+                          href={`/lighthouse-QnA?id=${qa.id}`}
+                          className="block mx-3"
+                        >
+                          <div className="bg-white border border-[#cecece] rounded-[15px] px-4 py-3 hover:shadow-sm transition-shadow">
+                            <div className="flex items-center gap-3">
+                              <Badge className="bg-[#f0fdf4] text-[#15803d] border-[#c1f8d4] border hover:bg-[#f0fdf4] text-xs font-bold" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
+                                {qa.type === "resource" ? "정보" : "질문"}
+                              </Badge>
+                              <p className="text-[17px] font-bold text-black flex-1" style={{ fontFamily: 'Pretendard, sans-serif' }}>
+                                {extractText(qa.question)}
+                              </p>
+                              <p className="text-[13px] text-[#9ca3af]" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
+                                🖋️ {qa.type === "resource" ? qa.author || "운영팀" : "Editor.K"}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </>
@@ -900,7 +924,7 @@ function QnAContent() {
                     )}
                   </>
                 ) : paginatedQAs.length === 0 ? (
-                  <Card className="border border-gray-200">
+                  <Card className="hidden border border-gray-200">
                     <CardContent className="p-12 text-center">
                       <HelpCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                       <h3 className="text-lg font-bold text-gray-900 mb-2">아직 질문이 없네요</h3>
@@ -1058,9 +1082,9 @@ function QnAContent() {
 
             {/* 오른쪽 사이드바 */}
             <div className="lg:col-span-3 space-y-8">
-              {/* 인기 질문 (사이드바) */}
+              {/* 인기 질문 (사이드바) - hidden */}
               <div className="sticky top-24 space-y-4">
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                <div className="hidden bg-white border border-gray-200 rounded-lg p-4">
                   <h4 className="text-sm font-bold text-gray-900 mb-3">인기 질문</h4>
                   <div className="space-y-2">
                     {popularQuestions.map((qa, idx) => (
@@ -1102,7 +1126,7 @@ function QnAContent() {
                 </div>
 
                 {/* 질문하기 배너 (작고 무채색) */}
-                <div className="bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
+                <div className="hidden bg-gray-50 rounded-lg p-4 text-center border border-gray-200">
                   <div className="mb-3">
                     <HelpCircle className="w-10 h-10 mx-auto mb-2 text-gray-500" />
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">

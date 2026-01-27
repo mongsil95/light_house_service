@@ -1,7 +1,7 @@
 // lib/email/utils/generatePDFBuffer.ts
-import { renderToStaticMarkup } from 'react-dom/server';
-import puppeteer from 'puppeteer';
-import type { FormId } from '@/types/form';
+import { renderToStaticMarkup } from "react-dom/server";
+import puppeteer from "puppeteer";
+import type { FormId } from "@/types/form";
 
 /**
  * PDF용 HTML 문자열 생성
@@ -9,9 +9,11 @@ import type { FormId } from '@/types/form';
 function generateHTML(data: any, formId: FormId): string {
   const rows = Object.entries(data).map(([key, value]) => {
     const content = Array.isArray(value)
-      ? value.join(', ')
-      : typeof value === 'boolean'
-        ? value ? '예' : '아니오'
+      ? value.join(", ")
+      : typeof value === "boolean"
+        ? value
+          ? "예"
+          : "아니오"
         : String(value);
 
     return `<tr><th>${key}</th><td>${content}</td></tr>`;
@@ -33,7 +35,7 @@ function generateHTML(data: any, formId: FormId): string {
         <h1>CareSea - ${formId} 신청서</h1>
         <table>
           <tbody>
-            ${rows.join('\n')}
+            ${rows.join("\n")}
           </tbody>
         </table>
       </body>
@@ -44,22 +46,19 @@ function generateHTML(data: any, formId: FormId): string {
 /**
  * Puppeteer를 활용한 PDF 버퍼 생성
  */
-export async function generatePDFBuffer(
-  data: any,
-  formId: FormId
-): Promise<Buffer> {
+export async function generatePDFBuffer(data: any, formId: FormId): Promise<Buffer> {
   const html = generateHTML(data, formId);
   const browser = await puppeteer.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
   try {
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: "networkidle0" });
 
     const pdfBuffer = await page.pdf({
-      format: 'A4',
+      format: "A4",
       printBackground: true,
     });
 

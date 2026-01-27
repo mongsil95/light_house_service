@@ -71,8 +71,7 @@ export const NewsletterBasicEmail = ({ data }: NewsletterBasicEmailProps) => {
             <Heading style={h1}>{title}</Heading>
             {recipientName && (
               <Text style={greeting}>
-                안녕하세요,{" "}
-                {recipientOrganization && `${recipientOrganization} `}
+                안녕하세요, {recipientOrganization && `${recipientOrganization} `}
                 {recipientName} 님!
               </Text>
             )}
@@ -88,8 +87,7 @@ export const NewsletterBasicEmail = ({ data }: NewsletterBasicEmailProps) => {
           {/* 푸터 */}
           <Section style={footer}>
             <Text style={footerText}>
-              이 메일은 <strong>반려해변</strong> 프로젝트 참여 단체에게
-              발송되었습니다.
+              이 메일은 <strong>반려해변</strong> 프로젝트 참여 단체에게 발송되었습니다.
             </Text>
             <Text style={footerText}>
               반려해변 사무국 | (사)이타서울
@@ -101,11 +99,7 @@ export const NewsletterBasicEmail = ({ data }: NewsletterBasicEmailProps) => {
 
             {/* 소셜 미디어 링크 */}
             <Section style={socialLinks}>
-              <Link
-                href="https://caresea.kr"
-                style={socialLink}
-                target="_blank"
-              >
+              <Link href="https://caresea.kr" style={socialLink} target="_blank">
                 🌊 홈페이지
               </Link>
               <Link

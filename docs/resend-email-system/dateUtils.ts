@@ -1,9 +1,20 @@
-import { format, formatDistanceToNow, formatDistanceToNowStrict, formatRelative, isToday, isTomorrow, isValid, isYesterday, parse, parseISO } from "date-fns";
+import {
+  format,
+  formatDistanceToNow,
+  formatDistanceToNowStrict,
+  formatRelative,
+  isToday,
+  isTomorrow,
+  isValid,
+  isYesterday,
+  parse,
+  parseISO,
+} from "date-fns";
 import { ko } from "date-fns/locale";
 
 /**
  * 날짜 또는 시간 문자열을 자동으로 판단하여 포맷팅합니다.
- * 
+ *
  * @example
  * formatDateOrTime("2024-05-03") => "2024년 5월 3일 (금)"
  * formatDateOrTime("14:30:00") => "14:30"
@@ -27,21 +38,16 @@ export function formatDateOrTime(input: string | Date | null | undefined): strin
   }
 }
 
-
-
-
-
-
 /*
 {
   relative: "오늘",
   date: "5월 3일 (금)",
   time: "14:00"
 }
-*/export type SmartDate = {
+*/ export type SmartDate = {
   relative: string; // 예: 오늘, 어제, 3일 전
-  date: string;     // 예: 5월 3일 (금) 또는 2025년 5월 3일 (토)
-  time?: string;    // 예: 14:30
+  date: string; // 예: 5월 3일 (금) 또는 2025년 5월 3일 (토)
+  time?: string; // 예: 14:30
 };
 
 export type SmartDateFormat = "md" | "ymd" | "hm" | "full" | string;
@@ -73,8 +79,7 @@ export function formatSmartDate(
   if (!input) return { relative: "-", date: "-" };
 
   // 📌 "yyyy-MM-dd" 인 경우 시각 없는 날짜일 수 있어서 특수 처리
-  const isDateOnlyString =
-    typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input);
+  const isDateOnlyString = typeof input === "string" && /^\d{4}-\d{2}-\d{2}$/.test(input);
 
   const date = new Date(input);
 
@@ -82,7 +87,7 @@ export function formatSmartDate(
   if (isNaN(date.getTime())) return { relative: "-", date: "-" };
 
   const dateStr = format(date, resolveFormat(options?.format), { locale: ko });
-  const timeStr = format(date, "a h:mm", { locale: ko });  // a: 오전/오후, h:mm: 12시간제
+  const timeStr = format(date, "a h:mm", { locale: ko }); // a: 오전/오후, h:mm: 12시간제
 
   // 날짜가 오늘/어제/내일인 경우 relative 처리
   // if (isToday(date)) return { relative: "오늘", date: dateStr, time: timeStr };
@@ -103,7 +108,7 @@ export function formatSmartDate(
 
 // { relative: '8개월 후', date: '2024년 5월 3일 (금)', time: '오후 11:30' }
 
-// // d-day 
+// // d-day
 // export function formatDDay(date: Date | string | null | undefined): string {
 //   if (!date) return "-";
 
@@ -122,14 +127,6 @@ export function formatSmartDate(
 //     return "오늘";
 //   }
 // }
-
-
-
-
-
-
-
-
 
 /**
  * YYYY년 M월 D일 (요일) 형식
@@ -233,7 +230,6 @@ export function formatHM(date: string | Date | null | undefined): string {
   }
 }
 
-
 export function __formatHM_AMPM(date: string | Date | null | undefined): string {
   if (!date || (typeof date === "string" && date.trim() === "")) return "-";
 
@@ -257,7 +253,6 @@ export function __formatHM_AMPM(date: string | Date | null | undefined): string 
   }
 }
 
-
 /**
  * ✅ ISO → MySQL DATE ("YYYY-MM-DD")
  * ex: "2025-06-02T00:00:00.000Z" → "2025-06-02"
@@ -265,9 +260,9 @@ export function __formatHM_AMPM(date: string | Date | null | undefined): string 
 export function formatAsDateOnly(isoString: string): string {
   try {
     const date = new Date(isoString);
-    return format(date, 'yyyy-MM-dd');
+    return format(date, "yyyy-MM-dd");
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -278,7 +273,7 @@ export function formatAsDateOnly(isoString: string): string {
  * ex: "2025-06-02" → Date
  */
 export function parseDateOnly(dateStr: string): Date | null {
-  const parsed = parse(dateStr, 'yyyy-MM-dd', new Date());
+  const parsed = parse(dateStr, "yyyy-MM-dd", new Date());
   return isValid(parsed) ? parsed : null;
 }
 
@@ -287,20 +282,12 @@ export function parseDateOnly(dateStr: string): Date | null {
  * ex: new Date() → "2025-06-02"
  */
 export function dateToDateOnlyString(date: Date): string {
-  return format(date, 'yyyy-MM-dd');
+  return format(date, "yyyy-MM-dd");
 }
 
 export function stringToMySQLDateOnly(isoString: string): string {
   return isoString.slice(0, 10); // "YYYY-MM-DD"
 }
-
-
-
-
-
-
-
-
 
 /**
  * ✅ ISO → MySQL DATETIME ("YYYY-MM-DD HH:mm:ss")
@@ -309,9 +296,9 @@ export function stringToMySQLDateOnly(isoString: string): string {
 export function formatAsDateTime(isoString: string): string {
   try {
     const date = new Date(isoString);
-    return format(date, 'yyyy-MM-dd HH:mm:ss');
+    return format(date, "yyyy-MM-dd HH:mm:ss");
   } catch {
-    return '';
+    return "";
   }
 }
 
@@ -320,7 +307,7 @@ export function formatAsDateTime(isoString: string): string {
  * ex: "2025-06-02 14:30:00" → Date
  */
 export function parseDateTime(dateTimeStr: string): Date | null {
-  const parsed = parse(dateTimeStr, 'yyyy-MM-dd HH:mm:ss', new Date());
+  const parsed = parse(dateTimeStr, "yyyy-MM-dd HH:mm:ss", new Date());
   return isValid(parsed) ? parsed : null;
 }
 
@@ -329,14 +316,14 @@ export function parseDateTime(dateTimeStr: string): Date | null {
  * ex: new Date() → "2025-06-02 14:30:00"
  */
 export function dateToDateTimeString(date: Date): string {
-  return format(date, 'yyyy-MM-dd HH:mm:ss');
+  return format(date, "yyyy-MM-dd HH:mm:ss");
 }
 
 // 남은 개월 및 일, 시간, 분, 초 계산 함수
 export function getTimeLeft(target: Date) {
   const now = new Date();
   let diff = target.getTime() - now.getTime();
-  if (diff <= 0) return { expired: true, text: '만료됨' };
+  if (diff <= 0) return { expired: true, text: "만료됨" };
 
   // 각 단위별로 계산
   const seconds = Math.floor((diff / 1000) % 60);
@@ -344,7 +331,8 @@ export function getTimeLeft(target: Date) {
   const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
 
   // "개월"과 "일"은 날짜 계산이므로 좀 더 정교하게 계산
-  let months = 0, days = 0;
+  let months = 0,
+    days = 0;
   let temp = new Date(now);
   while (temp < target) {
     const next = new Date(temp);
@@ -367,7 +355,7 @@ export function getTimeLeft(target: Date) {
     }
   }
 
-  let text = '';
+  let text = "";
   if (months > 0) text += `${months}개월 `;
   if (days > 0) text += `${days}일 `;
   if (hours > 0) text += `${hours}시간 `;
@@ -376,7 +364,6 @@ export function getTimeLeft(target: Date) {
 
   return { expired: false, text: text.trim() };
 }
-
 
 // 남은 개월 및 일, 시간, 분, 초 계산 함수
 /**
@@ -417,16 +404,16 @@ export const getTimeLeftDisplay = (enddate: string | Date | null | undefined): s
   return `${diffMinutes}분 남음`;
 };
 
-
-
 // utils/dateUtils.ts 등
 export function isSameDay(date1?: string, date2?: string): boolean {
   if (!date1 || !date2) return false;
   const d1 = new Date(date1);
   const d2 = new Date(date2);
-  return d1.getFullYear() === d2.getFullYear() &&
+  return (
+    d1.getFullYear() === d2.getFullYear() &&
     d1.getMonth() === d2.getMonth() &&
-    d1.getDate() === d2.getDate();
+    d1.getDate() === d2.getDate()
+  );
 }
 
 // import {

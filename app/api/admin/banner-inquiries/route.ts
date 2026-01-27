@@ -1,8 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import {
-  sendBannerInquiryNotification,
-  sendBannerInquiryConfirmation,
-} from "@/lib/email";
+import { sendBannerInquiryNotification, sendBannerInquiryConfirmation } from "@/lib/email";
 import { NextRequest, NextResponse } from "next/server";
 
 // 배너 문의 목록 조회
@@ -48,8 +45,11 @@ export async function POST(req: NextRequest) {
     // 이메일 전송 (비동기로 실행, 실패해도 응답은 성공 처리)
     if (data && data.length > 0) {
       const inquiry = data[0];
-      console.log("📧 이메일 전송 시작:", { organization: inquiry.organization, email: inquiry.email });
-      
+      console.log("📧 이메일 전송 시작:", {
+        organization: inquiry.organization,
+        email: inquiry.email,
+      });
+
       Promise.all([
         sendBannerInquiryNotification({
           id: inquiry.id,
@@ -60,11 +60,13 @@ export async function POST(req: NextRequest) {
           organization: inquiry.organization,
           email: inquiry.email,
         }),
-      ]).then((results) => {
-        console.log("✅ 이메일 전송 완료:", results);
-      }).catch((emailError) => {
-        console.error("❌ 이메일 전송 오류:", emailError);
-      });
+      ])
+        .then((results) => {
+          console.log("✅ 이메일 전송 완료:", results);
+        })
+        .catch((emailError) => {
+          console.error("❌ 이메일 전송 오류:", emailError);
+        });
     }
 
     return NextResponse.json({ data }, { status: 201 });

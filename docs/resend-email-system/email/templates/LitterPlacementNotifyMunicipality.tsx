@@ -1,13 +1,5 @@
 import { formatSmartDate } from "@/lib/utils/dateUtils";
-import {
-  Html,
-  Section,
-  Heading,
-  Text,
-  Img,
-  Row,
-  Column,
-} from "@react-email/components";
+import { Html, Section, Heading, Text, Img, Row, Column } from "@react-email/components";
 
 export function LitterPlacementNotifyMunicipality({
   beachName,
@@ -32,9 +24,7 @@ export function LitterPlacementNotifyMunicipality({
 }: any) {
   // 카카오맵 링크 생성
   const officialKakaoLink =
-    pileLat && pileLng
-      ? `https://map.kakao.com/link/map/공식적치장,${pileLat},${pileLng}`
-      : null;
+    pileLat && pileLng ? `https://map.kakao.com/link/map/공식적치장,${pileLat},${pileLng}` : null;
   const dumpedKakaoLink =
     dumpedLat && dumpedLng
       ? `https://map.kakao.com/link/map/실적치장소,${dumpedLat},${dumpedLng}`
@@ -79,22 +69,16 @@ export function LitterPlacementNotifyMunicipality({
             lineHeight: 1.7,
           }}
         >
-          안녕하세요,{" "}
-          {municipalManagerName
-            ? `${municipalManagerName} 담당자님`
-            : "담당자님"}
+          안녕하세요, {municipalManagerName ? `${municipalManagerName} 담당자님` : "담당자님"}
           .
           <br />
-          {municipalGroupName ? <b>{municipalGroupName}</b> : null}의 해양환경
-          보호의 협력과 노고에 깊이 감사드립니다.
+          {municipalGroupName ? <b>{municipalGroupName}</b> : null}의 해양환경 보호의 협력과 노고에
+          깊이 감사드립니다.
           <br />이 신고는 민원 접수가 아닌,{" "}
-          <b>
-            반려해변 협력 지자체 간의 원활한 수거 및 행정협력을 위한 공식 안내
-          </b>
+          <b>반려해변 협력 지자체 간의 원활한 수거 및 행정협력을 위한 공식 안내</b>
           입니다.
           <br />
-          아래 폐기물 적치신고와 수거과정의 행정 협력 요청 사항을 확인
-          부탁드립니다.
+          아래 폐기물 적치신고와 수거과정의 행정 협력 요청 사항을 확인 부탁드립니다.
           <br />
         </Text>
 
@@ -129,11 +113,9 @@ export function LitterPlacementNotifyMunicipality({
           <Text>
             <b>활동일시:</b>
             <br />
-            시작: {formatSmartDate(startDate).date}{" "}
-            {formatSmartDate(startDate).time}
+            시작: {formatSmartDate(startDate).date} {formatSmartDate(startDate).time}
             <br />
-            종료: {formatSmartDate(endDate).date}{" "}
-            {formatSmartDate(endDate).time}
+            종료: {formatSmartDate(endDate).date} {formatSmartDate(endDate).time}
           </Text>
           <Text>
             <b>정화기관:</b> {groupName}
@@ -144,11 +126,7 @@ export function LitterPlacementNotifyMunicipality({
           <Text>
             <b>공식 적치 장소:</b>{" "}
             {pileLat && officialKakaoLink ? (
-              <a
-                href={officialKakaoLink}
-                target="_blank"
-                style={{ color: "#0984e3" }}
-              >
+              <a href={officialKakaoLink} target="_blank" style={{ color: "#0984e3" }}>
                 카카오맵 바로가기 ({pileLat}, {pileLng})
               </a>
             ) : (
@@ -158,11 +136,7 @@ export function LitterPlacementNotifyMunicipality({
           <Text>
             <b>실제 적치 위치(GPS):</b>{" "}
             {dumpedKakaoLink ? (
-              <a
-                href={dumpedKakaoLink}
-                target="_blank"
-                style={{ color: "#0984e3" }}
-              >
+              <a href={dumpedKakaoLink} target="_blank" style={{ color: "#0984e3" }}>
                 카카오맵 바로가기 ({dumpedLat}, {dumpedLng})
               </a>
             ) : (
@@ -170,11 +144,8 @@ export function LitterPlacementNotifyMunicipality({
             )}
           </Text>
 
-          <Text
-            style={{ marginTop: "12px", fontSize: "13px", color: "#ff4c4c" }}
-          >
-            ※ 실제 적치 위치 기록은 부정확할 수 있습니다. 사진과 함께 참고
-            부탁드립니다.
+          <Text style={{ marginTop: "12px", fontSize: "13px", color: "#ff4c4c" }}>
+            ※ 실제 적치 위치 기록은 부정확할 수 있습니다. 사진과 함께 참고 부탁드립니다.
           </Text>
 
           {comment ? (
@@ -185,9 +156,7 @@ export function LitterPlacementNotifyMunicipality({
         </Section>
 
         <Section style={{ marginTop: "18px", marginBottom: "10px" }}>
-          <Heading
-            style={{ fontSize: "16px", marginBottom: "8px", color: "#0984e3" }}
-          >
+          <Heading style={{ fontSize: "16px", marginBottom: "8px", color: "#0984e3" }}>
             사진 링크
           </Heading>
           <ul style={{ margin: 0, padding: 0 }}>
@@ -243,19 +212,15 @@ export function LitterPlacementNotifyMunicipality({
               color: "#666",
             }}
           >
-            ※ 본 안내는 반려해변 공식 행정협력을 위한 것으로, 민원건의 접수가
-            아님을 다시 한 번 안내드립니다.
+            ※ 본 안내는 반려해변 공식 행정협력을 위한 것으로, 민원건의 접수가 아님을 다시 한 번
+            안내드립니다.
           </Text>
         </Section>
 
         <Section style={{ borderTop: "1px solid #bae6fd", paddingTop: "18px" }}>
           <Row>
             <Column align="center">
-              <Img
-                src="https://team.caresea.kr/logo/adb_logo.png"
-                alt="반려해변 로고"
-                width="85"
-              />
+              <Img src="https://team.caresea.kr/logo/adb_logo.png" alt="반려해변 로고" width="85" />
             </Column>
             <Column align="center">
               <Img

@@ -8,18 +8,18 @@
   },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
-  
+
   // TypeScript 설정
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.enablePromptUseWorkspaceTsdk": true,
   "typescript.preferences.importModuleSpecifier": "relative",
-  
+
   // Tailwind CSS 설정
   "tailwindCSS.experimental.classRegex": [
     ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
     ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
   ],
-  
+
   // 파일 관련 설정
   "files.exclude": {
     "**/.git": true,
@@ -36,7 +36,7 @@
   "files.associations": {
     "*.css": "tailwindcss"
   },
-  
+
   // 검색 제외
   "search.exclude": {
     "**/node_modules": true,

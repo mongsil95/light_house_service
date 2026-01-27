@@ -67,8 +67,7 @@ export function Conf25SupplementEmail({ data }: Conf25SupplementEmailProps) {
 
             <Section style={highlightBox}>
               <Text style={highlightText}>
-                위 내용을 보완하신 후, 아래 버튼을 클릭하여 신청 내용을
-                수정해주시기 바랍니다.
+                위 내용을 보완하신 후, 아래 버튼을 클릭하여 신청 내용을 수정해주시기 바랍니다.
               </Text>
               <Section style={buttonSection}>
                 <Button href={applyUrl} style={button}>
@@ -76,9 +75,7 @@ export function Conf25SupplementEmail({ data }: Conf25SupplementEmailProps) {
                 </Button>
               </Section>
               {data.editUrl && (
-                <Text style={noteText}>
-                  ※ 수정 링크는 7일간 유효하며, 1회만 사용 가능합니다.
-                </Text>
+                <Text style={noteText}>※ 수정 링크는 7일간 유효하며, 1회만 사용 가능합니다.</Text>
               )}
             </Section>
 
@@ -124,8 +121,7 @@ export function Conf25SupplementEmail({ data }: Conf25SupplementEmailProps) {
                 lineHeight: "1.6",
               }}
             >
-              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가
-              친절하게 안내해 드립니다.
+              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가 친절하게 안내해 드립니다.
               <br />
               참가 준비, 일정, 장소, 주차 등 무엇이든 편하게 문의하세요!
             </Text>
@@ -177,8 +173,7 @@ export function Conf25SupplementEmail({ data }: Conf25SupplementEmailProps) {
 // Styles
 const main = {
   backgroundColor: "#f6f9fc",
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
 };
 
 const container = {

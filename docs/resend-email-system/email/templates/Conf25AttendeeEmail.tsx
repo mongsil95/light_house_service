@@ -1,14 +1,5 @@
 // src/lib/email/templates/Conf25AttendeeEmail.tsx
-import {
-  Html,
-  Section,
-  Heading,
-  Text,
-  Img,
-  Row,
-  Column,
-  Link,
-} from "@react-email/components";
+import { Html, Section, Heading, Text, Img, Row, Column, Link } from "@react-email/components";
 
 interface Conf25AttendeeEmailProps {
   data: {
@@ -75,15 +66,12 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
         >
           맑은 바다를 만드는 반려해변 활동에 관심을 가져주셔서 감사합니다.
           <br />
-          <strong>{data.affiliation}</strong>의{" "}
-          <strong>{data.attendeeTypeLabel}</strong>으로
+          <strong>{data.affiliation}</strong>의 <strong>{data.attendeeTypeLabel}</strong>으로
           <br />
           2025 반려해변 전국대회 참가가 승인되었습니다.
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -95,40 +83,26 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
         >
           참가자 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           이름: {data.name}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           소속: {data.affiliation}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           직책: {data.position}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           참석 유형: {data.attendeeTypeLabel}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           이메일: {data.email}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           연락처: {data.mobile}
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -140,35 +114,23 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
         >
           대회 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           행사명: 제3회 반려해변 전국대회 (2025년)
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           주제: 함께 만든 맑은 해변
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           일시: 2025년 12월 15일 (월) 오후 1시 ~ 5시
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           장소: 온드림 소사이어티 1층
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           주소: 서울특별시 중구 명동길 73
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         {/* 티켓 이미지 섹션 */}
         {data.ticketImage && (
@@ -193,10 +155,7 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
                   marginTop: "8px",
                 }}
               >
-                티켓 번호:{" "}
-                <strong style={{ color: "#0084FC" }}>
-                  {data.ticketNumber}
-                </strong>
+                티켓 번호: <strong style={{ color: "#0084FC" }}>{data.ticketNumber}</strong>
               </Text>
             )}
             <Text
@@ -234,15 +193,11 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
             >
               첨부파일을 저장하여, 입구에서 보여주세요
             </Text>
-            <Section
-              style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-            />
+            <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
           </>
         )}
 
-        <Text
-          style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}
-        >
+        <Text style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}>
           <strong>📋 중요 안내사항</strong>
           <br />
           <br />
@@ -305,8 +260,7 @@ export function Conf25AttendeeEmail({ data }: Conf25AttendeeEmailProps) {
               lineHeight: "1.6",
             }}
           >
-            전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가
-            친절하게 안내해 드립니다.
+            전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가 친절하게 안내해 드립니다.
             <br />
             참가 준비, 일정, 장소, 주차 등 무엇이든 편하게 문의하세요!
           </Text>

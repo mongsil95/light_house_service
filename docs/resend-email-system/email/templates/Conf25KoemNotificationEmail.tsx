@@ -1,13 +1,5 @@
 // src/lib/email/templates/Conf25KoemNotificationEmail.tsx
-import {
-  Html,
-  Section,
-  Heading,
-  Text,
-  Img,
-  Row,
-  Column,
-} from "@react-email/components";
+import { Html, Section, Heading, Text, Img, Row, Column } from "@react-email/components";
 
 interface Conf25KoemNotificationEmailProps {
   data: {
@@ -22,9 +14,7 @@ interface Conf25KoemNotificationEmailProps {
   };
 }
 
-export function Conf25KoemNotificationEmail({
-  data,
-}: Conf25KoemNotificationEmailProps) {
+export function Conf25KoemNotificationEmail({ data }: Conf25KoemNotificationEmailProps) {
   return (
     <Html>
       <Section
@@ -66,9 +56,7 @@ export function Conf25KoemNotificationEmail({
           제3회 반려해변 전국대회에 새로운 참가자가 등록되었습니다.
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -80,35 +68,23 @@ export function Conf25KoemNotificationEmail({
         >
           참가자 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           이름: {data.name}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           소속: {data.affiliation}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           이메일: {data.email}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           계정 ID: {data.generatedUsername}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           참가 구분: {data.isManager ? "관리자 (팀 대표)" : "팀원"}
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -120,25 +96,17 @@ export function Conf25KoemNotificationEmail({
         >
           조직 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           조직명: {data.organizationName}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           현재 등록 인원: {data.totalParticipants}명
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           할당 티켓: {data.totalTickets}매
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -150,34 +118,22 @@ export function Conf25KoemNotificationEmail({
         >
           대회 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           행사명: 제3회 반려해변 전국대회 (2025년)
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           일시: 2025년 12월 15일 (월) 오후 1시 ~ 5시
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           장소: 온드림 소사이어티 1층
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           주소: 서울특별시 중구 명동길 73
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
-        <Text
-          style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}
-        >
+        <Text style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}>
           <strong>📊 현황 통계</strong>
           <br />
           <br />
@@ -235,8 +191,7 @@ export function Conf25KoemNotificationEmail({
             paddingTop: "16px",
           }}
         >
-          ※ 본 이메일은 전국대회 참가자 등록 시 해양환경공단 담당자에게 자동
-          발송됩니다.
+          ※ 본 이메일은 전국대회 참가자 등록 시 해양환경공단 담당자에게 자동 발송됩니다.
           <br />※ 담당자: 한민지 | 문의: itaseoul@itaseoul.org
         </Text>
       </Section>

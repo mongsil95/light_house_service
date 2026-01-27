@@ -170,19 +170,19 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
 }) {
   try {
     console.log("📎 PDF 첨부 이메일 전송 시도:", inquiryData.email);
-    
+
     // PDF 파일 읽기
     const filePath = path.join(process.cwd(), "public", "file", "2026 반려해변 활동 가이드.pdf");
     console.log("📁 파일 경로:", filePath);
-    
+
     if (!fs.existsSync(filePath)) {
       console.error("❌ 파일이 존재하지 않습니다:", filePath);
       throw new Error("PDF 파일을 찾을 수 없습니다");
     }
-    
+
     const fileBuffer = fs.readFileSync(filePath);
     console.log("✅ 파일 읽기 성공, 크기:", fileBuffer.length, "bytes");
-    
+
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <onboarding@resend.dev>",
       // 테스트 환경에서는 관리자 이메일로 전송 (실제 환경에서는 inquiryData.email 사용)
@@ -224,7 +224,7 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
       attachments: [
         {
           filename: "2026_반려해변_활동_가이드.pdf",
-          content: fileBuffer.toString('base64'),
+          content: fileBuffer.toString("base64"),
         },
       ],
     });

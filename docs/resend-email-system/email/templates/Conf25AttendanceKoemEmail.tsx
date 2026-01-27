@@ -24,9 +24,7 @@ interface Conf25AttendanceKoemEmailProps {
   };
 }
 
-export function Conf25AttendanceKoemEmail({
-  data,
-}: Conf25AttendanceKoemEmailProps) {
+export function Conf25AttendanceKoemEmail({ data }: Conf25AttendanceKoemEmailProps) {
   return (
     <Html>
       <Head />
@@ -107,8 +105,7 @@ export function Conf25AttendanceKoemEmail({
                 lineHeight: "1.6",
               }}
             >
-              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가
-              친절하게 안내해 드립니다.
+              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가 친절하게 안내해 드립니다.
               <br />
               참가 준비, 일정, 장소, 주차 등 무엇이든 편하게 문의하세요!
             </Text>
@@ -144,9 +141,7 @@ export function Conf25AttendanceKoemEmail({
                 라이트하우스 (Lighthouse)
               </Link>
             </Text>
-            <Text style={footerNote}>
-              본 메일은 전국대회 운영 협조를 위해 발송되었습니다.
-            </Text>
+            <Text style={footerNote}>본 메일은 전국대회 운영 협조를 위해 발송되었습니다.</Text>
           </Section>
         </Container>
       </Body>

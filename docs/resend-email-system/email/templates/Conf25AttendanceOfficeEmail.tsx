@@ -24,9 +24,7 @@ interface Conf25AttendanceOfficeEmailProps {
   };
 }
 
-export function Conf25AttendanceOfficeEmail({
-  data,
-}: Conf25AttendanceOfficeEmailProps) {
+export function Conf25AttendanceOfficeEmail({ data }: Conf25AttendanceOfficeEmailProps) {
   return (
     <Html>
       <Head />
@@ -103,8 +101,7 @@ export function Conf25AttendanceOfficeEmail({
                 lineHeight: "1.6",
               }}
             >
-              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가
-              친절하게 안내해 드립니다.
+              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가 친절하게 안내해 드립니다.
               <br />
               참가 준비, 일정, 장소, 주차 등 무엇이든 편하게 문의하세요!
             </Text>

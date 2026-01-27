@@ -1,13 +1,5 @@
 // src/lib/email/templates/AdoptApplyConfirmationEmail.tsx
-import {
-  Html,
-  Section,
-  Heading,
-  Text,
-  Img,
-  Row,
-  Column,
-} from "@react-email/components";
+import { Html, Section, Heading, Text, Img, Row, Column } from "@react-email/components";
 import { ORG_TYPE_OPTIONS } from "@/constants/orgTypes";
 
 export function AdoptApplyConfirmationEmail({ data }: { data: any }) {
@@ -69,9 +61,7 @@ export function AdoptApplyConfirmationEmail({ data }: { data: any }) {
           앞으로의 활동을 진심으로 응원드립니다.
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         <Text
           style={{
@@ -83,42 +73,27 @@ export function AdoptApplyConfirmationEmail({ data }: { data: any }) {
         >
           기관 정보
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           기관명 : {data.name}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           기관 유형 :{" "}
-          {ORG_TYPE_OPTIONS["adoptorg"].find((o) => o.value === data.orgType)
-            ?.label || "-"}
+          {ORG_TYPE_OPTIONS["adoptorg"].find((o) => o.value === data.orgType)?.label || "-"}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "16px", color: "#2c2c2c" }}>
           입양 이력 : {data.hasAdoptHistory}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           주소 : {data.address}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           홈페이지 : {data.homepage}
         </Text>
-        <Text
-          style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}
-        >
+        <Text style={{ fontSize: "14px", marginBottom: "3px", color: "#2c2c2c" }}>
           신청담당자 : {data.managerName} ({data.managerEmail})
         </Text>
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         {data.beaches && data.beaches.length > 0 && (
           <>
@@ -150,27 +125,20 @@ export function AdoptApplyConfirmationEmail({ data }: { data: any }) {
                 color: "#2c2c2c",
               }}
             >
-              {data.beaches
-                .map((beach: any) => `- ${beach.name} (${beach.addr})`)
-                .join("\n")}
+              {data.beaches.map((beach: any) => `- ${beach.name} (${beach.addr})`).join("\n")}
             </Text>
           </>
         )}
 
-        <Section
-          style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }}
-        />
+        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
-        <Text
-          style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}
-        >
+        <Text style={{ fontSize: "14px", lineHeight: "1.6", marginTop: "24px" }}>
           소중한 입양 신청에 진심으로 감사드립니다. <br />
           아래와 같이 심사 및 승인 일정이 진행됩니다. <br />
           <br />• <strong>심사 기간</strong>: 2025년 6월 12일(수) ~ 6월 13일(목)
           <br />• <strong>입양 승인 발표</strong>: 2025년 6월 16일(월) 15:00
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;→ 반려해변 플랫폼 공지사항을 통해 확인하실 수
-          있습니다. <br />
+          &nbsp;&nbsp;&nbsp;&nbsp;→ 반려해변 플랫폼 공지사항을 통해 확인하실 수 있습니다. <br />
           <br />
           다시 한 번 함께해 주셔서 감사합니다.
         </Text>
@@ -237,8 +205,7 @@ export function AdoptApplyConfirmationEmail({ data }: { data: any }) {
           }}
         >
           ※ 본 이메일은 25 반려해변 입양 신청 확인을 위해 발송되었습니다. <br />
-          ※ 일주일 내외로 담당자에게 개별 연락드릴 예정입니다. <br />※ 문의:
-          itaseoul@itaseoul.org |{" "}
+          ※ 일주일 내외로 담당자에게 개별 연락드릴 예정입니다. <br />※ 문의: itaseoul@itaseoul.org |{" "}
           <a
             href="https://pf.kakao.com/_irYGC"
             style={{ color: "#3b82f6", textDecoration: "underline" }}

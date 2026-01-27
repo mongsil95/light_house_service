@@ -1,180 +1,175 @@
 {
-  "folders": [
-    {
-      "path": ".",
-      "name": "Light House Service"
-    }
-  ],
-  "settings": {
-    // 에디터 설정
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.organizeImports": "explicit"
-    },
-    "editor.tabSize": 2,
-    "editor.insertSpaces": true,
-    
-    // TypeScript 설정
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "typescript.preferences.importModuleSpecifier": "relative",
-    
-    // 파일 관련 설정
-    "files.exclude": {
-      "**/.git": true,
-      "**/.next": true,
-      "**/node_modules": true,
-      "**/.DS_Store": true
-    },
-    "files.watcherExclude": {
-      "**/.git/objects/**": true,
-      "**/.git/subtree-cache/**": true,
-      "**/node_modules/**": true,
-      "**/.next/**": true
-    },
-    "files.associations": {
-      "*.css": "tailwindcss"
-    },
-    
-    // 검색 제외
-    "search.exclude": {
-      "**/node_modules": true,
-      "**/.next": true,
-      "**/package-lock.json": true
-    },
-    
-    // Tailwind CSS 설정
-    "tailwindCSS.experimental.classRegex": [
-      ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
-      ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
-    ],
-    
-    // ESLint 설정
-    "eslint.validate": [
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact"
-    ],
-    
-    // Prettier 설정
-    "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[javascriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[typescriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[jsonc]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[css]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    },
-    "[markdown]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode"
-    }
-  },
-  "extensions": {
-    "recommendations": [
-      // 필수 익스텐션
-      "dbaeumer.vscode-eslint",
-      "esbenp.prettier-vscode",
-      "bradlc.vscode-tailwindcss",
-      
-      // TypeScript 관련
-      "ms-vscode.vscode-typescript-next",
-      
-      // Next.js 관련
-      "unifiedjs.vscode-mdx",
-      
-      // 유용한 익스텐션
-      "christian-kohler.path-intellisense",
-      "PKief.material-icon-theme",
-      "usernamehw.errorlens",
-      "eamodio.gitlens",
-      "GitHub.copilot",
-      
-      // 한국어 지원
-      "MS-CEINTL.vscode-language-pack-ko"
-    ]
-  },
-  "launch": {
-    "version": "0.2.0",
-    "configurations": [
-      {
-        "name": "Next.js: debug server-side",
-        "type": "node-terminal",
-        "request": "launch",
-        "command": "npm run dev"
-      },
-      {
-        "name": "Next.js: debug client-side",
-        "type": "chrome",
-        "request": "launch",
-        "url": "http://localhost:3000"
-      },
-      {
-        "name": "Next.js: debug full stack",
-        "type": "node-terminal",
-        "request": "launch",
-        "command": "npm run dev",
-        "serverReadyAction": {
-          "pattern": "- Local:.+(https?://.+)",
-          "uriFormat": "%s",
-          "action": "debugWithChrome"
-        }
-      }
-    ]
-  },
-  "tasks": {
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "type": "npm",
-        "script": "dev",
-        "problemMatcher": [],
-        "label": "npm: dev",
-        "detail": "next dev"
-      },
-      {
-        "type": "npm",
-        "script": "build",
-        "problemMatcher": [],
-        "label": "npm: build",
-        "detail": "next build"
-      },
-      {
-        "type": "npm",
-        "script": "start",
-        "problemMatcher": [],
-        "label": "npm: start",
-        "detail": "next start"
-      },
-      {
-        "type": "npm",
-        "script": "lint",
-        "problemMatcher": ["$eslint-stylish"],
-        "label": "npm: lint",
-        "detail": "next lint"
-      },
-      {
-        "type": "npm",
-        "script": "format",
-        "problemMatcher": [],
-        "label": "npm: format",
-        "detail": "prettier --write"
-      }
-    ]
-  }
+	"folders": [
+		{
+			"path": ".",
+			"name": "Light House Service"
+		}
+	],
+	"settings": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode",
+		"editor.codeActionsOnSave": {
+			"source.fixAll.eslint": "explicit",
+			"source.organizeImports": "explicit"
+		},
+		"editor.tabSize": 2,
+		"editor.insertSpaces": true,
+		"typescript.tsdk": "node_modules/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"typescript.preferences.importModuleSpecifier": "relative",
+		"files.exclude": {
+			"**/.git": true,
+			"**/.next": true,
+			"**/node_modules": true,
+			"**/.DS_Store": true
+		},
+		"files.watcherExclude": {
+			"**/.git/objects/**": true,
+			"**/.git/subtree-cache/**": true,
+			"**/node_modules/**": true,
+			"**/.next/**": true
+		},
+		"files.associations": {
+			"*.css": "tailwindcss"
+		},
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/.next": true,
+			"**/package-lock.json": true
+		},
+		"tailwindCSS.experimental.classRegex": [
+			[
+				"cva\\(([^)]*)\\)",
+				"[\"'`]([^\"'`]*).*?[\"'`]"
+			],
+			[
+				"cn\\(([^)]*)\\)",
+				"(?:'|\"|`)([^']*)(?:'|\"|`)"
+			]
+		],
+		"eslint.validate": [
+			"javascript",
+			"javascriptreact",
+			"typescript",
+			"typescriptreact"
+		],
+		"[javascript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[javascriptreact]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescript]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[typescriptreact]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[json]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[jsonc]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[css]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"[markdown]": {
+			"editor.defaultFormatter": "esbenp.prettier-vscode"
+		},
+		"mcp": {
+			"servers": {
+				"my-mcp-server-d5aee35b": {
+					"url": "http://127.0.0.1:3845/mcp",
+					"type": "http"
+				}
+			},
+			"inputs": []
+		}
+	},
+	"extensions": {
+		"recommendations": [
+			"dbaeumer.vscode-eslint",
+			"esbenp.prettier-vscode",
+			"bradlc.vscode-tailwindcss",
+			"ms-vscode.vscode-typescript-next",
+			"unifiedjs.vscode-mdx",
+			"christian-kohler.path-intellisense",
+			"PKief.material-icon-theme",
+			"usernamehw.errorlens",
+			"eamodio.gitlens",
+			"GitHub.copilot",
+			"MS-CEINTL.vscode-language-pack-ko"
+		]
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"name": "Next.js: debug server-side",
+				"type": "node-terminal",
+				"request": "launch",
+				"command": "npm run dev"
+			},
+			{
+				"name": "Next.js: debug client-side",
+				"type": "chrome",
+				"request": "launch",
+				"url": "http://localhost:3000"
+			},
+			{
+				"name": "Next.js: debug full stack",
+				"type": "node-terminal",
+				"request": "launch",
+				"command": "npm run dev",
+				"serverReadyAction": {
+					"pattern": "- Local:.+(https?://.+)",
+					"uriFormat": "%s",
+					"action": "debugWithChrome"
+				}
+			}
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"type": "npm",
+				"script": "dev",
+				"problemMatcher": [],
+				"label": "npm: dev",
+				"detail": "next dev"
+			},
+			{
+				"type": "npm",
+				"script": "build",
+				"problemMatcher": [],
+				"label": "npm: build",
+				"detail": "next build"
+			},
+			{
+				"type": "npm",
+				"script": "start",
+				"problemMatcher": [],
+				"label": "npm: start",
+				"detail": "next start"
+			},
+			{
+				"type": "npm",
+				"script": "lint",
+				"problemMatcher": [
+					"$eslint-stylish"
+				],
+				"label": "npm: lint",
+				"detail": "next lint"
+			},
+			{
+				"type": "npm",
+				"script": "format",
+				"problemMatcher": [],
+				"label": "npm: format",
+				"detail": "prettier --write"
+			}
+		]
+	}
 }

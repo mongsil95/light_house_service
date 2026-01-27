@@ -20,14 +20,7 @@ export interface NewsletterTemplateProps {
 }
 
 export function generateNewsletterHTML(props: NewsletterTemplateProps): string {
-  const {
-    title,
-    markdown,
-    recipient,
-    campaign,
-    viewOnlineUrl,
-    unsubscribeUrl,
-  } = props;
+  const { title, markdown, recipient, campaign, viewOnlineUrl, unsubscribeUrl } = props;
 
   return `
 <!DOCTYPE html>
@@ -143,9 +136,7 @@ export function generateNewsletterHTML(props: NewsletterTemplateProps): string {
  * Next.js API Route에서 HTML 생성
  * POST /api/newsletter/generate-html
  */
-export async function generateNewsletterHTMLForPHP(
-  props: NewsletterTemplateProps
-) {
+export async function generateNewsletterHTMLForPHP(props: NewsletterTemplateProps) {
   // Markdown → HTML 변환 (Next.js에서 처리)
   const { marked } = await import("marked");
   const htmlContent = await marked.parse(props.markdown);

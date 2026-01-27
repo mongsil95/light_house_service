@@ -42,8 +42,7 @@ export function Conf25RejectionEmail({ data }: Conf25RejectionEmailProps) {
             <Text style={paragraph}>
               맑은 바다를 만드는 반려해변 활동에 관심을 가져주셔서 감사합니다.
               <br />
-              2025년 반려해변 전국대회에 참가 신청해주셔서 진심으로
-              감사드립니다.
+              2025년 반려해변 전국대회에 참가 신청해주셔서 진심으로 감사드립니다.
             </Text>
 
             <Section style={infoBox}>
@@ -65,13 +64,10 @@ export function Conf25RejectionEmail({ data }: Conf25RejectionEmailProps) {
             <Text style={paragraph}>
               반려해변은 앞으로도 다양한 행사와 활동을 계획하고 있습니다.
               <br />
-              다음 기회에 꼭 함께할 수 있기를 바라며, 계속해서 관심과 응원을
-              부탁드립니다.
+              다음 기회에 꼭 함께할 수 있기를 바라며, 계속해서 관심과 응원을 부탁드립니다.
             </Text>
 
-            <Text style={paragraph}>
-              궁금하신 사항이 있으시면 언제든지 문의해주세요.
-            </Text>
+            <Text style={paragraph}>궁금하신 사항이 있으시면 언제든지 문의해주세요.</Text>
           </Section>
 
           <Hr style={hr} />
@@ -106,8 +102,7 @@ export function Conf25RejectionEmail({ data }: Conf25RejectionEmailProps) {
                 lineHeight: "1.6",
               }}
             >
-              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가
-              친절하게 안내해 드립니다.
+              전국대회 관련 모든 궁금한 사항을 <strong>등대지기</strong>가 친절하게 안내해 드립니다.
               <br />
               참가 준비, 일정, 장소, 주차 등 무엇이든 편하게 문의하세요!
             </Text>
@@ -159,8 +154,7 @@ export function Conf25RejectionEmail({ data }: Conf25RejectionEmailProps) {
 // Styles
 const main = {
   backgroundColor: "#f6f9fc",
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
 };
 
 const container = {

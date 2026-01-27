@@ -64,8 +64,7 @@ export function CoffeeChatConfirmEmail({ data }: CoffeeChatConfirmEmailProps) {
               안녕하세요, <strong>{data.name}</strong>님!
             </Text>
             <Text style={styles.paragraph}>
-              등대지기와 차 한잔 예약이{" "}
-              <strong style={styles.highlight}>확정</strong>되었습니다. 🎉
+              등대지기와 차 한잔 예약이 <strong style={styles.highlight}>확정</strong>되었습니다. 🎉
             </Text>
           </Section>
 
@@ -78,21 +77,15 @@ export function CoffeeChatConfirmEmail({ data }: CoffeeChatConfirmEmailProps) {
               <tbody>
                 <tr>
                   <td style={styles.tableLabel}>날짜</td>
-                  <td style={styles.tableValue}>
-                    {formatDate(data.slot_date)}
-                  </td>
+                  <td style={styles.tableValue}>{formatDate(data.slot_date)}</td>
                 </tr>
                 <tr>
                   <td style={styles.tableLabel}>시간</td>
-                  <td style={styles.tableValue}>
-                    {formatTime(data.slot_time)} (30분)
-                  </td>
+                  <td style={styles.tableValue}>{formatTime(data.slot_time)} (30분)</td>
                 </tr>
                 <tr>
                   <td style={styles.tableLabel}>미팅 방식</td>
-                  <td style={styles.tableValue}>
-                    {isVideo ? "💻 화상 미팅" : "📞 유선 통화"}
-                  </td>
+                  <td style={styles.tableValue}>{isVideo ? "💻 화상 미팅" : "📞 유선 통화"}</td>
                 </tr>
                 <tr>
                   <td style={styles.tableLabel}>소속</td>
@@ -108,9 +101,7 @@ export function CoffeeChatConfirmEmail({ data }: CoffeeChatConfirmEmailProps) {
               <Heading as="h2" style={styles.meetTitle}>
                 💻 화상 미팅 정보
               </Heading>
-              <Text style={styles.paragraph}>
-                아래 구글 밋 링크로 접속해주세요:
-              </Text>
+              <Text style={styles.paragraph}>아래 구글 밋 링크로 접속해주세요:</Text>
               <Button href={data.google_meet_url} style={styles.button}>
                 🔗 구글 밋 입장하기
               </Button>

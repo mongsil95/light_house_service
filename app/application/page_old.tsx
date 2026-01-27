@@ -619,218 +619,220 @@ export default function EasyGuidePage() {
           {/* 탭 1: 채팅형 작성 */}
           <TabsContent value="chat">
             {/* 메인 컨텐츠 영역 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* 왼쪽: 채팅 영역 */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* 진행률 표시바 */}
-            <Card className="p-6 bg-white shadow-md">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span className="font-medium">
-                    진행 단계: {currentStep + 1} / {questionFlow.length}
-                  </span>
-                  <span className="font-medium">{Math.round(progress)}% 완료</span>
-                </div>
-                <Progress value={progress} className="h-3" />
-                <div className="flex justify-between text-xs text-gray-500">
-                  <span>🏢 기관 정보</span>
-                  <span>👥 활동 정보</span>
-                  <span>📋 확약 정보</span>
-                  <span>✅ 완료</span>
-                </div>
-              </div>
-            </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* 왼쪽: 채팅 영역 */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* 진행률 표시바 */}
+                <Card className="p-6 bg-white shadow-md">
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm text-gray-600">
+                      <span className="font-medium">
+                        진행 단계: {currentStep + 1} / {questionFlow.length}
+                      </span>
+                      <span className="font-medium">{Math.round(progress)}% 완료</span>
+                    </div>
+                    <Progress value={progress} className="h-3" />
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>🏢 기관 정보</span>
+                      <span>👥 활동 정보</span>
+                      <span>📋 확약 정보</span>
+                      <span>✅ 완료</span>
+                    </div>
+                  </div>
+                </Card>
 
-            {/* 채팅 영역 */}
-            <Card className="bg-white shadow-lg">
-              <div className="h-[500px] flex flex-col">
-                {/* 메시지 목록 */}
-                <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`flex ${
-                        message.type === "user" ? "justify-end" : "justify-start"
-                      }`}
-                    >
-                      <div
-                        className={`max-w-[70%] rounded-lg px-4 py-3 ${
-                          message.type === "user"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 text-gray-900"
-                        }`}
-                      >
-                        <p className="whitespace-pre-line">{message.content}</p>
-                        {message.type === "bot" && message.note && (
-                          <div className="mt-3 pt-3 border-t border-gray-300">
-                            <p className="text-xs text-blue-700 font-semibold bg-blue-50 p-2 rounded border border-blue-200">
-                              💡 {message.note}
-                            </p>
-                          </div>
-                        )}
-                        <span
-                          className={`text-xs mt-1 block ${
-                            message.type === "user" ? "text-blue-100" : "text-gray-500"
+                {/* 채팅 영역 */}
+                <Card className="bg-white shadow-lg">
+                  <div className="h-[500px] flex flex-col">
+                    {/* 메시지 목록 */}
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                      {messages.map((message) => (
+                        <div
+                          key={message.id}
+                          className={`flex ${
+                            message.type === "user" ? "justify-end" : "justify-start"
                           }`}
                         >
-                          {message.timestamp.toLocaleTimeString("ko-KR", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                  <div ref={messagesEndRef} />
-                </div>
-
-                {/* 입력 영역 */}
-                {!isCompleted ? (
-                  <div className="border-t p-4 space-y-3">
-                    {/* 버튼 옵션이 있는 경우 버튼으로 표시 */}
-                    {questionFlow[currentStep]?.options ? (
-                      <div className="space-y-3">
-                        <p className="text-sm text-gray-600 text-center">
-                          아래 버튼 중 하나를 선택해주세요
-                        </p>
-                        <div className="flex flex-wrap gap-3 justify-center">
-                          {questionFlow[currentStep].options.map((option) => (
-                            <Button
-                              key={option}
-                              onClick={() => handleOptionClick(option)}
-                              className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
-                              size="lg"
+                          <div
+                            className={`max-w-[70%] rounded-lg px-4 py-3 ${
+                              message.type === "user"
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-100 text-gray-900"
+                            }`}
+                          >
+                            <p className="whitespace-pre-line">{message.content}</p>
+                            {message.type === "bot" && message.note && (
+                              <div className="mt-3 pt-3 border-t border-gray-300">
+                                <p className="text-xs text-blue-700 font-semibold bg-blue-50 p-2 rounded border border-blue-200">
+                                  💡 {message.note}
+                                </p>
+                              </div>
+                            )}
+                            <span
+                              className={`text-xs mt-1 block ${
+                                message.type === "user" ? "text-blue-100" : "text-gray-500"
+                              }`}
                             >
-                              {option}
+                              {message.timestamp.toLocaleTimeString("ko-KR", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      <div ref={messagesEndRef} />
+                    </div>
+
+                    {/* 입력 영역 */}
+                    {!isCompleted ? (
+                      <div className="border-t p-4 space-y-3">
+                        {/* 버튼 옵션이 있는 경우 버튼으로 표시 */}
+                        {questionFlow[currentStep]?.options ? (
+                          <div className="space-y-3">
+                            <p className="text-sm text-gray-600 text-center">
+                              아래 버튼 중 하나를 선택해주세요
+                            </p>
+                            <div className="flex flex-wrap gap-3 justify-center">
+                              {questionFlow[currentStep].options.map((option) => (
+                                <Button
+                                  key={option}
+                                  onClick={() => handleOptionClick(option)}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
+                                  size="lg"
+                                >
+                                  {option}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          // 일반 텍스트 입력
+                          <div className="flex gap-2">
+                            <Input
+                              value={inputValue}
+                              onChange={(e) => setInputValue(e.target.value)}
+                              onKeyPress={(e) => {
+                                if (e.key === "Enter") {
+                                  handleSendMessage();
+                                }
+                              }}
+                              placeholder={
+                                questionFlow[currentStep]?.example || "답변을 입력하세요..."
+                              }
+                              className="flex-1 placeholder:text-gray-400"
+                            />
+                            <Button onClick={handleSendMessage} className="px-6">
+                              <Send className="h-4 w-4" />
                             </Button>
-                          ))}
+                          </div>
+                        )}
+                        <div className="flex justify-end gap-2">
+                          {hasSavedData && (
+                            <Button
+                              onClick={loadSavedData}
+                              variant="default"
+                              size="sm"
+                              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                            >
+                              <RefreshCw className="h-4 w-4" />
+                              불러오기
+                            </Button>
+                          )}
+                          <Button
+                            onClick={handleSaveTemp}
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-2 text-gray-600"
+                          >
+                            <Save className="h-4 w-4" />
+                            임시저장
+                          </Button>
                         </div>
                       </div>
                     ) : (
-                      // 일반 텍스트 입력
-                      <div className="flex gap-2">
-                        <Input
-                          value={inputValue}
-                          onChange={(e) => setInputValue(e.target.value)}
-                          onKeyPress={(e) => {
-                            if (e.key === "Enter") {
-                              handleSendMessage();
-                            }
-                          }}
-                          placeholder={questionFlow[currentStep]?.example || "답변을 입력하세요..."}
-                          className="flex-1 placeholder:text-gray-400"
-                        />
-                        <Button onClick={handleSendMessage} className="px-6">
-                          <Send className="h-4 w-4" />
-                        </Button>
+                      <div className="border-t p-6 bg-gradient-to-r from-green-50 to-blue-50">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Button
+                            onClick={handleDownloadPDF}
+                            className="flex-1 bg-red-600 hover:bg-red-700"
+                          >
+                            <FileText className="h-4 w-4 mr-2" />
+                            PDF로 다운로드
+                          </Button>
+                          <Button
+                            onClick={handleDownloadWord}
+                            className="flex-1 bg-blue-600 hover:bg-blue-700"
+                          >
+                            <Download className="h-4 w-4 mr-2" />
+                            Word로 다운로드
+                          </Button>
+                        </div>
                       </div>
                     )}
-                    <div className="flex justify-end gap-2">
-                      {hasSavedData && (
-                        <Button
-                          onClick={loadSavedData}
-                          variant="default"
-                          size="sm"
-                          className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+                  </div>
+                </Card>
+              </div>
+
+              {/* 오른쪽: 입력 현황 */}
+              <div className="lg:col-span-1">
+                <Card className="bg-white shadow-md">
+                  <div className="h-[500px] flex flex-col">
+                    <div className="p-6 border-b">
+                      <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <FileText className="h-5 w-5" />
+                        입력 현황
+                      </h3>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-6 space-y-3">
+                      {formFields.map((field) => (
+                        <div
+                          key={field.key}
+                          ref={(el) => {
+                            fieldRefs.current[field.key] = el;
+                          }}
+                          className={
+                            formData[field.key]
+                              ? "p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors"
+                              : "p-3 bg-gray-50 rounded-lg border border-gray-200"
+                          }
+                          onClick={() => formData[field.key] && handleEditField(field.key)}
                         >
-                          <RefreshCw className="h-4 w-4" />
-                          불러오기
-                        </Button>
-                      )}
-                      <Button
-                        onClick={handleSaveTemp}
-                        variant="outline"
-                        size="sm"
-                        className="flex items-center gap-2 text-gray-600"
-                      >
-                        <Save className="h-4 w-4" />
-                        임시저장
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="border-t p-6 bg-gradient-to-r from-green-50 to-blue-50">
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Button
-                        onClick={handleDownloadPDF}
-                        className="flex-1 bg-red-600 hover:bg-red-700"
-                      >
-                        <FileText className="h-4 w-4 mr-2" />
-                        PDF로 다운로드
-                      </Button>
-                      <Button
-                        onClick={handleDownloadWord}
-                        className="flex-1 bg-blue-600 hover:bg-blue-700"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Word로 다운로드
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
-          </div>
-
-          {/* 오른쪽: 입력 현황 */}
-          <div className="lg:col-span-1">
-            <Card className="bg-white shadow-md">
-              <div className="h-[500px] flex flex-col">
-                <div className="p-6 border-b">
-                  <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    입력 현황
-                  </h3>
-                </div>
-                <div className="flex-1 overflow-y-auto p-6 space-y-3">
-                  {formFields.map((field) => (
-                    <div
-                      key={field.key}
-                      ref={(el) => {
-                        fieldRefs.current[field.key] = el;
-                      }}
-                      className={
-                        formData[field.key]
-                          ? "p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:bg-blue-100 transition-colors"
-                          : "p-3 bg-gray-50 rounded-lg border border-gray-200"
-                      }
-                      onClick={() => formData[field.key] && handleEditField(field.key)}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <p className="text-xs text-gray-500 mb-1">{field.label}</p>
-                          <p
-                            className={
-                              formData[field.key]
-                                ? "text-sm font-medium text-gray-900"
-                                : "text-sm text-gray-400 italic"
-                            }
-                          >
-                            {formData[field.key] || "미입력"}
-                          </p>
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="text-xs text-gray-500 mb-1">{field.label}</p>
+                              <p
+                                className={
+                                  formData[field.key]
+                                    ? "text-sm font-medium text-gray-900"
+                                    : "text-sm text-gray-400 italic"
+                                }
+                              >
+                                {formData[field.key] || "미입력"}
+                              </p>
+                            </div>
+                            {formData[field.key] && (
+                              <Edit2 className="h-4 w-4 text-blue-600 flex-shrink-0 ml-2" />
+                            )}
+                          </div>
                         </div>
-                        {formData[field.key] && (
-                          <Edit2 className="h-4 w-4 text-blue-600 flex-shrink-0 ml-2" />
-                        )}
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
-          </div>
-        </div>
+            </div>
 
-        {/* 안내 문구 */}
-        <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-gray-600 text-center">
-            💡 답변하신 내용은 자동으로 서류에 입력되어 다운로드됩니다.
-            <br />
-            잘못 입력한 내용은 오른쪽 입력 현황에서 클릭하여 수정할 수 있습니다.
-            <br />
-            임시저장 버튼을 통해 작성 중인 내용을 저장하고 나중에 이어서 작성할 수 있습니다.
-          </p>
-        </div>
+            {/* 안내 문구 */}
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-gray-600 text-center">
+                💡 답변하신 내용은 자동으로 서류에 입력되어 다운로드됩니다.
+                <br />
+                잘못 입력한 내용은 오른쪽 입력 현황에서 클릭하여 수정할 수 있습니다.
+                <br />
+                임시저장 버튼을 통해 작성 중인 내용을 저장하고 나중에 이어서 작성할 수 있습니다.
+              </p>
+            </div>
           </TabsContent>
 
           {/* 탭 2: 폼 형식 작성 */}

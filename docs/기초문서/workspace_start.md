@@ -40,6 +40,7 @@ wc -l app/page.tsx
 ```
 
 **분할 순서:**
+
 1. 데이터 배열/객체 → `lib/[name]Data.ts`
 2. 타입 정의 → `types/[name].ts`
 3. 유틸리티 함수 → `lib/[name]Utils.ts`

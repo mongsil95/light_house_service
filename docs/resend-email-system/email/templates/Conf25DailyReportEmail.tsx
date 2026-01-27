@@ -71,9 +71,7 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
         <Container style={styles.container}>
           {/* 헤더 */}
           <Section style={styles.header}>
-            <Heading style={styles.title}>
-              📊 제3회 반려해변 전국대회 일일 리포트
-            </Heading>
+            <Heading style={styles.title}>📊 제3회 반려해변 전국대회 일일 리포트</Heading>
             <Text style={styles.subtitle}>{data.today} 기준</Text>
           </Section>
 
@@ -87,22 +85,17 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
               </Column>
               <Column style={styles.statBox}>
                 <Text style={styles.statLabel}>참여기관</Text>
-                <Text style={styles.statValue}>
-                  {data.totalStats.ticketHolders}명
-                </Text>
+                <Text style={styles.statValue}>{data.totalStats.ticketHolders}명</Text>
               </Column>
               <Column style={styles.statBox}>
                 <Text style={styles.statLabel}>일반 참가자 (승인/접수)</Text>
                 <Text style={styles.statValue}>
-                  {data.totalStats.generalPublicApproved}/
-                  {data.totalStats.generalPublicTotal}명
+                  {data.totalStats.generalPublicApproved}/{data.totalStats.generalPublicTotal}명
                 </Text>
               </Column>
               <Column style={styles.statBox}>
                 <Text style={styles.statLabel}>현장 체크인</Text>
-                <Text style={styles.statValue}>
-                  {data.totalStats.checkedIn}명
-                </Text>
+                <Text style={styles.statValue}>{data.totalStats.checkedIn}명</Text>
               </Column>
             </Row>
           </Section>
@@ -115,9 +108,7 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
               🆕 오늘 신규 신청자 ({data.newApplicants.length}명)
             </Heading>
             {data.newApplicants.length === 0 ? (
-              <Text style={styles.emptyText}>
-                오늘은 신규 신청자가 없습니다.
-              </Text>
+              <Text style={styles.emptyText}>오늘은 신규 신청자가 없습니다.</Text>
             ) : (
               <table style={styles.table}>
                 <thead>
@@ -141,25 +132,18 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
                       }}
                     >
                       <td style={styles.tableCell}>
-                        {new Date(applicant.created_at).toLocaleTimeString(
-                          "ko-KR",
-                          {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )}
+                        {new Date(applicant.created_at).toLocaleTimeString("ko-KR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </td>
                       <td style={styles.tableCell}>{applicant.name}</td>
                       <td style={styles.tableCell}>
                         {applicant.group_name || applicant.affiliation}
                       </td>
                       <td style={styles.tableCell}>{applicant.email}</td>
-                      <td style={styles.tableCell}>
-                        {applicant.mobile || "-"}
-                      </td>
-                      <td style={styles.tableCell}>
-                        {getTypeLabel(applicant.attendee_type)}
-                      </td>
+                      <td style={styles.tableCell}>{applicant.mobile || "-"}</td>
+                      <td style={styles.tableCell}>{getTypeLabel(applicant.attendee_type)}</td>
                       <td style={styles.tableCell}>
                         {getCategoryLabel(applicant.attendance_category)}
                       </td>
@@ -193,9 +177,7 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
                     }}
                   >
                     <td style={styles.tableCell}>{day.date}</td>
-                    <td style={{ ...styles.tableCell, fontWeight: "600" }}>
-                      +{day.newCount}명
-                    </td>
+                    <td style={{ ...styles.tableCell, fontWeight: "600" }}>+{day.newCount}명</td>
                     <td style={styles.tableCell}>{day.cumulative}명</td>
                   </tr>
                 ))}
@@ -210,19 +192,13 @@ export function Conf25DailyReportEmail({ data }: { data: DailyReportData }) {
             <Link href={data.adminPageUrl} style={styles.ctaButton}>
               🔗 관리자 페이지 바로가기
             </Link>
-            <Text style={styles.ctaSubtext}>
-              상세한 참가자 정보와 출석 현황을 확인하세요
-            </Text>
+            <Text style={styles.ctaSubtext}>상세한 참가자 정보와 출석 현황을 확인하세요</Text>
           </Section>
 
           {/* 푸터 */}
           <Section style={styles.footer}>
-            <Text style={styles.footerText}>
-              이 메일은 매일 오전 9시에 자동으로 발송됩니다.
-            </Text>
-            <Text style={styles.footerText}>
-              반려해변 사무국 | info@caresea.kr
-            </Text>
+            <Text style={styles.footerText}>이 메일은 매일 오전 9시에 자동으로 발송됩니다.</Text>
+            <Text style={styles.footerText}>반려해변 사무국 | info@caresea.kr</Text>
           </Section>
         </Container>
       </Body>
