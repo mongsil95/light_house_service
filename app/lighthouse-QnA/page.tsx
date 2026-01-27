@@ -701,10 +701,13 @@ function QnAContent() {
                     </div>
                   </div>
 
-                  {/* 사무국이 추천하는 글 3가지 */}
+                  {/* 등대지기가 추천하는 글 3가지 */}
                   <div className="border border-[#cecece] rounded-[10px] overflow-hidden mb-6">
-                    <p className="text-base font-bold text-black px-6 py-5" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
-                      사무국이 추천하는 글 3가지
+                    <p
+                      className="text-base font-bold text-black px-6 py-5"
+                      style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
+                    >
+                      등대지기가 추천하는 글 3가지
                     </p>
                     <div className="space-y-3 pb-4">
                       {sortedQAs.slice(0, 3).map((qa) => (
@@ -715,13 +718,22 @@ function QnAContent() {
                         >
                           <div className="bg-white border border-[#cecece] rounded-[15px] px-4 py-3 hover:shadow-sm transition-shadow">
                             <div className="flex items-center gap-3">
-                              <Badge className="bg-[#f0fdf4] text-[#15803d] border-[#c1f8d4] border hover:bg-[#f0fdf4] text-xs font-bold" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
+                              <Badge
+                                className="bg-[#f0fdf4] text-[#15803d] border-[#c1f8d4] border hover:bg-[#f0fdf4] text-xs font-bold"
+                                style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
+                              >
                                 {qa.type === "resource" ? "정보" : "질문"}
                               </Badge>
-                              <p className="text-[17px] font-bold text-black flex-1" style={{ fontFamily: 'Pretendard, sans-serif' }}>
+                              <p
+                                className="text-[17px] font-bold text-black flex-1"
+                                style={{ fontFamily: "Pretendard, sans-serif" }}
+                              >
                                 {extractText(qa.question)}
                               </p>
-                              <p className="text-[13px] text-[#9ca3af]" style={{ fontFamily: 'Cafe24_Ssurround, sans-serif' }}>
+                              <p
+                                className="text-[13px] text-[#9ca3af]"
+                                style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
+                              >
                                 🖋️ {qa.type === "resource" ? qa.author || "운영팀" : "Editor.K"}
                               </p>
                             </div>
