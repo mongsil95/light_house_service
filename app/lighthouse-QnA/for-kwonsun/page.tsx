@@ -3,12 +3,12 @@
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 // 가이드 관리 컴포넌트를 import
+import BannerInquiriesAdmin from "./banner-inquiries/page";
 import GuidesAdmin from "./guides/page";
 import QnAAdmin from "./qna/page";
-import BannerInquiriesAdmin from "./banner-inquiries/page";
 
 const menuItems = [
   {
@@ -116,12 +116,7 @@ export default function AdminDashboard() {
           <div className="absolute bottom-0 left-0 right-0 p-6 border-t border-gray-200">
             <Link href="/lighthouse-QnA">
               <Button variant="outline" className="w-full font-['Pretendard'] text-sm">
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -136,9 +131,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* 메인 콘텐츠 */}
-        <div className="ml-64 flex-1">
-          {renderContent()}
-        </div>
+        <div className="ml-64 flex-1">{renderContent()}</div>
       </div>
     </div>
   );

@@ -4,7 +4,6 @@ import TipTapEditor from "@/components/TipTapEditor";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -716,7 +715,9 @@ export default function GuidesAdmin() {
                                 });
                                 if (!res.ok) throw new Error("업데이트 실패");
                                 setGuides((prev) =>
-                                  prev.map((g) => (g.id === guide.id ? { ...g, is_recommended: newVal } : g))
+                                  prev.map((g) =>
+                                    g.id === guide.id ? { ...g, is_recommended: newVal } : g
+                                  )
                                 );
                               } catch (err) {
                                 console.error(err);

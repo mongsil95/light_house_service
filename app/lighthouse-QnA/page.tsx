@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { supabase } from "@/lib/supabase";
-import { Calendar, ChevronDown, Eye, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
+import { Calendar, ChevronDown, Copy, Eye, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -170,6 +170,7 @@ function QnAContent() {
             expert: "익명",
             answered: qa.status === "answered",
             content: qa.content,
+            created_at_raw: qa.created_at,
             is_recommended: false,
           }));
           allItems.push(...formattedQAs);
@@ -197,6 +198,7 @@ function QnAContent() {
             expert: "관리자",
             answered: true,
             content: resource.content,
+            created_at_raw: resource.created_at,
             thumbnail_url: resource.thumbnail_url, // 썸네일 URL 추가
             author: resource.author || "운영팀",
             is_recommended: !!resource.is_recommended,
@@ -383,6 +385,42 @@ function QnAContent() {
       });
   };
 
+  // 상세뷰 전용: 현재 URL 복사
+  const copyCurrentUrl = async () => {
+    try {
+      // 우선, 선택된 게시물의 본문을 복사한다. 제목 + 본문 텍스트 형태.
+      if (selectedQa && selectedQa.content) {
+        const title = selectedQa.question || "";
+        const bodyText = extractText(String(selectedQa.content));
+        const payload = `${title}\n\n${bodyText}`.trim();
+        await navigator.clipboard.writeText(payload);
+        alert("본문 내용이 복사되었습니다.");
+        return;
+      }
+
+      // 선택된 게시물이 없으면 URL을 복사
+      await navigator.clipboard.writeText(window.location.href);
+      alert("링크가 복사되었습니다.");
+    } catch (e) {
+      console.error(e);
+      alert("복사에 실패했습니다.");
+    }
+  };
+
+  const shareCurrentUrl = async () => {
+    const url = window.location.href;
+    if ((navigator as any).share) {
+      try {
+        await (navigator as any).share({ title: selectedQa?.question || "", url });
+      } catch (e) {
+        // 사용자가 취소하거나 에러
+      }
+    } else {
+      await copyCurrentUrl();
+      alert("공유 API를 사용할 수 없어 링크를 복사했습니다.");
+    }
+  };
+
   // 배너 폼 제출
   const handleBannerSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -532,7 +570,9 @@ function QnAContent() {
 
   // 메인 상단용 추천 리스트: 관리자에서 설정한 is_recommended 우선
   const topRecommended = qaList.filter((q) => q.type === "resource" && !!q.is_recommended);
-  const topRecommendationList = topRecommended.length ? topRecommended.slice(0, 3) : sortedQAs.slice(0, 3);
+  const topRecommendationList = topRecommended.length
+    ? topRecommended.slice(0, 3)
+    : sortedQAs.slice(0, 3);
 
   // 인기 질문 TOP 5 (질문만 필터링, 조회수 기준으로 정렬)
   const popularQuestions = [...qaList]
@@ -603,6 +643,46 @@ function QnAContent() {
                 </button>
                 {mobileMenuOpen && (
                   <div className="mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                    {/* 첨부파일 목록 (없으면 표시하지 않음) */}
+                    {selectedQa?.type === "resource" && (
+                      <div
+                        className={`bg-white border border-gray-200 rounded-lg p-4 mb-6 ${
+                          resourceFiles && resourceFiles.length > 0
+                            ? "bg-yellow-50 border-yellow-300"
+                            : ""
+                        }`}
+                      >
+                        <h3 className="text-sm font-semibold mb-3">자료 받아보기</h3>
+                        <ul className="space-y-2">
+                          {resourceFiles.map((f) => (
+                            <li key={f.id} className="flex items-center justify-between gap-4">
+                              <div className="text-sm text-gray-700">{f.file_name}</div>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={copyCurrentUrl}
+                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
+                                  aria-label="본문 복사"
+                                >
+                                  <Copy className="w-4 h-4 mr-2" />
+                                  복사하기
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={shareCurrentUrl}
+                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
+                                  aria-label="공유하기"
+                                >
+                                  <Share2 className="w-4 h-4 mr-2" />
+                                  공유하기
+                                </button>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                     <Link
                       href="/lighthouse-QnA"
                       onClick={() => setMobileMenuOpen(false)}
@@ -612,41 +692,9 @@ function QnAContent() {
                           : "text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      {/* 첨부파일 목록 (없으면 표시하지 않음) */}
-                      {selectedQa?.type === "resource" && (
-                        <div
-                          className={`bg-white border border-gray-200 rounded-lg p-4 mb-6 ${
-                            resourceFiles && resourceFiles.length > 0
-                              ? "bg-yellow-50 border-yellow-300"
-                              : ""
-                          }`}
-                        >
-                          <h3 className="text-sm font-semibold mb-3">자료 받아보기</h3>
-                          <ul className="space-y-2">
-                            {resourceFiles.map((f) => (
-                              <li key={f.id} className="flex items-center justify-between gap-4">
-                                <div className="text-sm text-gray-700">{f.file_name}</div>
-                                <div className="flex items-center gap-2">
-                                  <a
-                                    href={`/api/admin/guides/files/download?path=${encodeURIComponent(
-                                      f.file_path
-                                    )}`}
-                                    className="text-sm text-blue-600"
-                                    title="받아보기"
-                                  >
-                                    받아보기
-                                  </a>
-                                  <div className="text-xs text-gray-500">
-                                    {f.file_size ? `${Math.round(f.file_size / 1024)} KB` : ""}
-                                  </div>
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
                       전체
                     </Link>
+
                     {qnaCategories.map((category) => (
                       <div key={category.value}>
                         <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
@@ -777,13 +825,23 @@ function QnAContent() {
                             </Badge>
                           </div>
                           <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <Eye className="w-4 h-4" />
-                              <span>{selectedQa.views}</span>
+                            <div className="text-sm text-gray-500">
+                              {typeof selectedQa.views === "number" && selectedQa.views > 0
+                                ? `${selectedQa.views}명이 확인했어요`
+                                : `00명이 확인했어요`}
                             </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              <span>{selectedQa.date}</span>
+                            <div className="text-sm text-gray-500">
+                              {(() => {
+                                const raw = (selectedQa as any).created_at_raw || selectedQa.date;
+                                const d = new Date(raw);
+                                if (isNaN(d.getTime())) return selectedQa.date || "";
+                                const yy = String(d.getFullYear()).slice(2);
+                                const mm = d.getMonth() + 1;
+                                const dd = d.getDate();
+                                const diffDays = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+                                const rel = `(${diffDays}일전)`;
+                                return `${yy}년 ${mm}월 ${dd}일 ${rel}`;
+                              })()}
                             </div>
                           </div>
                         </div>
@@ -793,7 +851,28 @@ function QnAContent() {
                         </h1>
 
                         {selectedQa.type === "resource" && selectedQa.author && (
-                          <p className="text-sm text-gray-600 mb-4">작성자: {selectedQa.author}</p>
+                          <>
+                            <div className="w-full border-t border-gray-200 mb-4" />
+                            <div className="flex items-center justify-between mb-4">
+                              <p className="text-sm text-gray-600">작성자: {selectedQa.author}</p>
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={copyCurrentUrl}
+                                  className="px-3 py-1 bg-white border border-gray-200 rounded text-sm hover:bg-gray-50"
+                                >
+                                  복사하기
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={shareCurrentUrl}
+                                  className="px-3 py-1 bg-white border border-gray-200 rounded text-sm hover:bg-gray-50"
+                                >
+                                  공유하기
+                                </button>
+                              </div>
+                            </div>
+                          </>
                         )}
 
                         <div className="bg-gray-50 rounded-lg p-6 mb-6">
@@ -805,6 +884,31 @@ function QnAContent() {
                             }}
                             dangerouslySetInnerHTML={{ __html: selectedQa.content }}
                           />
+                          {selectedQa.type === "resource" && (
+                            <>
+                              <div className="w-full border-t border-gray-200 my-6" />
+                              <div className="flex items-center justify-start gap-2">
+                                <button
+                                  type="button"
+                                  onClick={copyCurrentUrl}
+                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
+                                  aria-label="본문 복사"
+                                >
+                                  <Copy className="w-4 h-4 mr-2" />
+                                  복사하기
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={shareCurrentUrl}
+                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
+                                  aria-label="공유하기"
+                                >
+                                  <Share2 className="w-4 h-4 mr-2" />
+                                  공유하기
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
 
                         {/* 명확하게 보이는 다운로드 박스 (본문 바로 아래) */}
