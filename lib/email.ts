@@ -183,7 +183,7 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
     console.log("✅ 파일 읽기 성공, 크기:", fileBuffer.length, "bytes");
 
     // React Email 컴포넌트를 HTML로 렌더링
-    const emailHtml = render(
+    const emailHtml = await render(
       AdoptionGuide2026Email({
         data: {
           organization: inquiryData.organization,
