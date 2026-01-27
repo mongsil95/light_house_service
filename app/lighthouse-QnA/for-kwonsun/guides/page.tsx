@@ -371,19 +371,9 @@ export default function GuidesAdmin() {
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/lighthouse-QnA/for-kwonsun">
-              <Button variant="ghost" size="sm" className="font-['Pretendard']">
-                ← 대시보드
-              </Button>
-            </Link>
             <h1 className="text-xl font-semibold text-gray-900">가이드 관리</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/lighthouse-QnA">
-              <Button variant="outline" size="sm" className="font-['Pretendard']">
-                사이트 보기
-              </Button>
-            </Link>
             {!editingId && (
               <Button onClick={handleNew} size="sm" className="font-['Pretendard']">
                 새 가이드 추가
