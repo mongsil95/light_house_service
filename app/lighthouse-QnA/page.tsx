@@ -231,8 +231,8 @@ function QnAContent() {
 
   // URL 파라미터 변경 감지
   useEffect(() => {
-    const id = searchParams.get("id");
-    const category = searchParams.get("category");
+    const id = searchParams?.get("id") ?? null;
+    const category = searchParams?.get("category");
 
     setQaId(id);
 
