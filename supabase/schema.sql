@@ -58,6 +58,7 @@ CREATE TABLE IF NOT EXISTS resources (
   author VARCHAR(100) DEFAULT '운영팀',
   views INTEGER DEFAULT 0,
   likes INTEGER DEFAULT 0,
+  is_recommended BOOLEAN DEFAULT FALSE,
   status VARCHAR(50) DEFAULT 'published',  -- draft, published, archived
   published_at TIMESTAMP WITH TIME ZONE,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),

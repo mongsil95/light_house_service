@@ -48,6 +48,7 @@ interface Guide {
   author?: string;
   status?: string;
   thumbnail_url?: string | null;
+  is_recommended?: boolean;
   created_at?: string;
 }
 
@@ -315,6 +316,9 @@ export default function GuidesAdmin() {
       // 업로드 실행 (신규 생성이면 created.id 사용)
       const guideId = editingId === "new" ? created?.id : editingId;
       if (guideId) await uploadSelectedFiles(guideId);
+
+      // reflect saved value from server
+      fetchGuides();
 
       // clear local draft after successful save
       try {
@@ -613,6 +617,21 @@ export default function GuidesAdmin() {
                 </select>
               </div>
 
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">추천 노출</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    id="is_recommended"
+                    type="checkbox"
+                    checked={!!formData.is_recommended}
+                    onChange={(e) => setFormData({ ...formData, is_recommended: e.target.checked })}
+                  />
+                  <label htmlFor="is_recommended" className="text-sm text-gray-600">
+                    등대지기 추천 영역에 노출됩니다
+                  </label>
+                </div>
+              </div>
+
               <div className="flex gap-2 pt-4">
                 <Button onClick={handleSave} className="font-['Pretendard']">
                   저장
@@ -651,6 +670,9 @@ export default function GuidesAdmin() {
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       작성자
                     </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      추천
+                    </th>
                     <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       작업
                     </th>
@@ -679,6 +701,32 @@ export default function GuidesAdmin() {
                           : "-"}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">{guide.author || "-"}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        <label className="inline-flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={!!guide.is_recommended}
+                            onChange={async () => {
+                              const newVal = !guide.is_recommended;
+                              try {
+                                const res = await fetch(`/api/admin/guides/${guide.id}`, {
+                                  method: "PUT",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ is_recommended: newVal }),
+                                });
+                                if (!res.ok) throw new Error("업데이트 실패");
+                                setGuides((prev) =>
+                                  prev.map((g) => (g.id === guide.id ? { ...g, is_recommended: newVal } : g))
+                                );
+                              } catch (err) {
+                                console.error(err);
+                                alert("추천 설정 변경 중 오류가 발생했습니다.");
+                              }
+                            }}
+                          />
+                          <span className="text-sm text-gray-600">노출</span>
+                        </label>
+                      </td>
                       <td className="px-6 py-4 text-sm text-right">
                         <Button
                           onClick={() => handleEdit(guide)}

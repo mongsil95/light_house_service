@@ -170,6 +170,7 @@ function QnAContent() {
             expert: "익명",
             answered: qa.status === "answered",
             content: qa.content,
+            is_recommended: false,
           }));
           allItems.push(...formattedQAs);
           console.log("Formatted QAs:", formattedQAs.length);
@@ -198,6 +199,7 @@ function QnAContent() {
             content: resource.content,
             thumbnail_url: resource.thumbnail_url, // 썸네일 URL 추가
             author: resource.author || "운영팀",
+            is_recommended: !!resource.is_recommended,
           }));
           allItems.push(...formattedResources);
           console.log("Formatted Resources:", formattedResources.length);
@@ -286,8 +288,11 @@ function QnAContent() {
     const pool = qaList.filter(
       (q) => q.type === selectedQa.type && String(q.id) !== String(selectedQa.id)
     );
+    // 우선 추천 플래그가 있는 항목을 선택, 없으면 전체 pool에서 랜덤
+    const recommendedPool = pool.filter((q) => !!q.is_recommended);
+    const candidates = recommendedPool.length ? recommendedPool : pool;
     // 간단한 셔플
-    const shuffled = pool.sort(() => Math.random() - 0.5);
+    const shuffled = candidates.sort(() => Math.random() - 0.5);
     setRecommendations(shuffled.slice(0, 3));
   }, [selectedQa, qaList]);
 
@@ -525,6 +530,10 @@ function QnAContent() {
     return new Date(b.date).getTime() - new Date(a.date).getTime();
   });
 
+  // 메인 상단용 추천 리스트: 관리자에서 설정한 is_recommended 우선
+  const topRecommended = qaList.filter((q) => q.type === "resource" && !!q.is_recommended);
+  const topRecommendationList = topRecommended.length ? topRecommended.slice(0, 3) : sortedQAs.slice(0, 3);
+
   // 인기 질문 TOP 5 (질문만 필터링, 조회수 기준으로 정렬)
   const popularQuestions = [...qaList]
     .filter((qa) => qa.type === "qna")
@@ -710,7 +719,7 @@ function QnAContent() {
                       등대지기가 추천하는 글 3가지
                     </p>
                     <div className="space-y-3 pb-4">
-                      {sortedQAs.slice(0, 3).map((qa) => (
+                      {topRecommendationList.map((qa) => (
                         <Link
                           key={qa.id}
                           href={`/lighthouse-QnA?id=${qa.id}`}

@@ -43,6 +43,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       status,
       author,
       thumbnail_url,
+      is_recommended,
     } = body;
 
     // content 생성
@@ -59,6 +60,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     if (finalContent) updateData.content = finalContent;
     if (author) updateData.author = author;
     if (thumbnail_url !== undefined) updateData.thumbnail_url = thumbnail_url;
+    if (is_recommended !== undefined) updateData.is_recommended = is_recommended;
     if (status) {
       updateData.status = status;
       if (status === "published" && !updateData.published_at) {

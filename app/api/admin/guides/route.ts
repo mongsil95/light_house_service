@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
       status,
       author,
       thumbnail_url,
+      is_recommended,
     } = body;
 
     // 필수 필드 검증
@@ -73,6 +74,7 @@ export async function POST(request: NextRequest) {
         subtitle: subtitle || null,
         content: finalContent,
         author: author || "관리자",
+        is_recommended: is_recommended || false,
         status: status || "draft",
         published_at: status === "published" ? new Date().toISOString() : null,
         thumbnail_url: thumbnail_url || null,
