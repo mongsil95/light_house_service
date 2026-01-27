@@ -43,7 +43,7 @@ interface RelatedQuestion {
 
 export default function QuestionDetailPage() {
   const params = useParams();
-  const id = params.id as string;
+  const id = params?.id as string;
 
   const [qna, setQna] = useState<QnA | null>(null);
   const [answers, setAnswers] = useState<Answer[]>([]);
