@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { supabase } from "@/lib/supabase";
-import { Calendar, ChevronDown, Copy, Eye, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
+import { Copy, Eye, Filter, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -612,13 +612,36 @@ function QnAContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      <Navigation />
+      {/* 데스크톱에서만 Navigation 표시 */}
+      <div className="hidden md:block">
+        <Navigation />
+      </div>
 
-      <main className="pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      {/* 모바일 전용 헤더 */}
+      <div className="md:hidden fixed top-0 left-0 right-0 bg-white z-50 h-16 border-b border-gray-200">
+        <div className="flex items-center justify-between h-full px-4">
+          <Link href="/">
+            <Image
+              src="/images/adopt-a-beach.png"
+              alt="반려해변 로고"
+              width={80}
+              height={26}
+              className="object-contain"
+            />
+          </Link>
+          <Link href="https://caresea.kr">
+            <button className="px-3 py-1 bg-white border border-gray-300 rounded-full text-xs font-bold text-blue-600 hover:bg-gray-50 transition-colors">
+              반려해변 홈
+            </button>
+          </Link>
+        </div>
+      </div>
+
+      <main className="pt-24 pb-16 md:pt-24">
+        <div className="max-w-7xl mx-auto px-0 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             {/* 왼쪽 사이드바 - 데스크톱만 표시 */}
-            <div className="hidden lg:block lg:col-span-2">
+            <div className="hidden md:block md:col-span-2">
               <CategorySidebar
                 categories={qnaCategories}
                 selectedCategory={selectedCategory}
@@ -627,162 +650,128 @@ function QnAContent() {
             </div>
 
             {/* 메인 콘텐츠 */}
-            <div className="lg:col-span-7">
-              {/* 모바일 카테고리 드롭다운 */}
-              <div className="lg:hidden mb-4">
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="w-full flex items-center justify-between px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900">{selectedCategory}</span>
-                  <ChevronDown
-                    className={`w-5 h-5 text-gray-500 transition-transform ${
-                      mobileMenuOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {mobileMenuOpen && (
-                  <div className="mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
-                    {/* 첨부파일 목록 (없으면 표시하지 않음) */}
-                    {selectedQa?.type === "resource" && (
-                      <div
-                        className={`bg-white border border-gray-200 rounded-lg p-4 mb-6 ${
-                          resourceFiles && resourceFiles.length > 0
-                            ? "bg-yellow-50 border-yellow-300"
-                            : ""
-                        }`}
-                      >
-                        <h3 className="text-sm font-semibold mb-3">자료 받아보기</h3>
-                        <ul className="space-y-2">
-                          {resourceFiles.map((f) => (
-                            <li key={f.id} className="flex items-center justify-between gap-4">
-                              <div className="text-sm text-gray-700">{f.file_name}</div>
-                              <div className="flex items-center gap-2">
-                                <button
-                                  type="button"
-                                  onClick={copyCurrentUrl}
-                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
-                                  aria-label="본문 복사"
-                                >
-                                  <Copy className="w-4 h-4 mr-2" />
-                                  복사하기
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={shareCurrentUrl}
-                                  className="px-3 py-1 border border-gray-200 rounded text-sm hover:bg-gray-50 flex items-center"
-                                  aria-label="공유하기"
-                                >
-                                  <Share2 className="w-4 h-4 mr-2" />
-                                  공유하기
-                                </button>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-
-                    <Link
-                      href="/lighthouse-QnA"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`block px-4 py-3 ${
-                        selectedCategory === "전체"
-                          ? "bg-blue-50 text-blue-600 font-semibold"
-                          : "text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      전체
-                    </Link>
-
-                    {qnaCategories.map((category) => (
-                      <div key={category.value}>
-                        <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
-                          {category.label}
-                        </div>
-                        {category.subItems.map((subItem) => (
-                          <Link
-                            key={subItem.value}
-                            href={`/lighthouse-QnA?category=${subItem.value}`}
-                            onClick={() => setMobileMenuOpen(false)}
-                            className={`block px-6 py-2.5 ${
-                              selectedCategory === subItem.value
-                                ? "bg-blue-50 text-blue-600 font-semibold"
-                                : "text-gray-700 hover:bg-gray-50"
-                            }`}
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
+            <div className="md:col-span-7">
               {/* 검색 및 정렬 - 상세보기일 때 숨김 */}
               {!selectedQa && (
                 <>
                   {/* 검색창과 정렬 버튼을 한 줄에 배치 */}
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="flex-1 bg-white rounded-lg shadow-sm p-4">
-                      <input
-                        type="text"
-                        placeholder="질문 검색..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+                  <div className="mb-6 px-4 md:px-0">
+                    <div className="flex items-center gap-3">
+                      {/* 모바일: 검색창 + 필터 아이콘 */}
+                      <div className="flex items-center gap-2 flex-1 md:hidden">
+                        <div className="flex-1 relative">
+                          <input
+                            type="text"
+                            placeholder="질문 검색"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full px-3 py-2 border border-gray-400 rounded-[5px] focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm"
+                          />
+                        </div>
+                        <button
+                          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                          className="flex-shrink-0 w-7 h-7 flex items-center justify-center border border-gray-400 rounded"
+                          aria-label="필터"
+                        >
+                          <Filter className="w-4 h-4 text-gray-600" />
+                        </button>
+                      </div>
+
+                      {/* 데스크톱: 검색창 + 정렬 버튼 */}
+                      <div className="hidden md:flex flex-1 bg-white rounded-lg shadow-sm p-4">
+                        <input
+                          type="text"
+                          placeholder="질문 검색..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                      </div>
+                      <div className="hidden md:flex items-center gap-2">
+                        <button
+                          onClick={() => setSortOrder("최근 답변순")}
+                          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                            sortOrder === "최근 답변순"
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          최신순
+                        </button>
+                        <button
+                          onClick={() => setSortOrder("인기순")}
+                          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                            sortOrder === "인기순"
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          인기순
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => setSortOrder("최근 답변순")}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                          sortOrder === "최근 답변순"
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        최신순
-                      </button>
-                      <button
-                        onClick={() => setSortOrder("인기순")}
-                        className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                          sortOrder === "인기순"
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-gray-600 hover:bg-gray-50"
-                        }`}
-                      >
-                        인기순
-                      </button>
-                    </div>
+
+                    {/* 모바일 필터 메뉴 (검색바 아래) */}
+                    {mobileMenuOpen && (
+                      <div className="md:hidden mt-2 bg-white border border-gray-300 rounded-lg shadow-lg overflow-hidden">
+                        <Link
+                          href="/lighthouse-QnA"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className={`block px-4 py-3 ${
+                            selectedCategory === "전체"
+                              ? "bg-blue-50 text-blue-600 font-semibold"
+                              : "text-gray-700 hover:bg-gray-50"
+                          }`}
+                        >
+                          전체
+                        </Link>
+
+                        {qnaCategories.map((category) => (
+                          <div key={category.value}>
+                            <div className="px-4 py-2 bg-gray-50 text-xs font-semibold text-gray-500 uppercase">
+                              {category.label}
+                            </div>
+                            {category.subItems.map((subItem) => (
+                              <Link
+                                key={subItem.value}
+                                href={`/lighthouse-QnA?category=${subItem.value}`}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className={`block px-6 py-2.5 ${
+                                  selectedCategory === subItem.value
+                                    ? "bg-blue-50 text-blue-600 font-semibold"
+                                    : "text-gray-700 hover:bg-gray-50"
+                                }`}
+                              >
+                                {subItem.label}
+                              </Link>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
 
                   {/* 등대지기가 추천하는 글 3가지 */}
-                  <div className="border border-[#cecece] rounded-[10px] overflow-hidden mb-6">
+                  <div className="mb-6 px-4 md:px-0">
                     <p
-                      className="text-base font-bold text-black px-6 py-5"
+                      className="text-base font-bold text-black py-5"
                       style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
                     >
-                      등대지기가 추천하는 글 3가지
+                      사무국이 추천하는 글 3가지
                     </p>
                     <div className="space-y-3 pb-4">
                       {topRecommendationList.map((qa) => (
-                        <Link
-                          key={qa.id}
-                          href={`/lighthouse-QnA?id=${qa.id}`}
-                          className="block mx-3"
-                        >
+                        <Link key={qa.id} href={`/lighthouse-QnA?id=${qa.id}`} className="block">
                           <div className="bg-white border border-[#cecece] rounded-[15px] px-4 py-3 hover:shadow-sm transition-shadow">
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-3 min-w-0">
                               <Badge
-                                className="bg-[#f0fdf4] text-[#15803d] border-[#c1f8d4] border hover:bg-[#f0fdf4] text-xs font-bold"
+                                className="bg-[#f0fdf4] text-[#15803d] border-[#c1f8d4] border hover:bg-[#f0fdf4] text-xs font-bold flex-shrink-0"
                                 style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
                               >
-                                {qa.type === "resource" ? "정보" : "질문"}
+                                {qa.type === "resource" ? "추천" : "질문"}
                               </Badge>
                               <p
-                                className="text-[17px] font-bold text-black flex-1"
+                                className="text-[17px] font-bold text-black flex-1 truncate"
                                 style={{ fontFamily: "Pretendard, sans-serif" }}
                               >
                                 {extractText(qa.question)}
@@ -803,7 +792,7 @@ function QnAContent() {
               )}
 
               {/* Q&A 리스트 */}
-              <div className="space-y-4">
+              <div className="bg-white px-4 md:px-0">
                 {selectedQa ? (
                   <>
                     {/* Question Card */}
@@ -838,7 +827,9 @@ function QnAContent() {
                                 const yy = String(d.getFullYear()).slice(2);
                                 const mm = d.getMonth() + 1;
                                 const dd = d.getDate();
-                                const diffDays = Math.floor((Date.now() - d.getTime()) / (1000 * 60 * 60 * 24));
+                                const diffDays = Math.floor(
+                                  (Date.now() - d.getTime()) / (1000 * 60 * 60 * 24)
+                                );
                                 const rel = `(${diffDays}일전)`;
                                 return `${yy}년 ${mm}월 ${dd}일 ${rel}`;
                               })()}
@@ -1062,90 +1053,73 @@ function QnAContent() {
                     </CardContent>
                   </Card>
                 ) : (
-                  paginatedQAs.map((qa) => (
+                  paginatedQAs.map((qa, index) => (
                     <Link key={qa.id} href={`/lighthouse-QnA?id=${qa.id}`} className="block">
-                      <Card className="hover:shadow-lg transition-all border border-gray-200 cursor-pointer group">
-                        <CardContent className="p-6">
-                          <div className="flex flex-col md:flex-row items-start gap-4">
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-2">
-                                <Badge
-                                  variant="outline"
-                                  className={`text-xs font-semibold ${
-                                    qa.type === "resource"
-                                      ? "bg-green-50 text-green-700 border-green-200"
-                                      : "bg-blue-50 text-blue-700 border-blue-200"
-                                  }`}
-                                >
-                                  {qa.type === "resource" ? "정보" : "질문"}
-                                </Badge>
-                                <Badge variant="outline" className="text-xs font-semibold">
-                                  {qa.category}
-                                </Badge>
-                              </div>
-                              <h3
-                                className="font-bold text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors line-clamp-1"
+                      <div className="hover:bg-gray-50 transition-all cursor-pointer group py-4 border-b border-gray-300">
+                        <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
+                          {/* 정보 타입일 때만 사진 영역 표시 - 모바일에서는 먼저, 데스크톱에서는 오른쪽 */}
+                          {qa.type === "resource" && (
+                            <div className="flex-shrink-0 w-full md:w-[156px] md:h-[105px] bg-[#959595] rounded-[10px] overflow-hidden md:order-2">
+                              {qa.thumbnail_url ? (
+                                <Image
+                                  src={qa.thumbnail_url}
+                                  alt={extractText(qa.question)}
+                                  width={220}
+                                  height={124}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-gray-400 text-xs">
+                                  No Image
+                                </div>
+                              )}
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0 md:order-1">
+                            <h3
+                              className="font-bold text-gray-900 mb-1.5 group-hover:text-blue-600 transition-colors line-clamp-1 text-[20px]"
+                              style={{
+                                fontFamily:
+                                  "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                              }}
+                            >
+                              {extractText(qa.question)}
+                            </h3>
+                            {qa.type === "resource" && qa.subtitle ? (
+                              <p
+                                className="text-[15px] text-[#545d6a] mb-2 line-clamp-1"
                                 style={{
                                   fontFamily:
                                     "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
                                 }}
                               >
-                                {extractText(qa.question)}
-                              </h3>
-                              {qa.type === "resource" && qa.subtitle ? (
-                                <p
-                                  className="text-sm text-gray-600 mb-2 line-clamp-1"
-                                  style={{
-                                    fontFamily:
-                                      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                                  }}
-                                >
-                                  {qa.subtitle}
-                                </p>
-                              ) : qa.type !== "resource" ? (
-                                <p
-                                  className="text-sm text-gray-600 mb-2 line-clamp-1"
-                                  style={{
-                                    fontFamily:
-                                      "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
-                                  }}
-                                >
-                                  {extractText(qa.content)}
-                                </p>
-                              ) : null}
-                              <div className="flex items-center text-xs text-gray-400">
-                                <div className="flex items-center gap-3">
-                                  <span className="flex items-center gap-1">
-                                    <Eye className="w-3 h-3" />
-                                    {qa.views}명이 확인했어요
-                                  </span>
-                                  <span>
-                                    · {qa.type === "resource" ? qa.author || "운영팀" : qa.date}
-                                  </span>
-                                </div>
+                                {qa.subtitle}
+                              </p>
+                            ) : qa.type !== "resource" ? (
+                              <p
+                                className="text-[15px] text-[#545d6a] mb-2 line-clamp-1"
+                                style={{
+                                  fontFamily:
+                                    "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+                                }}
+                              >
+                                {extractText(qa.content)}
+                              </p>
+                            ) : null}
+                            <div className="flex items-center text-xs text-gray-400">
+                              <div className="flex items-center gap-3">
+                                <span className="flex items-center gap-1">
+                                  <Eye className="w-3 h-3" />
+                                  {qa.views}명이 확인했어요
+                                </span>
+                                <span>
+                                  · {qa.type === "resource" ? qa.author || "운영팀" : qa.date}
+                                </span>
                               </div>
                             </div>
-                            {/* 정보 타입일 때만 사진 영역 표시 (오른쪽) */}
-                            {qa.type === "resource" && (
-                              <div className="flex-shrink-0 w-full md:w-[150px] h-[84px] bg-gray-100 rounded-lg overflow-hidden mt-3 md:mt-0">
-                                {qa.thumbnail_url ? (
-                                  <Image
-                                    src={qa.thumbnail_url}
-                                    alt={extractText(qa.question)}
-                                    width={150}
-                                    height={84}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center text-gray-400 text-xs">
-                                    No Image
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </div>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      </div>
                     </Link>
                   ))
                 )}
@@ -1206,7 +1180,7 @@ function QnAContent() {
             </div>
 
             {/* 오른쪽 사이드바 */}
-            <div className="lg:col-span-3 space-y-8">
+            <div className="md:col-span-3 space-y-8">
               {/* 인기 질문 (사이드바) - hidden */}
               <div className="sticky top-24 space-y-4">
                 <div className="hidden bg-white border border-gray-200 rounded-lg p-4">

@@ -37,12 +37,12 @@ export default function CategorySidebar({
   };
 
   return (
-    <aside className="w-full">
+    <aside className="w-auto">
       <div className="bg-white rounded-lg shadow-sm p-4 sticky top-24">
         {/* 전체 링크 */}
         <Link
           href={basePath}
-          className={`block py-2 px-3 rounded-md transition-colors ${
+          className={`block py-2 px-2 rounded-md transition-colors text-xs md:text-sm whitespace-nowrap ${
             selectedCategory === "전체"
               ? "bg-blue-50 text-blue-600 font-semibold"
               : "text-gray-700 hover:bg-gray-50"
@@ -59,9 +59,11 @@ export default function CategorySidebar({
             <div key={category.value} className="border-b border-gray-100 last:border-b-0">
               <button
                 onClick={() => toggleCategory(category.value)}
-                className="w-full flex items-center justify-between py-3 px-2 text-left hover:bg-gray-50 rounded-md transition-colors"
+                className="w-full flex items-center justify-between py-2 px-2 text-left hover:bg-gray-50 rounded-md transition-colors"
               >
-                <span className="font-semibold text-gray-800 text-sm">{category.label}</span>
+                <span className="font-semibold text-gray-800 text-xs md:text-sm whitespace-nowrap">
+                  {category.label}
+                </span>
                 {expandedCategories.includes(category.value) ? (
                   <ChevronUp className="w-4 h-4 text-gray-500" />
                 ) : (
@@ -75,7 +77,7 @@ export default function CategorySidebar({
                     <li key={subItem.value}>
                       <Link
                         href={`${basePath}?category=${encodeURIComponent(subItem.value)}`}
-                        className={`block py-2 px-4 ml-2 text-sm rounded-md transition-colors ${
+                        className={`block py-1.5 px-3 ml-2 text-xs md:text-sm rounded-md transition-colors whitespace-nowrap ${
                           selectedCategory === subItem.value
                             ? "bg-blue-50 text-blue-600 font-medium"
                             : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
