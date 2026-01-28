@@ -848,7 +848,7 @@ function QnAContent() {
                           </>
                         )}
 
-                        <div className="bg-gray-50 rounded-lg p-6 mb-6">
+                        <div className="bg-gray-50 rounded-lg p-4 mb-4">
                           <div
                             className="prose prose-sm sm:prose-base max-w-none prose-p:my-2 prose-p:leading-relaxed whitespace-pre-wrap break-words"
                             style={{
