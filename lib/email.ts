@@ -170,17 +170,42 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
   try {
     console.log("📎 PDF 첨부 이메일 전송 시도:", inquiryData.email);
 
-    // PDF 파일 읽기
+    // PDF 파일 읽기 (에러 처리 강화)
     const filePath = path.join(process.cwd(), "public", "file", "2026 반려해변 활동 가이드.pdf");
     console.log("📁 파일 경로:", filePath);
+    console.log("📂 현재 작업 디렉토리:", process.cwd());
 
     if (!fs.existsSync(filePath)) {
       console.error("❌ 파일이 존재하지 않습니다:", filePath);
-      throw new Error("PDF 파일을 찾을 수 없습니다");
+      // 파일이 없어도 이메일은 전송 시도
+      const emailHtml = await render(
+        AdoptionGuide2026Email({
+          data: {
+            organization: inquiryData.organization,
+            email: inquiryData.email,
+          },
+        })
+      );
+
+      const { data, error } = await resend.emails.send({
+        from: "등대지기 반려해변 <lighthouse@caresea.kr>",
+        to: [inquiryData.email],
+        subject: `[등대지기 반려해변] 2026년 반려해변 입양가이드`,
+        html: emailHtml,
+      });
+
+      if (error) {
+        console.error("❌ 이메일 전송 실패 (첨부파일 없음):", error);
+        return { success: false, error };
+      }
+
+      console.log("⚠️ PDF 첨부 없이 이메일 전송 완료:", data);
+      return { success: true, data, warning: "PDF 파일을 찾을 수 없어 첨부하지 못했습니다." };
     }
 
     const fileBuffer = fs.readFileSync(filePath);
-    console.log("✅ 파일 읽기 성공, 크기:", fileBuffer.length, "bytes");
+    const fileSizeMB = (fileBuffer.length / (1024 * 1024)).toFixed(2);
+    console.log(`✅ 파일 읽기 성공, 크기: ${fileBuffer.length} bytes (${fileSizeMB} MB)`);
 
     // React Email 컴포넌트를 HTML로 렌더링
     const emailHtml = await render(

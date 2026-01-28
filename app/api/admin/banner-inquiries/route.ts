@@ -1,5 +1,5 @@
+import { sendBannerInquiryConfirmation, sendBannerInquiryNotification } from "@/lib/email";
 import { supabase } from "@/lib/supabase";
-import { sendBannerInquiryNotification, sendBannerInquiryConfirmation } from "@/lib/email";
 import { NextRequest, NextResponse } from "next/server";
 
 // 배너 문의 목록 조회
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     if (error) throw error;
 
-    // 이메일 전송 (비동기로 실행, 실패해도 응답은 성공 처리)
+    // 이메일 전송 (동기로 실행하여 확실하게 전송 완료 보장)
     if (data && data.length > 0) {
       const inquiry = data[0];
       console.log("📧 이메일 전송 시작:", {
@@ -50,23 +50,36 @@ export async function POST(req: NextRequest) {
         email: inquiry.email,
       });
 
-      Promise.all([
-        sendBannerInquiryNotification({
+      try {
+        // 두 이메일을 순차적으로 전송 (더 안정적)
+        const notificationResult = await sendBannerInquiryNotification({
           id: inquiry.id,
           organization: inquiry.organization,
           email: inquiry.email,
-        }),
-        sendBannerInquiryConfirmation({
+        });
+        console.log("✅ 관리자 알림 이메일 전송:", notificationResult.success ? "성공" : "실패");
+
+        const confirmationResult = await sendBannerInquiryConfirmation({
           organization: inquiry.organization,
           email: inquiry.email,
-        }),
-      ])
-        .then((results) => {
-          console.log("✅ 이메일 전송 완료:", results);
-        })
-        .catch((emailError) => {
-          console.error("❌ 이메일 전송 오류:", emailError);
         });
+        console.log("✅ 문의자 확인 이메일 전송:", confirmationResult.success ? "성공" : "실패");
+
+        // 문의자 이메일 전송 실패 시 에러 응답
+        if (!confirmationResult.success) {
+          console.error("❌ 문의자 이메일 전송 실패:", confirmationResult.error);
+          return NextResponse.json(
+            { error: "이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요." },
+            { status: 500 }
+          );
+        }
+      } catch (emailError) {
+        console.error("❌ 이메일 전송 중 오류:", emailError);
+        return NextResponse.json(
+          { error: "이메일 전송에 실패했습니다. 잠시 후 다시 시도해주세요." },
+          { status: 500 }
+        );
+      }
     }
 
     return NextResponse.json({ data }, { status: 201 });
