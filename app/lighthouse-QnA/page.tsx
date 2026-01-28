@@ -778,8 +778,8 @@ function QnAContent() {
                 {selectedQa ? (
                   <>
                     {/* Question Card */}
-                    <Card className="mb-6 border border-gray-200">
-                      <CardContent className="p-8">
+                    <Card className="mb-6 border-0 md:border md:border-gray-200">
+                      <CardContent className="px-3 py-4 md:p-8">
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-2">
                             <Badge
@@ -795,13 +795,13 @@ function QnAContent() {
                               {selectedQa.category}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <div className="text-sm text-gray-500">
+                          <div className="flex items-center gap-2 md:gap-4 text-xs md:text-sm text-gray-500">
+                            <div className="text-xs md:text-sm text-gray-500">
                               {typeof selectedQa.views === "number" && selectedQa.views > 0
                                 ? `${selectedQa.views}명이 확인했어요`
                                 : `00명이 확인했어요`}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-xs md:text-sm text-gray-500">
                               {(() => {
                                 const raw = (selectedQa as any).created_at_raw || selectedQa.date;
                                 const d = new Date(raw);
@@ -819,7 +819,7 @@ function QnAContent() {
                           </div>
                         </div>
 
-                        <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                        <h1 className="text-xl md:text-3xl font-bold text-gray-900 mb-6">
                           {selectedQa.question}
                         </h1>
 
@@ -918,9 +918,9 @@ function QnAContent() {
                       answers.map((answer, index) => (
                         <Card
                           key={answer.id}
-                          className="mb-6 border-2 border-blue-100 bg-gradient-to-br from-blue-50/50 to-white"
+                          className="mb-6 border-0 md:border-2 md:border-blue-100 bg-gradient-to-br from-blue-50/50 to-white"
                         >
-                          <CardContent className="p-8">
+                          <CardContent className="px-3 py-4 md:p-8">
                             <div className="flex items-center gap-3 mb-6">
                               <div>
                                 <div className="flex items-center gap-2 mb-1">
@@ -982,8 +982,8 @@ function QnAContent() {
 
                     {/* 추천 섹션 */}
                     {recommendations.length > 0 && (
-                      <Card className="mb-6 border border-gray-200">
-                        <CardContent className="p-6">
+                      <Card className="mb-6 border-0 md:border md:border-gray-200">
+                        <CardContent className="px-3 py-4 md:p-6">
                           <h3 className="text-lg font-bold mb-4">
                             {selectedQa.type === "resource"
                               ? "이런 글은 어때요?"
