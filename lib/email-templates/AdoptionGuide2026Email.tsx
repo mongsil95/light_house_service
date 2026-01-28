@@ -85,9 +85,8 @@ export function AdoptionGuide2026Email({ data }: AdoptionGuide2026EmailProps) {
         >
           첨부파일로 <strong>2026년 반려해변 입양가이드</strong>를 보내드립니다.
           <br />
-          입양 절차, 필수 활동 등 2026년 반려해변에 대한 내용이 포함되어 있으니
-          <br />
-          꼼꼼히 확인해 주시기 바랍니다.
+          입양 절차, 필수 활동 등 2026년 반려해변에 대한 내용이 포함되어 있으니 꼼꼼히 확인해 주시기
+          바랍니다.
         </Text>
 
         <Section

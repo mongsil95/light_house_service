@@ -128,15 +128,11 @@ function QnAContent() {
           .eq("status", "answered")
           .order("created_at", { ascending: false });
 
-        console.log("QnA Data:", qnaData, "Error:", qnaError);
-
         // Resources 데이터 가져오기 (thumbnail_url 포함)
         const { data: resourcesData, error: resourcesError } = await supabase
           .from("resources")
           .select("*")
           .order("created_at", { ascending: false });
-
-        console.log("Resources Data:", resourcesData, "Error:", resourcesError);
 
         if (qnaError) {
           console.error("QnA Error:", qnaError);
@@ -174,7 +170,6 @@ function QnAContent() {
             is_recommended: false,
           }));
           allItems.push(...formattedQAs);
-          console.log("Formatted QAs:", formattedQAs.length);
         }
 
         // Resources 데이터 포맷팅
@@ -204,20 +199,7 @@ function QnAContent() {
             is_recommended: !!resource.is_recommended,
           }));
           allItems.push(...formattedResources);
-          console.log("Formatted Resources:", formattedResources.length);
         }
-
-        console.log("Total items:", allItems.length);
-
-        // 카테고리별 분포 확인
-        const categoryCounts = allItems.reduce(
-          (acc, item) => {
-            acc[item.category] = (acc[item.category] || 0) + 1;
-            return acc;
-          },
-          {} as Record<string, number>
-        );
-        console.log("Category distribution:", categoryCounts);
 
         // 날짜순으로 정렬
         allItems.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
