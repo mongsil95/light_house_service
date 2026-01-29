@@ -93,7 +93,7 @@ export async function sendAnswerNotification(answerData: {
           </div>
           
           <p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/lighthouse-QnA?id=${answerData.questionId}" 
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/lighthouse?id=${answerData.questionId}" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               전체 답변 보기
             </a>
@@ -138,7 +138,7 @@ export async function sendBannerInquiryNotification(inquiryData: {
           </div>
           
           <p>
-            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/lighthouse-QnA/for-kwonsun/banner-inquiries" 
+            <a href="${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/lighthouse/for-kwonsun/banner-inquiries" 
                style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
               가이드 다운로드 내역 확인하기
             </a>

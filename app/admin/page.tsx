@@ -7,6 +7,7 @@ import { useState } from "react";
 
 // 관리 컴포넌트 import
 import BannerInquiriesAdmin from "./banner-inquiries/page";
+import ContactsAdmin from "./contacts/page";
 import GuidesAdmin from "./guides/page";
 import QnAAdmin from "./qna/page";
 
@@ -59,6 +60,22 @@ const menuItems = [
       </svg>
     ),
   },
+  {
+    id: "contacts",
+    label: "무전 예약",
+    href: "/admin/contacts",
+    component: "contacts",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+        />
+      </svg>
+    ),
+  },
 ];
 
 export default function AdminDashboard() {
@@ -73,6 +90,8 @@ export default function AdminDashboard() {
         return <QnAAdmin />;
       case "inquiries":
         return <BannerInquiriesAdmin />;
+      case "contacts":
+        return <ContactsAdmin />;
       default:
         return <GuidesAdmin />;
     }
@@ -105,7 +124,7 @@ export default function AdminDashboard() {
         </div>
 
         <div className="absolute bottom-6 left-6 right-6">
-          <Link href="/lighthouse-QnA">
+          <Link href="/">
             <Button variant="outline" className="w-full font-['Pretendard'] text-sm">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path

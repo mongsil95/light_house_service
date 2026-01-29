@@ -65,6 +65,16 @@ export default function ContactPage() {
     return `${year}-${month}-${day}`;
   };
 
+  // 내일 날짜 가져오기 (당일 예약 방지)
+  const getTomorrowDate = (): string => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const year = tomorrow.getFullYear();
+    const month = String(tomorrow.getMonth() + 1).padStart(2, "0");
+    const day = String(tomorrow.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -383,7 +393,7 @@ export default function ContactPage() {
                     name="preferredDate"
                     value={formData.preferredDate}
                     onChange={handleChange}
-                    min={getTodayDate()}
+                    min={getTomorrowDate()}
                     required
                     className={`w-full px-4 py-3 border rounded-lg focus:ring-1 font-['Pretendard'] ${
                       dateError

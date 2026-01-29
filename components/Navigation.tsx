@@ -2,8 +2,9 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Radio, Telescope } from "lucide-react";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface MenuItem {
   label: string;
@@ -11,46 +12,6 @@ interface MenuItem {
   icon?: string;
   subItems?: { label: string; href: string }[];
 }
-
-// 망원경 아이콘 (탐색) - 항해사 손망원경
-const TelescopeIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="2" y="10" width="12" height="4" rx="1" transform="rotate(-30 8 12)" />
-    <rect x="12" y="7" width="8" height="3" rx="0.5" transform="rotate(-30 16 8.5)" />
-    <circle cx="3" cy="13" r="1.5" />
-    <circle cx="18" cy="6" r="1" />
-    <line x1="14" y1="14" x2="12" y2="18" />
-    <line x1="10" y1="12" x2="8" y2="16" />
-  </svg>
-);
-
-// 무전기 아이콘 (무전)
-const RadioIcon = ({ className }: { className?: string }) => (
-  <svg
-    className={className}
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="8" y="4" width="8" height="16" rx="1.5" />
-    <circle cx="12" cy="9" r="2" />
-    <line x1="10" y1="14" x2="14" y2="14" />
-    <line x1="10" y1="16" x2="14" y2="16" />
-    <line x1="12" y1="4" x2="12" y2="2" />
-    <circle cx="12" cy="1.5" r="0.5" fill="currentColor" />
-  </svg>
-);
 
 export default function Navigation() {
   const [openMenu, setOpenMenu] = useState<string | null>(null);
@@ -61,13 +22,13 @@ export default function Navigation() {
 
   const menuItems: MenuItem[] = [
     { label: "탐색", href: "/", icon: "telescope" },
-    { label: "무전", href: "/coffeechat", icon: "radio" },
+    { label: "무전", href: "/contact", icon: "radio" },
   ];
 
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
+
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
         // 스크롤 다운
         setHideMenu(true);
@@ -75,7 +36,7 @@ export default function Navigation() {
         // 스크롤 업
         setHideMenu(false);
       }
-      
+
       setLastScrollY(currentScrollY);
     };
 
@@ -99,14 +60,14 @@ export default function Navigation() {
               href="/"
               className="flex items-center gap-2 text-base font-bold text-black font-[Cafe24_Ssurround] hover:text-blue-600 transition-colors"
             >
-              <TelescopeIcon className="w-5 h-5" />
+              <Telescope className="w-5 h-5" />
               탐색
             </Link>
             <Link
-              href="/coffeechat"
+              href="/contact"
               className="flex items-center gap-2 text-base font-bold text-black font-[Cafe24_Ssurround] hover:text-blue-600 transition-colors"
             >
-              <RadioIcon className="w-5 h-5" />
+              <Radio className="w-5 h-5" />
               무전
             </Link>
           </nav>
@@ -157,15 +118,15 @@ export default function Navigation() {
         </div>
 
         {/* Bottom Row: Menu Links - 스크롤 시 숨김 */}
-        <div 
-          className={`flex items-center gap-8 justify-center overflow-hidden transition-all duration-300 py-3 ${hideMenu ? 'max-h-0 opacity-0' : 'max-h-24 opacity-100'}`}
+        <div
+          className={`flex items-center gap-8 justify-center overflow-hidden transition-all duration-300 py-3 ${hideMenu ? "max-h-0 opacity-0" : "max-h-24 opacity-100"}`}
         >
           <Link href="/" className="flex items-center gap-2">
-            <TelescopeIcon className="w-6 h-6 text-black" />
+            <Telescope className="w-6 h-6 text-black" />
             <span className="text-[15px] font-bold text-black font-[Cafe24_Ssurround]">탐색</span>
           </Link>
-          <Link href="/coffeechat" className="flex items-center gap-2">
-            <RadioIcon className="w-6 h-6 text-black" />
+          <Link href="/contact" className="flex items-center gap-2">
+            <Radio className="w-6 h-6 text-black" />
             <span className="text-[15px] font-bold text-black font-[Cafe24_Ssurround]">무전</span>
           </Link>
         </div>
@@ -195,7 +156,7 @@ export default function Navigation() {
                 onClick={() => setAboutModalOpen(false)}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-[Cafe24_Ssurround]"
               >
-                닫기
+                확인했어요
               </button>
             </div>
           </div>
@@ -204,13 +165,13 @@ export default function Navigation() {
 
       {/* About Modal - Mobile (Sheet) */}
       <Sheet open={aboutModalOpen} onOpenChange={setAboutModalOpen}>
-        <SheetContent side="bottom" className="sm:hidden">
-          <SheetHeader>
-            <SheetTitle className="text-xl font-bold text-gray-900 font-[Cafe24_Ssurround]">
+        <SheetContent side="bottom" className="sm:hidden bg-white rounded-t-2xl p-6 max-h-[80vh]">
+          <SheetHeader className="p-0">
+            <SheetTitle className="text-lg font-bold text-gray-900 font-[Cafe24_Ssurround]">
               반려해변 등대지기는 이런 역할이에요.
             </SheetTitle>
           </SheetHeader>
-          <div className="mt-4 space-y-4">
+          <div className="mt-6 space-y-4 pb-4">
             <p className="text-gray-700 leading-relaxed font-[Pretendard]">
               해변을 사랑하는 사람들이 안전하고 즐겁게 정화 활동을 할 수 있도록 보이지 않는 곳에서
               길을 밝혀요.
@@ -226,7 +187,7 @@ export default function Navigation() {
                 onClick={() => setAboutModalOpen(false)}
                 className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-[Cafe24_Ssurround]"
               >
-                닫기
+                확인했어요
               </button>
             </div>
           </div>
