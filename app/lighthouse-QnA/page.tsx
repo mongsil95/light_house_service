@@ -1,7 +1,9 @@
 "use client";
 
 import CategorySidebar from "@/components/CategorySidebar";
+import Footer from "@/components/Footer";
 import Navigation from "@/components/Navigation";
+import QnALoadingSkeleton from "@/components/QnALoadingSkeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { supabase } from "@/lib/supabase";
-import { Copy, Eye, Filter, HelpCircle, Send, Share2, ThumbsUp } from "lucide-react";
+import { Copy, Eye, Filter, HelpCircle, Search, Send, Share2, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -72,7 +74,7 @@ function QnAContent() {
   // Q&A 카테고리 구조
   const qnaCategories = [
     {
-      label: "입양관련",
+      label: "입양전",
       value: "입양관련",
       subItems: [
         { label: "전체", value: "입양관련" },
@@ -83,7 +85,7 @@ function QnAContent() {
       ],
     },
     {
-      label: "활동운영",
+      label: "활동",
       value: "활동운영",
       subItems: [
         { label: "전체", value: "활동운영" },
@@ -96,20 +98,11 @@ function QnAContent() {
       ],
     },
     {
-      label: "기부금",
+      label: "기부금 제도",
       value: "기부금",
       subItems: [
         { label: "전체", value: "기부금" },
         { label: "기금납부", value: "기금납부" },
-      ],
-    },
-    {
-      label: "기타",
-      value: "기타",
-      subItems: [
-        { label: "전체", value: "기타" },
-        { label: "일반문의", value: "일반문의" },
-        { label: "공지사항", value: "공지사항" },
       ],
     },
   ];
@@ -430,7 +423,7 @@ function QnAContent() {
         throw new Error("제출 실패");
       }
 
-      alert("이메일로 입양가이드를 보내드렸어요!\n감사합니다.");
+      alert("이메일로 사전안내서를 보내드렸어요! 감사합니다.");
       setIsBannerModalOpen(false);
       setBannerFormData({ organization: "", email: "" });
     } catch (error) {
@@ -575,51 +568,15 @@ function QnAContent() {
   };
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Navigation />
-        <main className="pt-24 pb-16">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="flex items-center justify-center h-96">
-              <div className="text-center">
-                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                <p className="text-gray-600">잠시만 기다려주세요</p>
-              </div>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <QnALoadingSkeleton />;
   }
 
   return (
     <div className="min-h-screen bg-white">
-      {/* 데스크톱에서만 Navigation 표시 */}
-      <div className="hidden md:block">
-        <Navigation />
-      </div>
+      {/* Navigation - 데스크톱과 모바일 모두 표시 */}
+      <Navigation />
 
-      {/* 모바일 전용 헤더 */}
-      <div className="md:hidden fixed top-0 left-0 right-0 bg-white z-50 h-16 border-b border-gray-200">
-        <div className="flex items-center justify-between h-full px-4">
-          <Link href="/">
-            <Image
-              src="/images/adopt-a-beach.png"
-              alt="반려해변 로고"
-              width={80}
-              height={26}
-              className="object-contain"
-            />
-          </Link>
-          <Link href="https://caresea.kr">
-            <button className="px-3 py-1 bg-white border border-gray-300 rounded-full text-xs font-bold text-blue-600 hover:bg-gray-50 transition-colors">
-              반려해변 홈
-            </button>
-          </Link>
-        </div>
-      </div>
-
-      <main className="pt-24 pb-16 md:pt-24">
+      <main className="pt-32 pb-16 md:pt-24">
         <div className="max-w-7xl mx-auto px-0 md:px-6">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
             {/* 왼쪽 사이드바 - 데스크톱만 표시 */}
@@ -642,12 +599,13 @@ function QnAContent() {
                       {/* 모바일: 검색창 + 필터 아이콘 */}
                       <div className="flex items-center gap-2 flex-1 md:hidden">
                         <div className="flex-1 relative">
+                          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                           <input
                             type="text"
-                            placeholder="질문 검색"
+                            placeholder="입양신청은 어떻게 하나요?"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-400 rounded-[5px] focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm"
+                            className="w-full pl-10 pr-3 py-2 border border-gray-400 rounded-[5px] focus:outline-none focus:ring-1 focus:ring-gray-400 text-sm"
                           />
                         </div>
                         <button
@@ -661,13 +619,16 @@ function QnAContent() {
 
                       {/* 데스크톱: 검색창 + 정렬 버튼 */}
                       <div className="hidden md:flex flex-1 bg-white rounded-lg shadow-sm p-4">
-                        <input
-                          type="text"
-                          placeholder="질문 검색..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
+                        <div className="relative w-full">
+                          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                          <input
+                            type="text"
+                            placeholder="입양신청은 어떻게 하나요?"
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                        </div>
                       </div>
                       <div className="hidden md:flex items-center gap-2">
                         <button
@@ -739,7 +700,7 @@ function QnAContent() {
                       className="text-base font-bold text-black py-5"
                       style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
                     >
-                      사무국이 추천하는 글 3가지
+                      등대지기가 추천하는 글 3가지
                     </p>
                     <div className="space-y-3 pb-4">
                       {topRecommendationList.map((qa) => (
@@ -1244,7 +1205,7 @@ function QnAContent() {
                 fontFamily: "Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
               }}
             >
-              2026년 반려해변 입양가이드
+              2026년 반려해변 사전안내
             </DialogTitle>
             <DialogDescription
               className="text-sm text-gray-600"
@@ -1336,7 +1297,7 @@ function QnAContent() {
                 ) : (
                   <>
                     <Send className="w-4 h-4 mr-2" />
-                    가이드 받기
+                    사전안내서 받기
                   </>
                 )}
               </Button>
@@ -1346,29 +1307,15 @@ function QnAContent() {
       </Dialog>
 
       {/* 전문가 모달 및 관련 UI 제거됨 */}
+
+      <Footer />
     </div>
   );
 }
 
 export default function LighthouseQnAPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-white">
-          <Navigation />
-          <main className="pt-24 pb-16">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="flex items-center justify-center h-96">
-                <div className="text-center">
-                  <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                  <p className="text-gray-600">로딩 중...</p>
-                </div>
-              </div>
-            </div>
-          </main>
-        </div>
-      }
-    >
+    <Suspense fallback={<QnALoadingSkeleton />}>
       <QnAContent />
     </Suspense>
   );

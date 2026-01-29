@@ -33,7 +33,7 @@ export function AdoptionGuide2026Email({ data }: AdoptionGuide2026EmailProps) {
             color: "#00298a",
           }}
         >
-          2026년 반려해변 입양가이드
+          2026년 반려해변 사전 안내서
         </Heading>
 
         <Text
@@ -72,7 +72,7 @@ export function AdoptionGuide2026Email({ data }: AdoptionGuide2026EmailProps) {
             color: "#000000",
           }}
         >
-          📎 2026년 반려해변 입양가이드
+          📎 2026년 반려해변 사전 안내서
         </Text>
 
         <Text
@@ -83,7 +83,7 @@ export function AdoptionGuide2026Email({ data }: AdoptionGuide2026EmailProps) {
             color: "#2c2c2c",
           }}
         >
-          첨부파일로 <strong>2026년 반려해변 입양가이드</strong>를 보내드립니다.
+          첨부파일로 <strong>2026년 반려해변 사전 안내서</strong>를 보내드립니다.
           <br />
           입양 절차, 필수 활동 등 2026년 반려해변에 대한 내용이 포함되어 있으니 꼼꼼히 확인해 주시기
           바랍니다.

@@ -171,7 +171,7 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
     console.log("📎 PDF 첨부 이메일 전송 시도:", inquiryData.email);
 
     // PDF 파일 읽기 (에러 처리 강화)
-    const filePath = path.join(process.cwd(), "public", "file", "2026 반려해변 활동 가이드.pdf");
+    const filePath = path.join(process.cwd(), "public", "file", "2026 반려해변 사전안내서.pdf");
     console.log("📁 파일 경로:", filePath);
     console.log("📂 현재 작업 디렉토리:", process.cwd());
 
@@ -190,7 +190,7 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
       const { data, error } = await resend.emails.send({
         from: "등대지기 반려해변 <lighthouse@caresea.kr>",
         to: [inquiryData.email],
-        subject: `[등대지기 반려해변] 2026년 반려해변 입양가이드`,
+        subject: `[등대지기 반려해변] 2026년 반려해변 사전안내`,
         html: emailHtml,
       });
 
@@ -220,11 +220,11 @@ export async function sendBannerInquiryConfirmation(inquiryData: {
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
       to: [inquiryData.email],
-      subject: `[등대지기 반려해변] 2026년 반려해변 입양가이드`,
+      subject: `[등대지기 반려해변] 2026년 반려해변 사전안내`,
       html: emailHtml,
       attachments: [
         {
-          filename: "2026_반려해변_활동_가이드.pdf",
+          filename: "2026_반려해변_사전안내서.pdf",
           content: fileBuffer.toString("base64"),
         },
       ],

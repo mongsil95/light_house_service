@@ -422,3 +422,30 @@ CREATE INDEX IF NOT EXISTS idx_banner_inquiries_created ON banner_inquiries(crea
 -- 배너 문의 updated_at 트리거
 CREATE TRIGGER update_banner_inquiries_updated_at BEFORE UPDATE ON banner_inquiries
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ============================================
+-- 등대무전 (상담 예약) 테이블
+-- ============================================
+CREATE TABLE IF NOT EXISTS contact_reservations (
+  id BIGSERIAL PRIMARY KEY,
+  organization VARCHAR(255) NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  method VARCHAR(50) NOT NULL,  -- 전화, 구글밋
+  preferred_date DATE NOT NULL,
+  preferred_time VARCHAR(20) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',  -- pending, confirmed, completed, cancelled
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 등대무전 인덱스
+CREATE INDEX IF NOT EXISTS idx_contact_reservations_status ON contact_reservations(status);
+CREATE INDEX IF NOT EXISTS idx_contact_reservations_date ON contact_reservations(preferred_date);
+CREATE INDEX IF NOT EXISTS idx_contact_reservations_created ON contact_reservations(created_at DESC);
+
+-- 등대무전 updated_at 트리거
+CREATE TRIGGER update_contact_reservations_updated_at BEFORE UPDATE ON contact_reservations
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
