@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
       data: { session },
     } = await supabase.auth.getSession();
     if (session) {
-      const redirectTo = searchParams.get("redirectedFrom") || "/admin";
+      const redirectTo = searchParams?.get("redirectedFrom") || "/admin";
       router.push(redirectTo);
     }
   };
