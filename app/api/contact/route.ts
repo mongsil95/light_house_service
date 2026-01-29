@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       console.log("📧 이메일 발송 시작...");
       console.log("RESEND_API_KEY 존재 여부:", !!process.env.RESEND_API_KEY);
 
-      const emailHtml = render(
+      const emailHtml = await render(
         ContactReservationEmail({
           data: {
             organization,
