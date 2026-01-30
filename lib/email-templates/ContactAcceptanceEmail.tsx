@@ -137,81 +137,46 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
               </Column>
             </Row>
           </Section>
+
+          {/* 구글 밋 링크 표시 */}
+          {data.method === "구글밋" && (
+            <Section
+              style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px dashed #10b981" }}
+            >
+              <Text
+                style={{
+                  fontSize: "14px",
+                  color: "#065f46",
+                  fontWeight: "600",
+                  margin: "0 0 8px 0",
+                }}
+              >
+                💻 Google Meet 링크
+              </Text>
+              <a
+                href="https://meet.google.com/fkq-ciau-vzp"
+                style={{
+                  display: "inline-block",
+                  fontSize: "14px",
+                  color: "#2563eb",
+                  textDecoration: "underline",
+                  wordBreak: "break-all",
+                }}
+              >
+                https://meet.google.com/fkq-ciau-vzp
+              </a>
+              <Text
+                style={{
+                  fontSize: "12px",
+                  color: "#6b7280",
+                  margin: "8px 0 0 0",
+                }}
+              >
+                * 위 링크로 약속된 시간에 접속해주세요.
+              </Text>
+            </Section>
+          )}
         </Section>
-
-        {/* 담당자 정보 */}
-        <Section
-          style={{
-            backgroundColor: "#fff",
-            padding: "20px",
-            borderRadius: "12px",
-            border: "1px solid #e5e7eb",
-            marginBottom: "20px",
-            borderLeft: "4px solid #3b82f6",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: "16px",
-              fontWeight: "bold",
-              marginBottom: "16px",
-              color: "#1e3a8a",
-            }}
-          >
-            👤 담당자 정보
-          </Text>
-
-          <Section style={{ marginBottom: "12px" }}>
-            <Row>
-              <Column style={{ width: "140px" }}>
-                <Text
-                  style={{ fontSize: "14px", color: "#64748b", fontWeight: "600", margin: "0" }}
-                >
-                  담당자명
-                </Text>
-              </Column>
-              <Column>
-                <Text style={{ fontSize: "14px", color: "#1e293b", margin: "0" }}>{data.name}</Text>
-              </Column>
-            </Row>
-          </Section>
-
-          <Section style={{ marginBottom: "12px" }}>
-            <Row>
-              <Column style={{ width: "140px" }}>
-                <Text
-                  style={{ fontSize: "14px", color: "#64748b", fontWeight: "600", margin: "0" }}
-                >
-                  연락처
-                </Text>
-              </Column>
-              <Column>
-                <Text style={{ fontSize: "14px", color: "#1e293b", margin: "0" }}>
-                  {data.phone}
-                </Text>
-              </Column>
-            </Row>
-          </Section>
-
-          <Section>
-            <Row>
-              <Column style={{ width: "140px" }}>
-                <Text
-                  style={{ fontSize: "14px", color: "#64748b", fontWeight: "600", margin: "0" }}
-                >
-                  이메일
-                </Text>
-              </Column>
-              <Column>
-                <Text style={{ fontSize: "14px", color: "#1e293b", margin: "0" }}>
-                  {data.email}
-                </Text>
-              </Column>
-            </Row>
-          </Section>
-        </Section>
-
-        <Section style={{ borderTop: "1px dashed #d1d5db", margin: "24px 0" }} />
 
         {/* 담당 등대지기 정보 */}
         {data.lighthouseContactName && data.lighthouseContactEmail && (

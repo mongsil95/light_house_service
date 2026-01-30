@@ -48,12 +48,9 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error("예약 상태 업데이트 실패:", updateError);
-      return NextResponse.json({ error: "상태 업데이트 실패: " + updateError.message }, { status: 500 });
-    }
-
-    if (updateError) {
-      console.error("예약 상태 업데이트 실패:", updateError);
-      return NextResponse.json({ error: "상태 업데이트 실패: " + updateError.message }, { status: 500 });
+      return NextResponse.json({ 
+        error: "상태 업데이트 실패: " + (updateError instanceof Error ? updateError.message : String(updateError))
+      }, { status: 500 });
     }
 
     // 이메일 발송 시도 (실패해도 상태는 이미 업데이트됨)

@@ -376,7 +376,7 @@ export default function ContactsAdmin() {
                     상태
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-                    작업
+                    비고
                   </th>
                 </tr>
               </thead>
@@ -430,17 +430,29 @@ export default function ContactsAdmin() {
                         {getStatusBadge(contact).label}
                       </Badge>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteContact(contact.id);
-                        }}
-                      >
-                        삭제
-                      </Button>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      {(contact.status === 'accepted' || contact.lighthouse_contact_name) && contact.method === '구글밋' ? (
+                        <a
+                          href="https://meet.google.com/fkq-ciau-vzp"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-blue-600 hover:text-blue-800 underline font-medium"
+                        >
+                          Google Meet 링크
+                        </a>
+                      ) : (
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteContact(contact.id);
+                          }}
+                        >
+                          삭제
+                        </Button>
+                      )}
                     </td>
                   </tr>
                 ))}

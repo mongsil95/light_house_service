@@ -209,7 +209,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl text-gray-900 mb-4 font-[Cafe24_Ssurround]">
-              등대 무전 예약
+              등대지기 무전 예약
             </h1>
             <p className="text-lg text-gray-600 font-[Cafe24_Ssurround]">
               찾아도 안나오는 궁금증이 있으신가요? 등대지기에게 무전을 보내주세요!
@@ -223,8 +223,9 @@ export default function ContactPage() {
                 <h3 className="text-lg text-gray-900 mb-2 font-[Cafe24_Ssurround]">
                   무전 가능 시간
                 </h3>
-                <p className="text-gray-700 font-[Cafe24_Ssurround]">평일</p>
-                <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">13:00 - 16:00</p>
+                <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">
+                  평일 13:00 - 16:00
+                </p>
               </CardContent>
             </Card>
 
@@ -232,10 +233,10 @@ export default function ContactPage() {
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
                 <div className="text-4xl mb-3">⚡</div>
                 <p className="text-lg text-gray-900 font-[Cafe24_Ssurround]">
-                  신청 후 30분 내로 답변드립니다
+                  평균 호출 응답시간 30분 이내
                 </p>
                 <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">
-                  (상황에 따라 지연될 수 있습니다.)
+                  (수신 사정에 따라 늦어 질 수 있습니다.)
                 </p>
               </CardContent>
             </Card>
@@ -372,7 +373,7 @@ export default function ContactPage() {
                       required
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 font-['Pretendard']"
                     >
-                      <option value="전화">전화 통화</option>
+                      <option value="전화">전화 통화 (등대지기가 연락드려요)</option>
                       <option value="구글밋">구글 밋 (Google Meet)</option>
                     </select>
                   </div>
