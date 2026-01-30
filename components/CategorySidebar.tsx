@@ -2,7 +2,7 @@
 
 import { ChevronDown, ChevronUp } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface SubItem {
   label: string;
@@ -29,6 +29,9 @@ export default function CategorySidebar({
   const [expandedCategories, setExpandedCategories] = useState<string[]>(
     categories.map((cat) => cat.value)
   );
+  const [stickyStyle, setStickyStyle] = useState<"top" | "bottom">("top");
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
 
   const toggleCategory = (value: string) => {
     setExpandedCategories((prev) =>
@@ -36,63 +39,119 @@ export default function CategorySidebar({
     );
   };
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!sidebarRef.current) return;
+
+      const currentScrollY = window.scrollY;
+      const sidebar = sidebarRef.current;
+      const sidebarHeight = sidebar.offsetHeight;
+      const windowHeight = window.innerHeight;
+      const navbarHeight = 96; // top-24 = 96px
+
+      // 사이드바가 뷰포트보다 작거나 같으면 항상 top sticky
+      if (sidebarHeight + navbarHeight <= windowHeight) {
+        if (stickyStyle !== "top") {
+          setStickyStyle("top");
+        }
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // 스크롤 방향 감지
+      const scrollingDown = currentScrollY > lastScrollY.current;
+
+      if (scrollingDown) {
+        // 아래로 스크롤: bottom sticky로 전환
+        if (stickyStyle !== "bottom") {
+          setStickyStyle("bottom");
+        }
+      } else {
+        // 위로 스크롤: top sticky로 전환
+        if (stickyStyle !== "top") {
+          setStickyStyle("top");
+        }
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    // 리사이즈 이벤트도 감지
+    const handleResize = () => {
+      handleScroll();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true });
+    handleScroll(); // 초기 위치 설정
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [stickyStyle]);
+
   return (
-    <aside className="w-auto">
-      <div className="bg-white rounded-lg shadow-sm p-4 sticky top-24">
-        {/* 전체 링크 */}
-        <Link
-          href={basePath}
-          className={`block py-2 px-2 rounded-md transition-colors text-xs md:text-sm whitespace-nowrap ${
-            selectedCategory === "전체"
-              ? "bg-blue-50 text-blue-600 font-semibold"
-              : "text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          전체
-        </Link>
+    <div
+      ref={sidebarRef}
+      className={`bg-white rounded-lg shadow-sm p-4 sticky transition-all duration-300 ${
+        stickyStyle === "top" ? "top-24" : "bottom-6"
+      }`}
+      style={{ maxHeight: "calc(100vh - 120px)", overflow: "auto" }}
+    >
+      {/* 전체 링크 */}
+      <Link
+        href={basePath}
+        className={`block py-2 px-2 rounded-md transition-colors text-xs md:text-sm whitespace-nowrap ${
+          selectedCategory === "전체"
+            ? "bg-blue-50 text-blue-600 font-semibold"
+            : "text-gray-700 hover:bg-gray-50"
+        }`}
+      >
+        전체
+      </Link>
 
-        <div className="border-t border-gray-200 my-3" />
+      <div className="border-t border-gray-200 my-3" />
 
-        {/* 카테고리 아코디언 */}
-        <div className="space-y-1">
-          {categories.map((category) => (
-            <div key={category.value} className="border-b border-gray-100 last:border-b-0">
-              <button
-                onClick={() => toggleCategory(category.value)}
-                className="w-full flex items-center justify-between py-2 px-2 text-left hover:bg-gray-50 rounded-md transition-colors"
-              >
-                <span className="font-semibold text-gray-800 text-xs md:text-sm whitespace-nowrap">
-                  {category.label}
-                </span>
-                {expandedCategories.includes(category.value) ? (
-                  <ChevronUp className="w-4 h-4 text-gray-500" />
-                ) : (
-                  <ChevronDown className="w-4 h-4 text-gray-500" />
-                )}
-              </button>
-
-              {expandedCategories.includes(category.value) && (
-                <ul className="pb-2 space-y-1">
-                  {category.subItems.map((subItem) => (
-                    <li key={subItem.value}>
-                      <Link
-                        href={`${basePath}?category=${encodeURIComponent(subItem.value)}`}
-                        className={`block py-1.5 px-3 ml-2 text-xs md:text-sm rounded-md transition-colors whitespace-nowrap ${
-                          selectedCategory === subItem.value
-                            ? "bg-blue-50 text-blue-600 font-medium"
-                            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                        }`}
-                      >
-                        {subItem.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+      {/* 카테고리 아코디언 */}
+      <div className="space-y-1">
+        {categories.map((category) => (
+          <div key={category.value} className="border-b border-gray-100 last:border-b-0">
+            <button
+              onClick={() => toggleCategory(category.value)}
+              className="w-full flex items-center justify-between py-2 px-2 text-left hover:bg-gray-50 rounded-md transition-colors"
+            >
+              <span className="font-semibold text-gray-800 text-xs md:text-sm whitespace-nowrap">
+                {category.label}
+              </span>
+              {expandedCategories.includes(category.value) ? (
+                <ChevronUp className="w-4 h-4 text-gray-500" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-500" />
               )}
-            </div>
-          ))}
-        </div>
+            </button>
+
+            {expandedCategories.includes(category.value) && (
+              <ul className="pb-2 space-y-1">
+                {category.subItems.map((subItem) => (
+                  <li key={subItem.value}>
+                    <Link
+                      href={`${basePath}?category=${encodeURIComponent(subItem.value)}`}
+                      className={`block py-1.5 px-3 ml-2 text-xs md:text-sm rounded-md transition-colors whitespace-nowrap ${
+                        selectedCategory === subItem.value
+                          ? "bg-blue-50 text-blue-600 font-medium"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      {subItem.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
       </div>
-    </aside>
+    </div>
   );
 }

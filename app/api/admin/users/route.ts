@@ -9,23 +9,23 @@ export async function GET(request: NextRequest) {
 
     if (id) {
       const { data, error } = await supabase
-        .from("users")
-        .select("id,nickname")
+        .from("admin")
+        .select("id,name,nickname,email")
         .eq("id", id)
         .limit(1)
         .single();
       if (error) {
-        console.error("Error fetching user by id:", error);
+        console.error("Error fetching admin by id:", error);
         return NextResponse.json({ error: error.message }, { status: 500 });
       }
       return NextResponse.json({ data });
     }
 
-    // 기본: role이 admin인 사용자 목록 반환
+    // 기본: admin 테이블에서 모든 관리자 목록 반환
     const { data, error } = await supabase
-      .from("users")
-      .select("id,nickname,email")
-      .eq("role", "admin");
+      .from("admin")
+      .select("id,name,nickname,email")
+      .order("created_at", { ascending: false });
     if (error) {
       console.error("Error fetching admin users:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -41,27 +41,27 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = createClient();
     const body = await request.json();
-    const { nickname, email } = body;
+    const { name, nickname, email } = body;
 
-    if (!nickname || !email) {
-      return NextResponse.json({ error: "닉네임과 이메일은 필수입니다." }, { status: 400 });
+    if (!name || !nickname || !email) {
+      return NextResponse.json({ error: "이름, 닉네임, 이메일은 필수입니다." }, { status: 400 });
     }
 
-    // Create new user with admin role
+    // admin 테이블에 새 관리자 추가
     const { data, error } = await supabase
-      .from("users")
-      .insert({ nickname, email, role: "admin" })
+      .from("admin")
+      .insert({ name, nickname, email })
       .select()
       .single();
 
     if (error) {
-      console.error("Error creating user:", error);
+      console.error("Error creating admin:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ data });
   } catch (err: any) {
-    console.error("Server error creating user:", err);
+    console.error("Server error creating admin:", err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

@@ -1,9 +1,9 @@
+import { createClient } from "@/lib/supabase";
 import { render } from "@react-email/render";
 import * as fs from "fs";
 import * as path from "path";
 import { Resend } from "resend";
 import { AdoptionGuide2026Email } from "./email-templates/AdoptionGuide2026Email";
-import { createClient } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,11 +16,7 @@ console.log("🔑 Resend API Key 설정 여부:", !!process.env.RESEND_API_KEY);
 async function getAdminEmails(): Promise<string[]> {
   try {
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("users")
-      .select("email")
-      .eq("role", "admin")
-      .not("email", "is", null);
+    const { data, error } = await supabase.from("admin").select("email").not("email", "is", null);
 
     if (error) {
       console.error("관리자 이메일 조회 오류:", error);
@@ -28,8 +24,8 @@ async function getAdminEmails(): Promise<string[]> {
       return ["happything@itaseoul.org"];
     }
 
-    const emails = data?.map((user) => user.email).filter(Boolean) || [];
-    
+    const emails = data?.map((admin) => admin.email).filter(Boolean) || [];
+
     // 이메일이 없으면 기본 이메일 반환
     if (emails.length === 0) {
       console.warn("등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");
@@ -56,7 +52,7 @@ export async function sendNewQuestionNotification(questionData: {
 }) {
   try {
     const adminEmails = await getAdminEmails();
-    
+
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
       to: adminEmails,
@@ -161,7 +157,7 @@ export async function sendBannerInquiryNotification(inquiryData: {
 }) {
   try {
     const adminEmails = await getAdminEmails();
-    
+
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
       to: adminEmails,

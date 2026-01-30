@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 interface User {
   id: string;
+  name: string;
   nickname: string;
   email?: string;
 }
@@ -14,6 +15,7 @@ export default function UsersAdmin() {
   const [loading, setLoading] = useState(true);
   const [editingId, setEditingId] = useState<string | "new" | null>(null);
   const [formData, setFormData] = useState<Partial<User>>({
+    name: "",
     nickname: "",
     email: "",
   });
@@ -44,6 +46,7 @@ export default function UsersAdmin() {
   const handleNew = () => {
     setEditingId("new");
     setFormData({
+      name: "",
       nickname: "",
       email: "",
     });
@@ -52,12 +55,17 @@ export default function UsersAdmin() {
   const handleCancel = () => {
     setEditingId(null);
     setFormData({
+      name: "",
       nickname: "",
       email: "",
     });
   };
 
   const handleSave = async () => {
+    if (!formData.name) {
+      alert("이름을 입력해주세요.");
+      return;
+    }
     if (!formData.nickname) {
       alert("닉네임을 입력해주세요.");
       return;
@@ -130,6 +138,17 @@ export default function UsersAdmin() {
 
             <div className="space-y-4">
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">이름</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
+                  value={formData.name || ""}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="이름을 입력하세요"
+                />
+              </div>
+
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
                 <input
                   type="text"
@@ -179,6 +198,9 @@ export default function UsersAdmin() {
                       ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                      이름
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                       닉네임
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -193,6 +215,7 @@ export default function UsersAdmin() {
                   {users.map((user) => (
                     <tr key={user.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 text-sm text-gray-900">{user.id}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{user.name}</td>
                       <td className="px-6 py-4 text-sm text-gray-900">{user.nickname}</td>
                       <td className="px-6 py-4 text-sm text-gray-600">{user.email || "-"}</td>
                       <td className="px-6 py-4 text-sm text-right">
