@@ -10,32 +10,28 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 async function getAdminEmails(): Promise<string[]> {
   try {
     const supabaseClient = createClient();
-    console.log("📋 [무전예약] 등대지기 관리자 이메일 조회 시작...");
-    
     const { data, error } = await supabaseClient
       .from("users")
       .select("email")
       .eq("role", "admin")
       .not("email", "is", null);
 
-    console.log("📋 [무전예약] 조회 결과:", { data, error });
-
     if (error) {
-      console.error("❌ [무전예약] 관리자 이메일 조회 오류:", error);
+      console.error("관리자 이메일 조회 오류:", error);
       return ["happything@itaseoul.org"];
     }
 
     const emails = data?.map((user) => user.email).filter(Boolean) || [];
 
     if (emails.length === 0) {
-      console.warn("⚠️ [무전예약] 등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");
+      console.warn("등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");
       return ["happything@itaseoul.org"];
     }
 
-    console.log(`✅ [무전예약] 등대지기 관리자 ${emails.length}명에게 이메일 발송 예정:`, emails);
+    console.log(`📧 등대지기 관리자 ${emails.length}명에게 이메일 발송 예정:`, emails);
     return emails;
   } catch (error) {
-    console.error("❌ [무전예약] 관리자 이메일 조회 중 오류:", error);
+    console.error("관리자 이메일 조회 중 오류:", error);
     return ["happything@itaseoul.org"];
   }
 }
