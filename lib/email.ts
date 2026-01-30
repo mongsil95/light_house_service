@@ -3,11 +3,46 @@ import * as fs from "fs";
 import * as path from "path";
 import { Resend } from "resend";
 import { AdoptionGuide2026Email } from "./email-templates/AdoptionGuide2026Email";
+import { createClient } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // API 키 확인 로깅
 console.log("🔑 Resend API Key 설정 여부:", !!process.env.RESEND_API_KEY);
+
+/**
+ * 등대지기 관리자 이메일 목록 가져오기
+ */
+async function getAdminEmails(): Promise<string[]> {
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("users")
+      .select("email")
+      .eq("role", "admin")
+      .not("email", "is", null);
+
+    if (error) {
+      console.error("관리자 이메일 조회 오류:", error);
+      // 오류 시 기본 이메일 반환
+      return ["happything@itaseoul.org"];
+    }
+
+    const emails = data?.map((user) => user.email).filter(Boolean) || [];
+    
+    // 이메일이 없으면 기본 이메일 반환
+    if (emails.length === 0) {
+      console.warn("등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");
+      return ["happything@itaseoul.org"];
+    }
+
+    console.log(`📧 등대지기 관리자 ${emails.length}명에게 이메일 발송 예정:`, emails);
+    return emails;
+  } catch (error) {
+    console.error("관리자 이메일 조회 중 오류:", error);
+    return ["happything@itaseoul.org"];
+  }
+}
 
 /**
  * 관리자에게 새 질문 알림 이메일 전송
@@ -20,9 +55,11 @@ export async function sendNewQuestionNotification(questionData: {
   category: string;
 }) {
   try {
+    const adminEmails = await getAdminEmails();
+    
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
-      to: ["happything@itaseoul.org"],
+      to: adminEmails,
       subject: `[새 질문] ${questionData.title}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
@@ -123,9 +160,11 @@ export async function sendBannerInquiryNotification(inquiryData: {
   email: string;
 }) {
   try {
+    const adminEmails = await getAdminEmails();
+    
     const { data, error } = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
-      to: ["happything@itaseoul.org"],
+      to: adminEmails,
       subject: `[가이드 다운로드 신청] ${inquiryData.organization}`,
       html: `
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">

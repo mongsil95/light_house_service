@@ -723,7 +723,8 @@ function QnAContent() {
                                 className="text-[13px] text-[#9ca3af]"
                                 style={{ fontFamily: "Cafe24_Ssurround, sans-serif" }}
                               >
-                                🖋️ {qa.type === "resource" ? qa.author || "운영팀" : "Editor.K"}
+                                🖋️ 등대지기{" "}
+                                {qa.type === "resource" ? qa.author || "운영팀" : "Editor.K"}
                               </p>
                             </div>
                           </div>
@@ -788,7 +789,7 @@ function QnAContent() {
                           <>
                             <div className="w-full border-t border-gray-200 mb-4" />
                             <div className="flex items-center justify-between mb-4">
-                              <p className="text-sm text-gray-600">작성자: {selectedQa.author}</p>
+                              <p className="text-sm text-gray-600">등대지기 {selectedQa.author}</p>
                               <div className="flex items-center gap-2">
                                 <button
                                   type="button"
@@ -1101,7 +1102,9 @@ function QnAContent() {
                                         </span>
                                         <span>
                                           ·{" "}
-                                          {qa.type === "resource" ? qa.author || "운영팀" : qa.date}
+                                          {qa.type === "resource"
+                                            ? `등대지기 ${qa.author || "운영팀"}`
+                                            : qa.date}
                                         </span>
                                       </div>
                                     </div>
@@ -1174,7 +1177,10 @@ function QnAContent() {
                                   {qa.views}명이 확인했어요
                                 </span>
                                 <span>
-                                  · {qa.type === "resource" ? qa.author || "운영팀" : qa.date}
+                                  ·{" "}
+                                  {qa.type === "resource"
+                                    ? `등대지기 ${qa.author || "운영팀"}`
+                                    : qa.date}
                                 </span>
                               </div>
                             </div>

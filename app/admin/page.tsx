@@ -10,6 +10,7 @@ import BannerInquiriesAdmin from "./banner-inquiries/page";
 import ContactsAdmin from "./contacts/page";
 import GuidesAdmin from "./guides/page";
 import QnAAdmin from "./qna/page";
+import UsersAdmin from "./users/page";
 
 const menuItems = [
   {
@@ -92,6 +93,8 @@ export default function AdminDashboard() {
         return <BannerInquiriesAdmin />;
       case "contacts":
         return <ContactsAdmin />;
+      case "users":
+        return <UsersAdmin />;
       default:
         return <GuidesAdmin />;
     }
@@ -123,7 +126,26 @@ export default function AdminDashboard() {
           </nav>
         </div>
 
-        <div className="absolute bottom-6 left-6 right-6">
+        <div className="absolute bottom-6 left-6 right-6 space-y-2">
+          <button
+            onClick={() => setActiveComponent("users")}
+            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+              activeComponent === "users"
+                ? "bg-blue-50 text-blue-600 font-medium"
+                : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+            }`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+              />
+            </svg>
+            <span className="text-sm">등대지기 정보 수정</span>
+          </button>
+
           <Link href="/">
             <Button variant="outline" className="w-full font-['Pretendard'] text-sm">
               <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

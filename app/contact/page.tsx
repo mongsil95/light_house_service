@@ -124,7 +124,7 @@ export default function ContactPage() {
         throw new Error(result.error || "예약 신청에 실패했습니다.");
       }
 
-      alert(`무전 예약이 신청되었습니다!\n담당자가 확인 후 연락드리겠습니다.`);
+      alert(`무전 예약이 신청되었습니다!\n등대지기가 확인 후 연락드리겠습니다.`);
 
       // 폼 초기화
       setFormData({
@@ -420,7 +420,8 @@ export default function ContactPage() {
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <p className="text-sm text-gray-700 font-['Pretendard']">
-                    📌 신청하신 내용은 담당자 확인 후 이메일 또는 전화로 최종 일정을 안내드립니다.
+                    📌 신청하신 내용은 등대지기가 확인 후 이메일 또는 전화로 최종 일정을
+                    안내드립니다.
                   </p>
                   <p className="text-sm text-gray-700 mt-2 font-['Pretendard']">
                     📌 무전 가능 시간: 평일 13:00 - 16:00

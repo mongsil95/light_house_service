@@ -1,10 +1,41 @@
 import { ContactReservationEmail } from "@/lib/email-templates/ContactReservationEmail";
 import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { render } from "@react-email/render";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// 등대지기 관리자 이메일 목록 가져오기
+async function getAdminEmails(): Promise<string[]> {
+  try {
+    const supabaseClient = createClient();
+    const { data, error } = await supabaseClient
+      .from("users")
+      .select("email")
+      .eq("role", "admin")
+      .not("email", "is", null);
+
+    if (error) {
+      console.error("관리자 이메일 조회 오류:", error);
+      return ["happything@itaseoul.org"];
+    }
+
+    const emails = data?.map((user) => user.email).filter(Boolean) || [];
+    
+    if (emails.length === 0) {
+      console.warn("등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");
+      return ["happything@itaseoul.org"];
+    }
+
+    console.log(`📧 등대지기 관리자 ${emails.length}명에게 이메일 발송 예정:`, emails);
+    return emails;
+  } catch (error) {
+    console.error("관리자 이메일 조회 중 오류:", error);
+    return ["happything@itaseoul.org"];
+  }
+}
 
 // 전화번호 형식 검증
 function validatePhone(phone: string): boolean {
@@ -79,6 +110,8 @@ export async function POST(request: NextRequest) {
       console.log("📧 이메일 발송 시작...");
       console.log("RESEND_API_KEY 존재 여부:", !!process.env.RESEND_API_KEY);
 
+      const adminEmails = await getAdminEmails();
+
       const emailHtml = await render(
         ContactReservationEmail({
           data: {
@@ -98,7 +131,7 @@ export async function POST(request: NextRequest) {
 
       const result = await resend.emails.send({
         from: "등대지기 반려해변 <lighthouse@caresea.kr>",
-        to: ["happything@itaseoul.org"],
+        to: adminEmails,
         subject: `[새 무전 예약] ${organization} - ${name}`,
         html: emailHtml,
       });
