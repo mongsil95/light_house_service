@@ -11,8 +11,9 @@ async function getAdminEmails(): Promise<string[]> {
   try {
     const supabaseClient = createClient();
     const { data, error } = await supabaseClient
-      .from("admin")
+      .from("users")
       .select("email")
+      .eq("role", "admin")
       .not("email", "is", null);
 
     if (error) {
@@ -20,7 +21,7 @@ async function getAdminEmails(): Promise<string[]> {
       return ["happything@itaseoul.org"];
     }
 
-    const emails = data?.map((admin) => admin.email).filter(Boolean) || [];
+    const emails = data?.map((user) => user.email).filter(Boolean) || [];
 
     if (emails.length === 0) {
       console.warn("등록된 관리자 이메일이 없습니다. 기본 이메일을 사용합니다.");

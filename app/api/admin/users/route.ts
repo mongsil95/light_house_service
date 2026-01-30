@@ -9,9 +9,10 @@ export async function GET(request: NextRequest) {
 
     if (id) {
       const { data, error } = await supabase
-        .from("admin")
+        .from("users")
         .select("id,name,nickname,email")
         .eq("id", id)
+        .eq("role", "admin")
         .limit(1)
         .single();
       if (error) {
@@ -21,10 +22,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ data });
     }
 
-    // 기본: admin 테이블에서 모든 관리자 목록 반환
+    // 기본: users 테이블에서 role이 admin인 사용자 목록 반환
     const { data, error } = await supabase
-      .from("admin")
+      .from("users")
       .select("id,name,nickname,email")
+      .eq("role", "admin")
       .order("created_at", { ascending: false });
     if (error) {
       console.error("Error fetching admin users:", error);
@@ -47,10 +49,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "이름, 닉네임, 이메일은 필수입니다." }, { status: 400 });
     }
 
-    // admin 테이블에 새 관리자 추가
+    // users 테이블에 새 관리자 추가 (role='admin')
     const { data, error } = await supabase
-      .from("admin")
-      .insert({ name, nickname, email })
+      .from("users")
+      .insert({ name, nickname, email, role: "admin" })
       .select()
       .single();
 
