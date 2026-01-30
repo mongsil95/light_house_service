@@ -212,7 +212,13 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
             <br />• 필요한 지원 사항이 있다면 함께 말씀해 주세요
           </Text>
         </Section>
-
+        <Section style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px" }}>
+          <Row>
+            <Column align="center">
+              <Img src="https://team.caresea.kr/logo/itaseoul_logo.png" alt="이타서울" width="80" />
+            </Column>
+          </Row>
+        </Section>
         <Text
           style={{
             fontSize: "12px",

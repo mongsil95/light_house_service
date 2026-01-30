@@ -256,6 +256,14 @@ export function ContactRejectionEmail({ data }: ContactRejectionEmailProps) {
           </Text>
         </Section>
 
+        <Section style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px" }}>
+          <Row>
+            <Column align="center">
+              <Img src="https://team.caresea.kr/logo/itaseoul_logo.png" alt="이타서울" width="80" />
+            </Column>
+          </Row>
+        </Section>
+
         {/* Footer */}
         <Section style={{ borderTop: "1px solid #e5e7eb", paddingTop: "16px" }}>
           <Text
