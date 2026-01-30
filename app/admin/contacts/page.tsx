@@ -43,19 +43,9 @@ export default function ContactsAdmin() {
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
-  const [lighthouseContact, setLighthouseContact] = useState({
-    name: "",
-    email: "",
-  });
 
   useEffect(() => {
     fetchContacts();
-    // localStorage에서 담당자 정보 불러오기
-    const savedName = localStorage.getItem("lighthouseContactName");
-    const savedEmail = localStorage.getItem("lighthouseContactEmail");
-    if (savedName && savedEmail) {
-      setLighthouseContact({ name: savedName, email: savedEmail });
-    }
   }, []);
 
   const fetchContacts = async () => {
@@ -285,17 +275,8 @@ export default function ContactsAdmin() {
   const handleConfirmAccept = async () => {
     if (!selectedContact) return;
 
-    if (!lighthouseContact.name || !lighthouseContact.email) {
-      alert("담당 등대지기 이름과 이메일을 입력해주세요.");
-      return;
-    }
-
     try {
       setIsSendingEmail(true);
-
-      // localStorage에 담당자 정보 저장
-      localStorage.setItem("lighthouseContactName", lighthouseContact.name);
-      localStorage.setItem("lighthouseContactEmail", lighthouseContact.email);
 
       const response = await fetch("/api/admin/contacts/accept", {
         method: "POST",
@@ -304,8 +285,6 @@ export default function ContactsAdmin() {
         },
         body: JSON.stringify({
           contactId: selectedContact.id,
-          lighthouseContactName: lighthouseContact.name,
-          lighthouseContactEmail: lighthouseContact.email,
         }),
       });
 
@@ -677,35 +656,6 @@ export default function ContactsAdmin() {
               <br />
               수락 시 <strong>{selectedContact?.email}</strong>로 확정 안내 이메일이 발송됩니다.
             </p>
-
-            {/* 담당 등대지기 정보 입력 */}
-            <div className="space-y-3 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-              <p className="text-sm font-semibold text-yellow-900">담당 등대지기 정보</p>
-              <div>
-                <label className="text-sm text-gray-700">이름 *</label>
-                <input
-                  type="text"
-                  value={lighthouseContact.name}
-                  onChange={(e) =>
-                    setLighthouseContact({ ...lighthouseContact, name: e.target.value })
-                  }
-                  placeholder="담당자 이름 입력"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-700">이메일 *</label>
-                <input
-                  type="email"
-                  value={lighthouseContact.email}
-                  onChange={(e) =>
-                    setLighthouseContact({ ...lighthouseContact, email: e.target.value })
-                  }
-                  placeholder="담당자 이메일 입력"
-                  className="mt-1 w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
 
             {selectedContact && (
               <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">

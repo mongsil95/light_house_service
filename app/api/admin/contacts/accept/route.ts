@@ -11,28 +11,22 @@ export async function POST(request: NextRequest) {
     const supabase = createClient();
     const body = await request.json();
 
-    const { contactId, lighthouseContactName, lighthouseContactEmail } = body;
+    const { contactId } = body;
 
     if (!contactId) {
       return NextResponse.json({ error: "contactId가 필요합니다." }, { status: 400 });
     }
 
-    if (!lighthouseContactName || !lighthouseContactEmail) {
-      return NextResponse.json({ error: "담당 등대지기 정보가 필요합니다." }, { status: 400 });
-    }
-
-    // contact_reservations 업데이트 (담당자 정보 및 상태 저장)
+    // contact_reservations 업데이트 (상태만 저장)
     const { error: updateError } = await supabase
       .from("contact_reservations")
       .update({
-        lighthouse_contact_name: lighthouseContactName,
-        lighthouse_contact_email: lighthouseContactEmail,
         status: "accepted",
       })
       .eq("id", contactId);
 
     if (updateError) {
-      console.error("담당자 정보 저장 실패:", updateError);
+      console.error("상태 저장 실패:", updateError);
     }
 
     // contact_reservations에서 데이터 가져오기
@@ -58,8 +52,6 @@ export async function POST(request: NextRequest) {
           preferredDate: contact.preferred_date,
           preferredTime: contact.preferred_time,
           method: contact.method,
-          lighthouseContactName,
-          lighthouseContactEmail,
         },
       })
     );
@@ -68,7 +60,6 @@ export async function POST(request: NextRequest) {
     const result = await resend.emails.send({
       from: "등대지기 반려해변 <lighthouse@caresea.kr>",
       to: [contact.email],
-      replyTo: lighthouseContactEmail,
       subject: `[반려해변 등대지기] ${contact.organization} 무전 예약이 확정되었습니다`,
       html: emailHtml,
     });

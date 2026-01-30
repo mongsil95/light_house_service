@@ -9,8 +9,6 @@ interface ContactAcceptanceEmailProps {
     preferredDate: string;
     preferredTime: string;
     method: string;
-    lighthouseContactName?: string;
-    lighthouseContactEmail?: string;
   };
 }
 
@@ -56,7 +54,7 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
           <br />
           <strong>{data.organization}</strong>에서 보내주신 무전을 등대지기가 받았습니다.
           <br />
-          아래 확정된 일정과 담당 등대지기의 정보를 확인해 주세요.
+          아래 확정된 일정을 확인해 주세요.
         </Text>
 
         <Section style={{ borderTop: "2px solid #10b981", margin: "24px 0" }} />
@@ -132,7 +130,9 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
               </Column>
               <Column>
                 <Text style={{ fontSize: "14px", color: "#1e293b", margin: "0" }}>
-                  {data.method}
+                  {data.method === "전화"
+                    ? "전화 (등대지기가 시간에 맞춰 연락드릴게요!)"
+                    : data.method}
                 </Text>
               </Column>
             </Row>

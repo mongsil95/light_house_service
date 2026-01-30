@@ -35,11 +35,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   try {
     const supabase = createClient();
 
-    const { error } = await supabase
-      .from("users")
-      .delete()
-      .eq("id", params.id)
-      .eq("role", "admin");
+    const { error } = await supabase.from("users").delete().eq("id", params.id).eq("role", "admin");
 
     if (error) {
       console.error("Error deleting admin:", error);
