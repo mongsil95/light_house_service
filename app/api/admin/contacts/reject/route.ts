@@ -1,8 +1,8 @@
 import { ContactRejectionEmail } from "@/lib/email-templates/ContactRejectionEmail";
 import { createClient } from "@/lib/supabase";
+import { render } from "@react-email/render";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
-import { render } from "@react-email/render";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const { error: updateError } = await supabase
       .from("contact_reservations")
       .update({
-        status: 'rejected',
+        status: "rejected",
         rejected_reason: reason.trim(),
       })
       .eq("id", contactId);
@@ -48,9 +48,14 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       console.error("예약 상태 업데이트 실패:", updateError);
-      return NextResponse.json({ 
-        error: "상태 업데이트 실패: " + (updateError instanceof Error ? updateError.message : String(updateError))
-      }, { status: 500 });
+      return NextResponse.json(
+        {
+          error:
+            "상태 업데이트 실패: " +
+            (updateError instanceof Error ? updateError.message : String(updateError)),
+        },
+        { status: 500 }
+      );
     }
 
     // 이메일 발송 시도 (실패해도 상태는 이미 업데이트됨)
@@ -89,8 +94,13 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("무전 거절 처리 실패:", error);
-    return NextResponse.json({ 
-      error: "처리 중 오류가 발생했습니다: " + (error instanceof Error ? error.message : String(error))
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error:
+          "처리 중 오류가 발생했습니다: " +
+          (error instanceof Error ? error.message : String(error)),
+      },
+      { status: 500 }
+    );
   }
 }

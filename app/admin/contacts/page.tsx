@@ -116,14 +116,14 @@ export default function ContactsAdmin() {
 
   const getStatusBadge = (contact: ContactReservation) => {
     // 거절 여부 확인
-    if (contact.status === 'rejected') {
+    if (contact.status === "rejected") {
       return {
         label: "거절",
         className: "bg-red-100 text-red-800 border border-red-200",
       };
     }
     // 승인 여부 확인 (lighthouse_contact_name이 있거나 status가 accepted)
-    if (contact.lighthouse_contact_name || contact.status === 'accepted') {
+    if (contact.lighthouse_contact_name || contact.status === "accepted") {
       return {
         label: "승인",
         className: "bg-green-100 text-green-800 border border-green-200",
@@ -431,7 +431,8 @@ export default function ContactsAdmin() {
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      {(contact.status === 'accepted' || contact.lighthouse_contact_name) && contact.method === '구글밋' ? (
+                      {(contact.status === "accepted" || contact.lighthouse_contact_name) &&
+                      contact.method === "구글밋" ? (
                         <a
                           href="https://meet.google.com/fkq-ciau-vzp"
                           target="_blank"

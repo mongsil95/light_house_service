@@ -178,84 +178,6 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
           )}
         </Section>
 
-        {/* 담당 등대지기 정보 */}
-        {data.lighthouseContactName && data.lighthouseContactEmail && (
-          <Section
-            style={{
-              backgroundColor: "#fef3c7",
-              padding: "20px",
-              borderRadius: "12px",
-              border: "1px solid #fbbf24",
-              marginBottom: "20px",
-              borderLeft: "4px solid #f59e0b",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                marginBottom: "12px",
-                color: "#92400e",
-              }}
-            >
-              🏠 담당 등대지기
-            </Text>
-            <Text
-              style={{
-                fontSize: "14px",
-                color: "#78716c",
-                margin: "0 0 8px 0",
-                lineHeight: "1.5",
-              }}
-            >
-              일정에 대해 문의사항이 있으시면 아래 담당자에게 직접 연락 주세요.
-            </Text>
-            <Section
-              style={{
-                backgroundColor: "#fff",
-                padding: "12px",
-                borderRadius: "8px",
-                marginTop: "8px",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: "14px",
-                  color: "#1f2937",
-                  margin: "0",
-                  lineHeight: "1.6",
-                }}
-              >
-                • 담당자: <strong>{data.lighthouseContactName}</strong>
-                <br />• 이메일: <strong>{data.lighthouseContactEmail}</strong>
-              </Text>
-            </Section>
-          </Section>
-        )}
-
-        {/* 안내 사항 */}
-        <Section
-          style={{
-            backgroundColor: "#eff6ff",
-            padding: "16px",
-            borderRadius: "8px",
-            border: "1px solid #3b82f6",
-            marginBottom: "24px",
-          }}
-        >
-          <Text
-            style={{
-              fontSize: "13px",
-              color: "#1e3a8a",
-              margin: "0",
-              lineHeight: "1.5",
-            }}
-          >
-            💡 <strong>안내:</strong> 예정된 시간에 {data.method}으로 연락드리겠습니다. 일정 변경이
-            필요하신 경우 미리 연락 부탁드립니다.
-          </Text>
-        </Section>
-
         {/* 준비 사항 */}
         <Section
           style={{
@@ -289,49 +211,6 @@ export function ContactAcceptanceEmail({ data }: ContactAcceptanceEmailProps) {
             • 해변 정화 활동 계획과 일정을 준비해 주세요
             <br />• 필요한 지원 사항이 있다면 함께 말씀해 주세요
           </Text>
-        </Section>
-
-        {/* 담당 등대지기 정보 */}
-        {data.lighthouseContactName && data.lighthouseContactEmail && (
-          <Section
-            style={{
-              backgroundColor: "#fef3c7",
-              padding: "16px",
-              borderRadius: "8px",
-              border: "1px solid #fbbf24",
-              marginBottom: "24px",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: "14px",
-                fontWeight: "bold",
-                marginBottom: "8px",
-                color: "#92400e",
-              }}
-            >
-              🏠 담당 등대지기
-            </Text>
-            <Text
-              style={{
-                fontSize: "13px",
-                color: "#78716c",
-                margin: "0",
-                lineHeight: "1.5",
-              }}
-            >
-              • 이름: <strong>{data.lighthouseContactName}</strong>
-              <br />• 이메일: <strong>{data.lighthouseContactEmail}</strong>
-            </Text>
-          </Section>
-        )}
-
-        <Section style={{ borderTop: "1px solid #e5e7eb", paddingTop: "24px" }}>
-          <Row>
-            <Column align="center">
-              <Img src="https://team.caresea.kr/logo/itaseoul_logo.png" alt="이타서울" width="80" />
-            </Column>
-          </Row>
         </Section>
 
         <Text

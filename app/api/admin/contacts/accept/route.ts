@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       .update({
         lighthouse_contact_name: lighthouseContactName,
         lighthouse_contact_email: lighthouseContactEmail,
-        status: 'accepted',
+        status: "accepted",
       })
       .eq("id", contactId);
 

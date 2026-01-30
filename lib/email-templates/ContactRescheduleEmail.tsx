@@ -168,61 +168,6 @@ export function ContactRescheduleEmail({ data }: ContactRescheduleEmailProps) {
           )}
         </Section>
 
-        {/* 담당 등대지기 정보 */}
-        {data.lighthouseContactName && data.lighthouseContactEmail && (
-          <Section
-            style={{
-              backgroundColor: "#fef3c7",
-              padding: "20px",
-              borderRadius: "12px",
-              border: "1px solid #fbbf24",
-              marginBottom: "20px",
-              borderLeft: "4px solid #f59e0b",
-            }}
-          >
-            <Text
-              style={{
-                fontSize: "16px",
-                fontWeight: "bold",
-                marginBottom: "12px",
-                color: "#92400e",
-              }}
-            >
-              🏠 담당 등대지기
-            </Text>
-            <Text
-              style={{
-                fontSize: "14px",
-                color: "#78716c",
-                margin: "0 0 8px 0",
-                lineHeight: "1.5",
-              }}
-            >
-              변경된 일정에 대해 문의사항이 있으시면 아래 담당자에게 직접 연락 주세요.
-            </Text>
-            <Section
-              style={{
-                backgroundColor: "#fff",
-                padding: "12px",
-                borderRadius: "8px",
-                marginTop: "8px",
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: "14px",
-                  color: "#1f2937",
-                  margin: "0",
-                  lineHeight: "1.6",
-                }}
-              >
-                • 담당자: <strong>{data.lighthouseContactName}</strong>
-                <br />• 이메일: <strong>{data.lighthouseContactEmail}</strong>
-              </Text>
-            </Section>
-          </Section>
-        )}
-
         {/* 안내 사항 */}
         <Section
           style={{
