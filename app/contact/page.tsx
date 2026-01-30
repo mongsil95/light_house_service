@@ -209,7 +209,7 @@ export default function ContactPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl text-gray-900 mb-4 font-[Cafe24_Ssurround]">
-              등대지기 무전 예약
+              등대지기에게 무전을 보내세요!
             </h1>
             <p className="text-lg text-gray-600 font-[Cafe24_Ssurround]">
               찾아도 안나오는 궁금증이 있으신가요? 등대지기에게 무전을 보내주세요!
@@ -221,7 +221,7 @@ export default function ContactPage() {
               <CardContent className="p-6 text-center">
                 <Clock className="w-12 h-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-lg text-gray-900 mb-2 font-[Cafe24_Ssurround]">
-                  무전 가능 시간
+                  등대지기는 평일에 무전을 받아요
                 </h3>
                 <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">
                   평일 13:00 - 16:00
@@ -233,7 +233,7 @@ export default function ContactPage() {
               <CardContent className="p-6 text-center flex flex-col justify-center h-full">
                 <div className="text-4xl mb-3">⚡</div>
                 <p className="text-lg text-gray-900 font-[Cafe24_Ssurround]">
-                  평균 호출 응답시간 30분 이내
+                  등대지기가 30분 내로 연락드려요!
                 </p>
                 <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">
                   (수신 사정에 따라 늦어 질 수 있습니다.)
@@ -245,14 +245,14 @@ export default function ContactPage() {
           <Card className="border border-gray-200 shadow-sm">
             <CardContent className="p-8">
               <h2 className="text-2xl text-gray-900 mb-6 font-[Cafe24_Ssurround]">
-                무전 예약 신청
+                무전 내용을 작성해주세요
               </h2>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      단체명 *
+                      어디 소속이신가요? *
                     </label>
                     <input
                       type="text"
@@ -267,7 +267,7 @@ export default function ContactPage() {
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      성명 *
+                      이름을 알려주세요 *
                     </label>
                     <input
                       type="text"
@@ -284,7 +284,7 @@ export default function ContactPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      전화번호 *
+                      전화번호를 알려주세요 *
                     </label>
                     <input
                       type="tel"
@@ -306,7 +306,7 @@ export default function ContactPage() {
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      이메일 주소 *
+                      이메일 주소를 알려주세요 *
                     </label>
                     <input
                       type="email"
@@ -329,7 +329,7 @@ export default function ContactPage() {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                    문의 내용 * (최소 100자)
+                    어떤 내용에 대해 무전을 보내실 건가요? * (최소 100자)
                   </label>
                   <textarea
                     name="content"
@@ -343,7 +343,7 @@ export default function ContactPage() {
                         ? "border-red-400 focus:ring-red-400 focus:border-red-400"
                         : "border-gray-300 focus:ring-gray-400 focus:border-gray-400"
                     }`}
-                    placeholder={`궁금하신 내용에 대하여, 홈에서 충분히 찾아보셨을까요?
+                    placeholder={`궁금하신 내용에 대하여, 탐색에서 충분히 찾아보셨을까요?
 
 상담이 필요한 구체적인 내용을 작성해주세요. (프로젝트 협업, 교육 문의, 단체 활동 등)
 자세히 작성해주실수록 더 나은 상담을 제공할 수 있습니다.`}
@@ -364,7 +364,7 @@ export default function ContactPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      무전 방법 *
+                      등대지기와 어떻게 연락할까요? *
                     </label>
                     <select
                       name="method"
@@ -374,13 +374,13 @@ export default function ContactPage() {
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 font-['Pretendard']"
                     >
                       <option value="전화">전화 통화 (등대지기가 연락드려요)</option>
-                      <option value="구글밋">구글 밋 (Google Meet)</option>
+                      <option value="구글밋">구글 밋 (메일로 링크를 드려요)</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                      희망 시간 * (13:00 - 16:00)
+                      가능하신 시간을 알려주세요 * (13:00 - 16:00)
                     </label>
                     <select
                       name="preferredTime"
@@ -402,7 +402,7 @@ export default function ContactPage() {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                    희망 일자 * (평일 가능)
+                    언제가 가능하신가요? * (평일 가능)
                   </label>
                   <input
                     type="date"
@@ -420,8 +420,7 @@ export default function ContactPage() {
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <p className="text-sm text-gray-700 font-['Pretendard']">
-                    📌 신청하신 내용은 등대지기가 확인 후 이메일 또는 전화로 최종 일정을
-                    안내드립니다.
+                    📌 보내주신 무전 내용을 등대지기가 확인 후 최대한 빠르게 회신드릴게요!
                   </p>
                   <p className="text-sm text-gray-700 mt-2 font-['Pretendard']">
                     📌 무전 가능 시간: 평일 13:00 - 16:00
@@ -441,7 +440,7 @@ export default function ContactPage() {
                   ) : (
                     <>
                       <Calendar className="w-5 h-5" />
-                      무전 예약 신청하기
+                      무전 발송 하기
                     </>
                   )}
                 </button>
