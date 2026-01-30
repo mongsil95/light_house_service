@@ -20,6 +20,10 @@ interface ContactReservation {
   rescheduled_date?: string;
   rescheduled_time?: string;
   rescheduled_reason?: string;
+  lighthouse_contact_name?: string;
+  lighthouse_contact_email?: string;
+  status?: string; // 'pending', 'accepted', 'rejected'
+  rejected_reason?: string;
   content: string;
   created_at: string;
 }
@@ -36,7 +40,9 @@ export default function ContactsAdmin() {
     reason: "",
   });
   const [isAcceptDialogOpen, setIsAcceptDialogOpen] = useState(false);
+  const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
   const [isSendingEmail, setIsSendingEmail] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [lighthouseContact, setLighthouseContact] = useState({
     name: "",
     email: "",
@@ -106,6 +112,35 @@ export default function ContactsAdmin() {
       대면미팅: "bg-orange-100 text-orange-800",
     };
     return colors[method] || "bg-gray-100 text-gray-800";
+  };
+
+  const getStatusBadge = (contact: ContactReservation) => {
+    // 거절 여부 확인
+    if (contact.status === 'rejected') {
+      return {
+        label: "거절",
+        className: "bg-red-100 text-red-800 border border-red-200",
+      };
+    }
+    // 승인 여부 확인 (lighthouse_contact_name이 있거나 status가 accepted)
+    if (contact.lighthouse_contact_name || contact.status === 'accepted') {
+      return {
+        label: "승인",
+        className: "bg-green-100 text-green-800 border border-green-200",
+      };
+    }
+    // 일정 변경 여부 확인
+    if (contact.rescheduled_date) {
+      return {
+        label: "변경",
+        className: "bg-yellow-100 text-yellow-800 border border-yellow-200",
+      };
+    }
+    // 대기중
+    return {
+      label: "대기중",
+      className: "bg-gray-100 text-gray-800 border border-gray-200",
+    };
   };
 
   const handleRowClick = (contact: ContactReservation) => {
@@ -195,6 +230,56 @@ export default function ContactsAdmin() {
 
   const handleAccept = () => {
     setIsAcceptDialogOpen(true);
+  };
+
+  const handleReject = () => {
+    setRejectReason("");
+    setIsRejectDialogOpen(true);
+  };
+
+  const handleConfirmReject = async () => {
+    if (!selectedContact) return;
+
+    if (!rejectReason.trim()) {
+      alert("거절 사유를 입력해주세요.");
+      return;
+    }
+
+    try {
+      setIsSendingEmail(true);
+
+      // 거절 이메일 발송 API 호출
+      const response = await fetch("/api/admin/contacts/reject", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          contactId: selectedContact.id,
+          reason: rejectReason,
+        }),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.error || "이메일 발송 실패");
+      }
+
+      alert(`무전 예약이 거절되었으며, 신청자에게 안내 이메일이 발송되었습니다.`);
+      setIsRejectDialogOpen(false);
+      setIsModalOpen(false);
+      setRejectReason("");
+      fetchContacts();
+    } catch (error) {
+      console.error("무전 거절 실패:", error);
+      alert(
+        "무전 거절 처리 중 오류가 발생했습니다: " +
+          (error instanceof Error ? error.message : "알 수 없는 오류")
+      );
+    } finally {
+      setIsSendingEmail(false);
+    }
   };
 
   const handleConfirmAccept = async () => {
@@ -288,6 +373,9 @@ export default function ContactsAdmin() {
                     접수일시
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    상태
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
                     작업
                   </th>
                 </tr>
@@ -336,6 +424,11 @@ export default function ContactsAdmin() {
                       <div className="text-sm text-gray-500">
                         {format(new Date(contact.created_at), "yyyy-MM-dd HH:mm", { locale: ko })}
                       </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge className={getStatusBadge(contact).className}>
+                        {getStatusBadge(contact).label}
+                      </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Button
@@ -462,6 +555,13 @@ export default function ContactsAdmin() {
                       className="font-['Pretendard']"
                     >
                       약속 변경
+                    </Button>
+                    <Button
+                      onClick={handleReject}
+                      variant="outline"
+                      className="font-['Pretendard'] text-red-600 border-red-300 hover:bg-red-50"
+                    >
+                      무전 거절
                     </Button>
                     <Button
                       onClick={handleAccept}
@@ -636,6 +736,68 @@ export default function ContactsAdmin() {
                 className="font-['Pretendard']"
               >
                 취소
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* 무전 거절 확인 다이얼로그 */}
+      <Dialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
+        <DialogContent className="max-w-md font-['Pretendard'] max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">무전 예약 거절</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 mt-4">
+            <p className="text-gray-700">
+              이 무전 예약을 거절하시겠습니까?
+              <br />
+              <br />
+              거절 시 <strong>{selectedContact?.email}</strong>로 거절 안내 이메일이 발송됩니다.
+            </p>
+
+            {selectedContact && (
+              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                <p className="text-sm text-red-900 font-semibold mb-2">거절할 예약:</p>
+                <p className="text-sm text-red-800">
+                  • 조직: {selectedContact.organization}
+                  <br />• 담당자: {selectedContact.name}
+                  <br />• 일정: {selectedContact.preferred_date} {selectedContact.preferred_time}
+                  <br />• 연락방법: {selectedContact.method}
+                </p>
+              </div>
+            )}
+
+            {/* 거절 사유 입력 */}
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-gray-700">거절 사유 *</label>
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="거절 사유를 입력해주세요. 신청자에게 전달됩니다."
+                rows={4}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+
+            <div className="flex gap-3 pt-6 w-full">
+              <Button
+                onClick={() => setIsRejectDialogOpen(false)}
+                disabled={isSendingEmail}
+                variant="outline"
+                size="lg"
+                className="font-['Pretendard'] w-32"
+              >
+                취소
+              </Button>
+              <Button
+                onClick={handleConfirmReject}
+                disabled={isSendingEmail}
+                size="lg"
+                className="font-['Pretendard'] flex-1 bg-red-600 hover:bg-red-700 text-white"
+              >
+                {isSendingEmail ? "처리 중..." : "거절 확정"}
               </Button>
             </div>
           </div>

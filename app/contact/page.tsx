@@ -37,24 +37,25 @@ export default function ContactPage() {
     return emailRegex.test(email);
   };
 
+  // TODO: 화요일, 목요일만 선택 가능하도록 제한 (나중에 활성화)
   // 날짜 검증 (화요일 또는 목요일인지 확인)
-  const validateDate = (dateString: string): { valid: boolean; message?: string } => {
-    if (!dateString) return { valid: false };
+  // const validateDate = (dateString: string): { valid: boolean; message?: string } => {
+  //   if (!dateString) return { valid: false };
 
-    const selectedDate = new Date(dateString);
-    const dayOfWeek = selectedDate.getDay(); // 0(일) ~ 6(토)
+  //   const selectedDate = new Date(dateString);
+  //   const dayOfWeek = selectedDate.getDay(); // 0(일) ~ 6(토)
 
-    // 화요일(2) 또는 목요일(4)인지 확인
-    if (dayOfWeek !== 2 && dayOfWeek !== 4) {
-      const dayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
-      return {
-        valid: false,
-        message: `선택하신 날짜는 ${dayNames[dayOfWeek]}입니다. 화요일 또는 목요일만 선택 가능합니다.`,
-      };
-    }
+  //   // 화요일(2) 또는 목요일(4)인지 확인
+  //   if (dayOfWeek !== 2 && dayOfWeek !== 4) {
+  //     const dayNames = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
+  //     return {
+  //       valid: false,
+  //       message: `선택하신 날짜는 ${dayNames[dayOfWeek]}입니다. 화요일 또는 목요일만 선택 가능합니다.`,
+  //     };
+  //   }
 
-    return { valid: true };
-  };
+  //   return { valid: true };
+  // };
 
   // 오늘 날짜 가져오기 (YYYY-MM-DD 형식)
   const getTodayDate = (): string => {
@@ -98,12 +99,13 @@ export default function ContactPage() {
       return;
     }
 
+    // TODO: 날짜 검증 (나중에 활성화)
     // 날짜 검증
-    const dateValidation = validateDate(formData.preferredDate);
-    if (!dateValidation.valid) {
-      alert(dateValidation.message || "화요일 또는 목요일만 선택 가능합니다.");
-      return;
-    }
+    // const dateValidation = validateDate(formData.preferredDate);
+    // if (!dateValidation.valid) {
+    //   alert(dateValidation.message || "화요일 또는 목요일만 선택 가능합니다.");
+    //   return;
+    // }
 
     setIsSubmitting(true);
 
@@ -183,19 +185,20 @@ export default function ContactPage() {
       }
     }
 
+    // TODO: 날짜 실시간 검증 (나중에 활성화)
     // 날짜 실시간 검증
-    if (name === "preferredDate") {
-      if (value) {
-        const dateValidation = validateDate(value);
-        if (!dateValidation.valid) {
-          setDateError(dateValidation.message || "화요일 또는 목요일만 선택 가능합니다.");
-        } else {
-          setDateError("");
-        }
-      } else {
-        setDateError("");
-      }
-    }
+    // if (name === "preferredDate") {
+    //   if (value) {
+    //     const dateValidation = validateDate(value);
+    //     if (!dateValidation.valid) {
+    //       setDateError(dateValidation.message || "화요일 또는 목요일만 선택 가능합니다.");
+    //     } else {
+    //       setDateError("");
+    //     }
+    //   } else {
+    //     setDateError("");
+    //   }
+    // }
   };
 
   return (
@@ -213,15 +216,27 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="flex justify-center mb-12">
-            <Card className="border border-gray-200 shadow-sm w-full max-w-md">
+          <div className="grid md:grid-cols-2 gap-6 mb-12">
+            <Card className="border border-gray-200 shadow-sm">
               <CardContent className="p-6 text-center">
                 <Clock className="w-12 h-12 mx-auto mb-4 text-blue-600" />
                 <h3 className="text-lg text-gray-900 mb-2 font-[Cafe24_Ssurround]">
                   무전 가능 시간
                 </h3>
-                <p className="text-gray-700 font-[Cafe24_Ssurround]">매주 화요일, 목요일</p>
+                <p className="text-gray-700 font-[Cafe24_Ssurround]">평일</p>
                 <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">13:00 - 16:00</p>
+              </CardContent>
+            </Card>
+
+            <Card className="border border-gray-200 shadow-sm">
+              <CardContent className="p-6 text-center flex flex-col justify-center h-full">
+                <div className="text-4xl mb-3">⚡</div>
+                <p className="text-lg text-gray-900 font-[Cafe24_Ssurround]">
+                  신청 후 30분 내로 답변드립니다
+                </p>
+                <p className="text-sm text-gray-600 mt-2 font-[Cafe24_Ssurround]">
+                  (상황에 따라 지연될 수 있습니다.)
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -386,7 +401,7 @@ export default function ContactPage() {
 
                 <div>
                   <label className="block text-sm text-gray-700 mb-2 font-['Pretendard']">
-                    희망 일자 * (화요일, 목요일만 가능)
+                    희망 일자 * (평일 가능)
                   </label>
                   <input
                     type="date"
@@ -395,19 +410,11 @@ export default function ContactPage() {
                     onChange={handleChange}
                     min={getTomorrowDate()}
                     required
-                    className={`w-full px-4 py-3 border rounded-lg focus:ring-1 font-['Pretendard'] ${
-                      dateError
-                        ? "border-red-400 focus:ring-red-400 focus:border-red-400"
-                        : "border-gray-300 focus:ring-gray-400 focus:border-gray-400"
-                    }`}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-gray-400 focus:border-gray-400 font-['Pretendard']"
                   />
-                  {dateError ? (
-                    <p className="text-xs text-red-600 mt-1 font-['Pretendard']">{dateError}</p>
-                  ) : (
-                    <p className="text-sm text-gray-500 mt-1 font-['Pretendard']">
-                      * 화요일 또는 목요일로 선택해주세요
-                    </p>
-                  )}
+                  <p className="text-sm text-gray-500 mt-1 font-['Pretendard']">
+                    * 평일 중 원하시는 날짜를 선택해주세요
+                  </p>
                 </div>
 
                 <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
@@ -415,7 +422,7 @@ export default function ContactPage() {
                     📌 신청하신 내용은 담당자 확인 후 이메일 또는 전화로 최종 일정을 안내드립니다.
                   </p>
                   <p className="text-sm text-gray-700 mt-2 font-['Pretendard']">
-                    📌 무전 가능 시간: 매주 화요일, 목요일 13:00 - 16:00
+                    📌 무전 가능 시간: 평일 13:00 - 16:00
                   </p>
                 </div>
 

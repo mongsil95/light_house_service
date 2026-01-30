@@ -9,6 +9,8 @@ ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS lighthouse_contact_ema
 ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS rescheduled_date TEXT;
 ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS rescheduled_time TEXT;
 ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS rescheduled_reason TEXT;
+ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'pending';
+ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS rejected_reason TEXT;
 ALTER TABLE contact_reservations ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now());
 
 -- 업데이트 시간 자동 갱신 함수 (아직 없는 경우)
