@@ -458,18 +458,13 @@ export default function GuidesAdmin() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">작성자</label>
-                <select
+                <input
+                  type="text"
                   className="w-full px-3 py-2 border border-gray-300 focus:outline-none focus:border-gray-900 font-['Pretendard']"
                   value={formData.author || ""}
                   onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                >
-                  <option value="">작성자를 선택하세요</option>
-                  {adminUsers.map((u) => (
-                    <option key={u.id} value={u.nickname}>
-                      {u.nickname}
-                    </option>
-                  ))}
-                </select>
+                  placeholder="작성자 이름을 입력하세요"
+                />
               </div>
 
               <div>
