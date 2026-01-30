@@ -431,8 +431,10 @@ export default function ContactsAdmin() {
                       </div>
                     )}
                     <label className="text-sm font-semibold text-gray-700">문의 내용</label>
-                    <div className="mt-1 p-4 bg-gray-50 rounded-lg">
-                      <p className="text-gray-900 whitespace-pre-wrap">{selectedContact.content}</p>
+                    <div className="mt-1 p-4 bg-gray-50 rounded-lg max-w-full overflow-hidden">
+                      <p className="text-gray-900 whitespace-pre-wrap break-all overflow-wrap-anywhere max-w-full">
+                        {selectedContact.content}
+                      </p>
                     </div>
                   </div>
 
