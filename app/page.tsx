@@ -90,7 +90,7 @@ function QnAContent() {
       subItems: [
         { label: "전체", value: "활동운영" },
         { label: "보험", value: "보험" },
-        { label: "정화 활동", value: "정화활동" },
+        { label: "정화활동", value: "정화활동" },
         { label: "캠페인", value: "캠페인" },
         { label: "사례공유", value: "사례공유" },
         { label: "보고서", value: "보고서" },
